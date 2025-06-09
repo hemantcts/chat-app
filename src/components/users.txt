@@ -1,0 +1,932 @@
+<div className="nk-ibx-item is-unread">
+                                    <a href="#" className="nk-ibx-link"></a>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-check">
+                                        <div className="custom-control custom-control-sm custom-checkbox">
+                                            <input type="checkbox" className="custom-control-input nk-dt-item-check" id="conversionItem02" />
+                                            <label className="custom-control-label" for="conversionItem02"></label>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-star">
+                                        <div className="asterisk"><a className="active" href="#"><em className="asterisk-off icon ni ni-star"></em><em className="asterisk-on icon ni ni-star-fill"></em></a></div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-user">
+                                        <div className="user-card">
+                                            <div className="user-avatar">
+                                                <img src="./images/avatar/b-sm.jpg" alt="" />
+                                            </div>
+                                            <div className="user-name">
+                                                <div className="lead-text">Ricardo Salazar</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-fluid">
+                                        <div className="nk-ibx-context-group">
+                                            <div className="nk-ibx-context-badges"><span className="badge badge-primary">Feedback</span></div>
+                                            <div className="nk-ibx-context">
+                                                <span className="nk-ibx-context-text">
+                                                    <span className="heading">Can we help you set up email forwording?</span> We’ve noticed you haven’t set up email forward </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-attach">
+                                        <a className="link link-light">
+                                            <em className="icon ni ni-clip-h"></em>
+                                        </a>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-time">
+                                        <div className="sub-text">10:00 AM</div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-tools">
+                                        <div className="ibx-actions">
+                                            <ul className="ibx-actions-hidden gx-1">
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Archive"><em className="icon ni ni-archived"></em></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete"><em className="icon ni ni-trash"></em></a>
+                                                </li>
+                                            </ul>
+                                            <ul className="ibx-actions-visible gx-2">
+                                                <li>
+                                                    <div className="dropdown">
+                                                        <a href="#" className="dropdown-toggle btn btn-sm btn-icon btn-trigger" data-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <ul className="link-list-opt no-bdr">
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-eye"></em><span>View</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-trash"></em><span>Delete</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-archived"></em><span>Archive</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="nk-ibx-item is-unread">
+                                    <a href="#" className="nk-ibx-link"></a>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-check">
+                                        <div className="custom-control custom-control-sm custom-checkbox">
+                                            <input type="checkbox" className="custom-control-input nk-dt-item-check" id="conversionItem03" />
+                                            <label className="custom-control-label" for="conversionItem03"></label>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-star">
+                                        <div className="asterisk"><a href="#"><em className="asterisk-off icon ni ni-star"></em><em className="asterisk-on icon ni ni-star-fill"></em></a></div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-user">
+                                        <div className="user-card">
+                                            <div className="user-avatar">
+                                                <span>LH</span>
+                                            </div>
+                                            <div className="user-name">
+                                                <div className="lead-text">Larry Hughes</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-fluid">
+                                        <div className="nk-ibx-context-group">
+                                            <div className="nk-ibx-context">
+                                                <span className="nk-ibx-context-text">
+                                                    <span className="heading">Individual Modal and Alert Design.</span> Please use the attached file for modal. </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-attach">
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-time">
+                                        <div className="sub-text">10:30 AM</div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-tools">
+                                        <div className="ibx-actions">
+                                            <ul className="ibx-actions-hidden gx-1">
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Archive"><em className="icon ni ni-archived"></em></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete"><em className="icon ni ni-trash"></em></a>
+                                                </li>
+                                            </ul>
+                                            <ul className="ibx-actions-visible gx-2">
+                                                <li>
+                                                    <div className="dropdown">
+                                                        <a href="#" className="dropdown-toggle btn btn-sm btn-icon btn-trigger" data-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <ul className="link-list-opt no-bdr">
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-eye"></em><span>View</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-trash"></em><span>Delete</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-archived"></em><span>Archive</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="nk-ibx-item">
+                                    <a href="#" className="nk-ibx-link"></a>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-check">
+                                        <div className="custom-control custom-control-sm custom-checkbox">
+                                            <input type="checkbox" className="custom-control-input nk-dt-item-check" id="conversionItem04" />
+                                            <label className="custom-control-label" for="conversionItem04"></label>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-star">
+                                        <div className="asterisk"><a className="active" href="#"><em className="asterisk-off icon ni ni-star"></em><em className="asterisk-on icon ni ni-star-fill"></em></a></div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-user">
+                                        <div className="user-card">
+                                            <div className="user-avatar">
+                                                <img src="./images/avatar/c-sm.jpg" alt="" />
+                                            </div>
+                                            <div className="user-name">
+                                                <div className="lead-text">Laura Matthews</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-fluid">
+                                        <div className="nk-ibx-context-group">
+                                            <div className="nk-ibx-context-badges"><span className="badge badge-success">Social</span></div>
+                                            <div className="nk-ibx-context">
+                                                <span className="nk-ibx-context-text">
+                                                    <span className="heading">Laravel Developer - Interview List</span> https://docs.google.com/document/d/12oOKEs4qjMlUiHXNVjHJBK </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-attach">
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-time">
+                                        <div className="sub-text">10:30 AM</div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-tools">
+                                        <div className="ibx-actions">
+                                            <ul className="ibx-actions-hidden gx-1">
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Archive"><em className="icon ni ni-archived"></em></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete"><em className="icon ni ni-trash"></em></a>
+                                                </li>
+                                            </ul>
+                                            <ul className="ibx-actions-visible gx-2">
+                                                <li>
+                                                    <div className="dropdown">
+                                                        <a href="#" className="dropdown-toggle btn btn-sm btn-icon btn-trigger" data-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <ul className="link-list-opt no-bdr">
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-eye"></em><span>View</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-trash"></em><span>Delete</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-archived"></em><span>Archive</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="nk-ibx-item">
+                                    <a href="#" className="nk-ibx-link"></a>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-check">
+                                        <div className="custom-control custom-control-sm custom-checkbox">
+                                            <input type="checkbox" className="custom-control-input nk-dt-item-check" id="conversionItem05" />
+                                            <label className="custom-control-label" for="conversionItem05"></label>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-star">
+                                        <div className="asterisk"><a className="active" href="#"><em className="asterisk-off icon ni ni-star"></em><em className="asterisk-on icon ni ni-star-fill"></em></a></div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-user">
+                                        <div className="user-card">
+                                            <div className="user-avatar">
+                                                <img src="./images/avatar/d-sm.jpg" alt="" />
+                                            </div>
+                                            <div className="user-name">
+                                                <div className="lead-text">Tammy Wilson</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-fluid">
+                                        <div className="nk-ibx-context-group">
+                                            <div className="nk-ibx-context">
+                                                <span className="nk-ibx-context-text">
+                                                    <span className="heading">TokenWiz - New Page</span> here are the 2 screens I would to implement with TokenWiz </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-attach">
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-time">
+                                        <div className="sub-text">10:30 AM</div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-tools">
+                                        <div className="ibx-actions">
+                                            <ul className="ibx-actions-hidden gx-1">
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Archive"><em className="icon ni ni-archived"></em></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete"><em className="icon ni ni-trash"></em></a>
+                                                </li>
+                                            </ul>
+                                            <ul className="ibx-actions-visible gx-2">
+                                                <li>
+                                                    <div className="dropdown">
+                                                        <a href="#" className="dropdown-toggle btn btn-sm btn-icon btn-trigger" data-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <ul className="link-list-opt no-bdr">
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-eye"></em><span>View</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-trash"></em><span>Delete</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-archived"></em><span>Archive</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="nk-ibx-item is-unread">
+                                    <a href="#" className="nk-ibx-link"></a>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-check">
+                                        <div className="custom-control custom-control-sm custom-checkbox">
+                                            <input type="checkbox" className="custom-control-input nk-dt-item-check" id="conversionItem06" />
+                                            <label className="custom-control-label" for="conversionItem06"></label>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-star">
+                                        <div className="asterisk"><a className="active" href="#"><em className="asterisk-off icon ni ni-star"></em><em className="asterisk-on icon ni ni-star-fill"></em></a></div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-user">
+                                        <div className="user-card">
+                                            <div className="user-avatar bg-azure">
+                                                <span>SP</span>
+                                            </div>
+                                            <div className="user-name">
+                                                <div className="lead-text">Sara Phillips</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-fluid">
+                                        <div className="nk-ibx-context-group">
+                                            <div className="nk-ibx-context">
+                                                <span className="nk-ibx-context-text">
+                                                    <span className="heading">TokenLite Promo Assets</span> Please check out attached. </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-attach">
+                                        <a className="link link-light">
+                                            <em className="icon ni ni-clip-h"></em>
+                                        </a>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-time">
+                                        <div className="sub-text">10:30 AM</div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-tools">
+                                        <div className="ibx-actions">
+                                            <ul className="ibx-actions-hidden gx-1">
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Archive"><em className="icon ni ni-archived"></em></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete"><em className="icon ni ni-trash"></em></a>
+                                                </li>
+                                            </ul>
+                                            <ul className="ibx-actions-visible gx-2">
+                                                <li>
+                                                    <div className="dropdown">
+                                                        <a href="#" className="dropdown-toggle btn btn-sm btn-icon btn-trigger" data-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <ul className="link-list-opt no-bdr">
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-eye"></em><span>View</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-trash"></em><span>Delete</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-archived"></em><span>Archive</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="nk-ibx-item">
+                                    <a href="#" className="nk-ibx-link"></a>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-check">
+                                        <div className="custom-control custom-control-sm custom-checkbox">
+                                            <input type="checkbox" className="custom-control-input nk-dt-item-check" id="conversionItem07" />
+                                            <label className="custom-control-label" for="conversionItem07"></label>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-star">
+                                        <div className="asterisk"><a href="#"><em className="asterisk-off icon ni ni-star"></em><em className="asterisk-on icon ni ni-star-fill"></em></a></div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-user">
+                                        <div className="user-card">
+                                            <div className="user-avatar bg-indigo">
+                                                <span>MA</span>
+                                            </div>
+                                            <div className="user-name">
+                                                <div className="lead-text">Mildred Arnold</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-fluid">
+                                        <div className="nk-ibx-context-group">
+                                            <div className="nk-ibx-context">
+                                                <span className="nk-ibx-context-text">
+                                                    <span className="heading">Token Page Content.</span> Please check included links for content. </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-attach">
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-time">
+                                        <div className="sub-text">10:30 AM</div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-tools">
+                                        <div className="ibx-actions">
+                                            <ul className="ibx-actions-hidden gx-1">
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Archive"><em className="icon ni ni-archived"></em></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete"><em className="icon ni ni-trash"></em></a>
+                                                </li>
+                                            </ul>
+                                            <ul className="ibx-actions-visible gx-2">
+                                                <li>
+                                                    <div className="dropdown">
+                                                        <a href="#" className="dropdown-toggle btn btn-sm btn-icon btn-trigger" data-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <ul className="link-list-opt no-bdr">
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-eye"></em><span>View</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-trash"></em><span>Delete</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-archived"></em><span>Archive</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="nk-ibx-item">
+                                    <a href="#" className="nk-ibx-link"></a>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-check">
+                                        <div className="custom-control custom-control-sm custom-checkbox">
+                                            <input type="checkbox" className="custom-control-input nk-dt-item-check" id="conversionItem08" />
+                                            <label className="custom-control-label" for="conversionItem08"></label>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-star">
+                                        <div className="asterisk"><a href="#"><em className="asterisk-off icon ni ni-star"></em><em className="asterisk-on icon ni ni-star-fill"></em></a></div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-user">
+                                        <div className="user-card">
+                                            <div className="user-avatar bg-success">
+                                                <img src="./images/avatar/a-sm.jpg" alt="" />
+                                            </div>
+                                            <div className="user-name">
+                                                <div className="lead-text">Abu Bin Ishtiyak</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-fluid">
+                                        <div className="nk-ibx-context-group">
+                                            <div className="nk-ibx-context-badges"><span className="badge badge-danger">Personal</span></div>
+                                            <div className="nk-ibx-context">
+                                                <span className="nk-ibx-context-text">
+                                                    <span className="heading">Feedback about licenses and support policy</span> Two important aspects of the marketplace are its licenses, which govern the use of your items by customers </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-attach">
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-time">
+                                        <div className="sub-text">10:30 AM</div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-tools">
+                                        <div className="ibx-actions">
+                                            <ul className="ibx-actions-hidden gx-1">
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Archive"><em className="icon ni ni-archived"></em></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete"><em className="icon ni ni-trash"></em></a>
+                                                </li>
+                                            </ul>
+                                            <ul className="ibx-actions-visible gx-2">
+                                                <li>
+                                                    <div className="dropdown">
+                                                        <a href="#" className="dropdown-toggle btn btn-sm btn-icon btn-trigger" data-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <ul className="link-list-opt no-bdr">
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-eye"></em><span>View</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-trash"></em><span>Delete</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-archived"></em><span>Archive</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="nk-ibx-item">
+                                    <a href="#" className="nk-ibx-link"></a>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-check">
+                                        <div className="custom-control custom-control-sm custom-checkbox">
+                                            <input type="checkbox" className="custom-control-input nk-dt-item-check" id="conversionItem09" />
+                                            <label className="custom-control-label" for="conversionItem09"></label>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-star">
+                                        <div className="asterisk"><a className="active" href="#"><em className="asterisk-off icon ni ni-star"></em><em className="asterisk-on icon ni ni-star-fill"></em></a></div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-user">
+                                        <div className="user-card">
+                                            <div className="user-avatar">
+                                                <img src="./images/avatar/d-sm.jpg" alt="" />
+                                            </div>
+                                            <div className="user-name">
+                                                <div className="lead-text">Tammy Wilson</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-fluid">
+                                        <div className="nk-ibx-context-group">
+                                            <div className="nk-ibx-context-badges"><span className="badge badge-info">Team</span></div>
+                                            <div className="nk-ibx-context">
+                                                <span className="nk-ibx-context-text">
+                                                    <span className="heading">Thanks for completing our survey</span> Since you've already completed our survey we wanted to give you the opportunity to win as well </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-attach">
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-time">
+                                        <div className="sub-text">10:30 AM</div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-tools">
+                                        <div className="ibx-actions">
+                                            <ul className="ibx-actions-hidden gx-1">
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Archive"><em className="icon ni ni-archived"></em></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete"><em className="icon ni ni-trash"></em></a>
+                                                </li>
+                                            </ul>
+                                            <ul className="ibx-actions-visible gx-2">
+                                                <li>
+                                                    <div className="dropdown">
+                                                        <a href="#" className="dropdown-toggle btn btn-sm btn-icon btn-trigger" data-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <ul className="link-list-opt no-bdr">
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-eye"></em><span>View</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-trash"></em><span>Delete</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-archived"></em><span>Archive</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="nk-ibx-item">
+                                    <a href="#" className="nk-ibx-link"></a>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-check">
+                                        <div className="custom-control custom-control-sm custom-checkbox">
+                                            <input type="checkbox" className="custom-control-input nk-dt-item-check" id="conversionItem10" />
+                                            <label className="custom-control-label" for="conversionItem10"></label>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-star">
+                                        <div className="asterisk"><a href="#"><em className="asterisk-off icon ni ni-star"></em><em className="asterisk-on icon ni ni-star-fill"></em></a></div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-user">
+                                        <div className="user-card">
+                                            <div className="user-avatar">
+                                                <img src="./images/avatar/b-sm.jpg" alt="" />
+                                            </div>
+                                            <div className="user-name">
+                                                <div className="lead-text">Ricardo Salazar</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-fluid">
+                                        <div className="nk-ibx-context-group">
+                                            <div className="nk-ibx-context">
+                                                <span className="nk-ibx-context-text">
+                                                    <span className="heading">Registration Confirmation for Envato Worldwide</span> The event organizer has provided the following information </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-attach">
+                                        <a className="link link-light">
+                                            <em className="icon ni ni-clip-h"></em>
+                                        </a>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-time">
+                                        <div className="sub-text">10:30 AM</div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-tools">
+                                        <div className="ibx-actions">
+                                            <ul className="ibx-actions-hidden gx-1">
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Archive"><em className="icon ni ni-archived"></em></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete"><em className="icon ni ni-trash"></em></a>
+                                                </li>
+                                            </ul>
+                                            <ul className="ibx-actions-visible gx-2">
+                                                <li>
+                                                    <div className="dropdown">
+                                                        <a href="#" className="dropdown-toggle btn btn-sm btn-icon btn-trigger" data-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <ul className="link-list-opt no-bdr">
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-eye"></em><span>View</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-trash"></em><span>Delete</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-archived"></em><span>Archive</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="nk-ibx-item">
+                                    <a href="#" className="nk-ibx-link"></a>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-check">
+                                        <div className="custom-control custom-control-sm custom-checkbox">
+                                            <input type="checkbox" className="custom-control-input nk-dt-item-check" id="conversionItem11" />
+                                            <label className="custom-control-label" for="conversionItem11"></label>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-star">
+                                        <div className="asterisk"><a href="#"><em className="asterisk-off icon ni ni-star"></em><em className="asterisk-on icon ni ni-star-fill"></em></a></div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-user">
+                                        <div className="user-card">
+                                            <div className="user-avatar bg-pink">
+                                                <span>CL</span>
+                                            </div>
+                                            <div className="user-name">
+                                                <div className="lead-text">Catherine Larson</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-fluid">
+                                        <div className="nk-ibx-context-group">
+                                            <div className="nk-ibx-context">
+                                                <span className="nk-ibx-context-text">
+                                                    <span className="heading">Bring personality to your design work.</span> As designers, how we tell our stories is key. We must be unique, genuine, and use language with purpose to get meaningful results in our design work. </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-attach">
+                                        <a className="link link-light">
+                                            <em className="icon ni ni-clip-h"></em>
+                                        </a>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-time">
+                                        <div className="sub-text">10:30 AM</div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-tools">
+                                        <div className="ibx-actions">
+                                            <ul className="ibx-actions-hidden gx-1">
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Archive"><em className="icon ni ni-archived"></em></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete"><em className="icon ni ni-trash"></em></a>
+                                                </li>
+                                            </ul>
+                                            <ul className="ibx-actions-visible gx-2">
+                                                <li>
+                                                    <div className="dropdown">
+                                                        <a href="#" className="dropdown-toggle btn btn-sm btn-icon btn-trigger" data-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <ul className="link-list-opt no-bdr">
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-eye"></em><span>View</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-trash"></em><span>Delete</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-archived"></em><span>Archive</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="nk-ibx-item">
+                                    <a href="#" className="nk-ibx-link"></a>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-check">
+                                        <div className="custom-control custom-control-sm custom-checkbox">
+                                            <input type="checkbox" className="custom-control-input nk-dt-item-check" id="conversionItem12" />
+                                            <label className="custom-control-label" for="conversionItem12"></label>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-star">
+                                        <div className="asterisk"><a href="#"><em className="asterisk-off icon ni ni-star"></em><em className="asterisk-on icon ni ni-star-fill"></em></a></div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-user">
+                                        <div className="user-card">
+                                            <div className="user-avatar bg-azure">
+                                                <span>SP</span>
+                                            </div>
+                                            <div className="user-name">
+                                                <div className="lead-text">Sara Phillips</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-fluid">
+                                        <div className="nk-ibx-context-group">
+                                            <div className="nk-ibx-context">
+                                                <span className="nk-ibx-context-text">
+                                                    <span className="heading">Unique design portfolio examples.</span> Prepare to be blown away with our favourite unique design portfolio examples built </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-attach">
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-time">
+                                        <div className="sub-text">10:30 AM</div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-tools">
+                                        <div className="ibx-actions">
+                                            <ul className="ibx-actions-hidden gx-1">
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Archive"><em className="icon ni ni-archived"></em></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete"><em className="icon ni ni-trash"></em></a>
+                                                </li>
+                                            </ul>
+                                            <ul className="ibx-actions-visible gx-2">
+                                                <li>
+                                                    <div className="dropdown">
+                                                        <a href="#" className="dropdown-toggle btn btn-sm btn-icon btn-trigger" data-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <ul className="link-list-opt no-bdr">
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-eye"></em><span>View</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-trash"></em><span>Delete</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-archived"></em><span>Archive</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="nk-ibx-item">
+                                    <a href="#" className="nk-ibx-link"></a>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-check">
+                                        <div className="custom-control custom-control-sm custom-checkbox">
+                                            <input type="checkbox" className="custom-control-input nk-dt-item-check" id="conversionItem13" />
+                                            <label className="custom-control-label" for="conversionItem13"></label>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-star">
+                                        <div className="asterisk"><a href="#"><em className="asterisk-off icon ni ni-star"></em><em className="asterisk-on icon ni ni-star-fill"></em></a></div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-user">
+                                        <div className="user-card">
+                                            <div className="user-avatar">
+                                                <img src="./images/avatar/c-sm.jpg" alt="" />
+                                            </div>
+                                            <div className="user-name">
+                                                <div className="lead-text">Laura Matthews</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-fluid">
+                                        <div className="nk-ibx-context-group">
+                                            <div className="nk-ibx-context-badges"><span className="badge badge-danger">Personal</span></div>
+                                            <div className="nk-ibx-context">
+                                                <span className="nk-ibx-context-text">
+                                                    <span className="heading">Credit Card Verification Incomplete.</span> Your recently submitted credit card verification has NOT been completed. We found the following errors in your submission. </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-attach">
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-time">
+                                        <div className="sub-text">10:30 AM</div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-tools">
+                                        <div className="ibx-actions">
+                                            <ul className="ibx-actions-hidden gx-1">
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Archive"><em className="icon ni ni-archived"></em></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete"><em className="icon ni ni-trash"></em></a>
+                                                </li>
+                                            </ul>
+                                            <ul className="ibx-actions-visible gx-2">
+                                                <li>
+                                                    <div className="dropdown">
+                                                        <a href="#" className="dropdown-toggle btn btn-sm btn-icon btn-trigger" data-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <ul className="link-list-opt no-bdr">
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-eye"></em><span>View</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-trash"></em><span>Delete</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-archived"></em><span>Archive</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="nk-ibx-item">
+                                    <a href="#" className="nk-ibx-link"></a>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-check">
+                                        <div className="custom-control custom-control-sm custom-checkbox">
+                                            <input type="checkbox" className="custom-control-input nk-dt-item-check" id="conversionItem14" />
+                                            <label className="custom-control-label" for="conversionItem14"></label>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-star">
+                                        <div className="asterisk"><a href="#"><em className="asterisk-off icon ni ni-star"></em><em className="asterisk-on icon ni ni-star-fill"></em></a></div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-user">
+                                        <div className="user-card">
+                                            <div className="user-avatar bg-gray">
+                                                <span>MG</span>
+                                            </div>
+                                            <div className="user-name">
+                                                <div className="lead-text">Maria Grant</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-fluid">
+                                        <div className="nk-ibx-context-group">
+                                            <div className="nk-ibx-context">
+                                                <span className="nk-ibx-context-text">
+                                                    <span className="heading">Introducing npm’s security insights API.</span> Something I think is very important to supply chain security is to have the right information available to make decisions about risk </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-attach">
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-time">
+                                        <div className="sub-text">10:30 AM</div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-tools">
+                                        <div className="ibx-actions">
+                                            <ul className="ibx-actions-hidden gx-1">
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Archive"><em className="icon ni ni-archived"></em></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete"><em className="icon ni ni-trash"></em></a>
+                                                </li>
+                                            </ul>
+                                            <ul className="ibx-actions-visible gx-2">
+                                                <li>
+                                                    <div className="dropdown">
+                                                        <a href="#" className="dropdown-toggle btn btn-sm btn-icon btn-trigger" data-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <ul className="link-list-opt no-bdr">
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-eye"></em><span>View</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-trash"></em><span>Delete</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-archived"></em><span>Archive</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="nk-ibx-item">
+                                    <a href="#" className="nk-ibx-link"></a>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-check">
+                                        <div className="custom-control custom-control-sm custom-checkbox">
+                                            <input type="checkbox" className="custom-control-input nk-dt-item-check" id="conversionItem15" />
+                                            <label className="custom-control-label" for="conversionItem15"></label>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-star">
+                                        <div className="asterisk"><a href="#"><em className="asterisk-off icon ni ni-star"></em><em className="asterisk-on icon ni ni-star-fill"></em></a></div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-user">
+                                        <div className="user-card">
+                                            <div className="user-avatar bg-dark">
+                                                <span>TN</span>
+                                            </div>
+                                            <div className="user-name">
+                                                <div className="lead-text">Timothy Nichols</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-fluid">
+                                        <div className="nk-ibx-context-group">
+                                            <div className="nk-ibx-context">
+                                                <span className="nk-ibx-context-text">
+                                                    <span className="heading">Do your table designs pass The Lunch Test</span> This email goes out to everyone who designs data-heavy applications. Lists and tables aren’t exactly the sexiest part of design, but in my own personal experience </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-attach">
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-time">
+                                        <div className="sub-text">10:30 AM</div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-tools">
+                                        <div className="ibx-actions">
+                                            <ul className="ibx-actions-hidden gx-1">
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Archive"><em className="icon ni ni-archived"></em></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete"><em className="icon ni ni-trash"></em></a>
+                                                </li>
+                                            </ul>
+                                            <ul className="ibx-actions-visible gx-2">
+                                                <li>
+                                                    <div className="dropdown">
+                                                        <a href="#" className="dropdown-toggle btn btn-sm btn-icon btn-trigger" data-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <ul className="link-list-opt no-bdr">
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-eye"></em><span>View</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-trash"></em><span>Delete</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-archived"></em><span>Archive</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="nk-ibx-item">
+                                    <a href="#" className="nk-ibx-link"></a>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-check">
+                                        <div className="custom-control custom-control-sm custom-checkbox">
+                                            <input type="checkbox" className="custom-control-input nk-dt-item-check" id="conversionItem16" />
+                                            <label className="custom-control-label" for="conversionItem16"></label>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-star">
+                                        <div className="asterisk"><a href="#"><em className="asterisk-off icon ni ni-star"></em><em className="asterisk-on icon ni ni-star-fill"></em></a></div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-user">
+                                        <div className="user-card">
+                                            <div className="user-avatar">
+                                                <span>JL</span>
+                                            </div>
+                                            <div className="user-name">
+                                                <div className="lead-text">Jenkins Lori</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-fluid">
+                                        <div className="nk-ibx-context-group">
+                                            <div className="nk-ibx-context">
+                                                <span className="nk-ibx-context-text">
+                                                    <span className="heading">Can I get email alerts.</span> If you subscribe to email notifications, you will receive an email alert </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-attach">
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-time">
+                                        <div className="sub-text">10:30 AM</div>
+                                    </div>
+                                    <div className="nk-ibx-item-elem nk-ibx-item-tools">
+                                        <div className="ibx-actions">
+                                            <ul className="ibx-actions-hidden gx-1">
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Archive"><em className="icon ni ni-archived"></em></a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" className="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete"><em className="icon ni ni-trash"></em></a>
+                                                </li>
+                                            </ul>
+                                            <ul className="ibx-actions-visible gx-2">
+                                                <li>
+                                                    <div className="dropdown">
+                                                        <a href="#" className="dropdown-toggle btn btn-sm btn-icon btn-trigger" data-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                            <ul className="link-list-opt no-bdr">
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-eye"></em><span>View</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-trash"></em><span>Delete</span></a></li>
+                                                                <li><a className="dropdown-item" href="#"><em className="icon ni ni-archived"></em><span>Archive</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>

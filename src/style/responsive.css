@@ -1,0 +1,242 @@
+.nk-ibx-item {
+    width: 100% !important;
+    cursor: unset !important;
+}
+
+.nk-ibx-list {
+    overflow: hidden !important;
+}
+
+/* .nk-apps-sidebar+.nk-main>.nk-wrap>.nk-header-fixed {
+    z-index: 5 !important;
+} */
+
+.group-create-form, .add-user-form {
+
+    input.form-control,
+    .search-wrapper {
+        border: 0;
+        border-radius: 0;
+        border-bottom: 2px solid #dbdfea;
+        padding: 5px 8px;
+    }
+
+    input:focus {
+        box-shadow: unset !important;
+    }
+}
+
+/* .chat-item{
+    li{
+        width: 100% !important;
+    }
+} */
+
+.select-chat {
+    ul li {
+        width: 50%;
+        text-align: center;
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        cursor: pointer;
+    }
+
+    ul li.active {
+        background-color: #798bff;
+        color: #fff;
+    }
+}
+
+/* .disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+} */
+
+.chat-list .chat-item.active {
+    background-color: rgb(235, 238, 242);
+}
+
+.nk-chat-profile {
+    overflow: hidden scroll;
+}
+
+.user-info input {
+    border: 0;
+    margin-bottom: 0.5rem;
+    padding: 0 0.5rem;
+    border-bottom: 2px solid #dbdfea;
+    text-align: center;
+}
+
+.user-info {
+    width: 100%;
+}
+
+.user-info input:focus-visible {
+    outline: 0 !important;
+    border-color: #798bff !important;
+}
+
+.members-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 0.5rem;
+    text-align: start;
+    max-height: 50vh;
+    border: 2px solid #798bff;
+    overflow: auto;
+    z-index: 2;
+    margin-top: 0.5rem;
+
+
+    /* scrollbar-width: none; 
+    -ms-overflow-style: none;   */
+
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+}
+
+/* WebKit (Chrome, Safari, Edge) scrollbar */
+.members-list::-webkit-scrollbar {
+    width: 4px;
+    /* Slightly wider than 1px for better visibility */
+}
+
+.members-list::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    /* Light gray thumb */
+    border-radius: 2px;
+    /* Slightly rounded corners */
+}
+
+.members-list::-webkit-scrollbar-track {
+    background: transparent;
+    /* Fully transparent track */
+}
+
+/* Hide scrollbar buttons */
+.members-list::-webkit-scrollbar-button {
+    display: none;
+    height: 0;
+    width: 0;
+}
+
+
+
+
+.nk-chat-profile {
+    scrollbar-width: thin;
+    /* scrollbar-color: #ccc transparent; */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.nk-chat-profile::-webkit-scrollbar {
+    width: 4px;
+}
+
+.nk-chat-profile::-webkit-scrollbar-track {
+    background: transparent;
+    /* Fully transparent track */
+}
+
+/* Hide scrollbar buttons */
+.nk-chat-profile::-webkit-scrollbar-button {
+    display: none;
+    height: 0;
+    width: 0;
+}
+
+
+
+/* .link-list-opt span {
+    display: flex;
+    align-items: center;
+    padding: .625rem 1.25rem;
+    font-size: 12px;
+    font-weight: 500;
+    color: #526484;
+    transition: all .4s;
+    line-height: 1.3rem;
+    position: relative;
+    cursor: pointer;
+} */
+
+.main-chat-box {
+    display: flex;
+    flex-direction: column !important;
+    flex-grow: 1;
+    flex-wrap: nowrap !important;
+
+    .chat {
+        width: 100%;
+    }
+}
+
+.reply {
+    padding: 0.7rem 1.25rem;
+    border-bottom: 1px solid #6576ff;
+    border-top: 1px solid #6576ff;
+}
+
+.my-reply-bubble {
+    padding: 0 !important;
+    padding-right: 0.5rem !important;
+    border-right: 2px solid #8b98b0;
+    margin-bottom: 0.25rem;
+
+    .reply-chat-msg {
+        background-color: #fff !important;
+        color: #526484 !important;
+    }
+}
+
+.user-reply-bubble {
+    padding: 0 !important;
+    padding-left: 0.5rem !important;
+    border-left: 2px solid #8b98b0;
+    margin-bottom: 0.25rem;
+
+    .reply-chat-msg {
+        background-color: #6576ff !important;
+        color: #fff !important;
+    }
+}
+
+.add-user-form select {
+    padding: 5px 8px;
+    border: 0;
+    border-bottom: 2px solid #dbdfea;
+    border-radius: 0;
+    color: #b6c6e3;
+}
+
+.chat-upload-option{
+    display: block !important;
+}
+
+.chat-upload-option .upload-files {
+    color: #6576ff;
+    font-size: 1.25rem;
+    height: 36px;
+    width: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 !important;
+}
+
+
+.is-unread .chat-context .status {
+    background-color: #6576ff;
+    color: #fff !important;
+    border-radius: 50%;
+    height: 19px;
+    width: 18px;
+    align-items: center;
+    justify-content: center;
+}

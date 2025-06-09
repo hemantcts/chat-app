@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import socket from '../utils/socket';
-// import './Login.css'; // Optional: for custom styles
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -10,22 +11,37 @@ const Login = () => {
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
-  const room = 'groupChatRoom';
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/dashboard");
+    }
+  }, [])
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post('https://chat.quanteqsolutions.com/api/auth/login', {
-        email,
-        password
+
+      const response = await fetch(`https://chat.quanteqsolutions.com/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
       });
 
-      localStorage.setItem('token', res.data.token);
+      const data = await response.json();
 
-      socket.emit('join room', room);
+      if (data.status) {
+        socket.emit('connectUser', { userId: data.user.id });
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userData', JSON.stringify(data.user));
+        navigate('/dashboard'); // redirect after login
+      }
+      else {
+        toast.error(data.message || 'error!');
+      }
 
-      navigate('/chat'); // redirect after login
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
     }
@@ -39,22 +55,22 @@ const Login = () => {
         <form onSubmit={handleLogin}>
           <div className="mb-3">
             <label>Email</label>
-            <input 
+            <input
               type="email"
               className="form-control"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required 
+              required
             />
           </div>
           <div className="mb-3">
             <label>Password</label>
-            <input 
+            <input
               type="password"
               className="form-control"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required 
+              required
             />
           </div>
           <button type="submit" className="btn btn-primary w-100">Login</button>
