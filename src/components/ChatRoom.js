@@ -8,6 +8,7 @@ import { useLocation } from 'react-router-dom'
 import EmptyChatRoom from './EmptyChatRoom'
 import AddUsers from './AddUsers'
 import NewChat from './NewChat'
+import AllUsers from './AllUsers'
 
 const ChatRoom = () => {
 
@@ -17,10 +18,12 @@ const ChatRoom = () => {
     const isCreateGroup = queryParams.has('create_group');
     const isAddUser = queryParams.has('add_user');
     const isNewChat = queryParams.has('new_chat');
+    const isAllUsers = queryParams.has('users');
+
     const selectedUserId = queryParams.get('user');
     const selectedGroupId = queryParams.get('group');
 
-    const isChatEmpty = !selectedUserId && !selectedGroupId && !isCreateGroup && !isAddUser && !isNewChat;
+    const isChatEmpty = !selectedUserId && !selectedGroupId && !isCreateGroup && !isAddUser && !isNewChat && !isAllUsers;
 
 
     return (
@@ -42,6 +45,7 @@ const ChatRoom = () => {
                         {isCreateGroup && <CreateGroup2 />}
                         {isAddUser && <AddUsers />}
                         {isNewChat && <NewChat />}
+                        {isAllUsers && <AllUsers />}
 
                     </div>
                 </div>

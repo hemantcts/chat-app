@@ -8,7 +8,7 @@ const EmptyChatRoom = () => {
 
             </div>
 
-            <div className="nk-chat-editor">
+            {/* <div className="nk-chat-editor">
                 <div className="nk-chat-editor-upload  ml-n1">
                     <a href="#" className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" data-target="chat-upload"><em className="icon ni ni-plus-circle-fill"></em></a>
                     <div className="chat-upload-option" data-content="chat-upload">
@@ -33,7 +33,7 @@ const EmptyChatRoom = () => {
                         <button className="btn btn-round btn-primary btn-icon"><em className="icon ni ni-send-alt"></em></button>
                     </li>
                 </ul>
-            </div>
+            </div> */}
         </div>
     )
 }

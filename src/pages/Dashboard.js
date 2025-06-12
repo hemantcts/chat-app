@@ -9,16 +9,16 @@ const Dashboard = () => {
     const { pathname } = useLocation();
 
     const isChat = pathname === '/dashboard/chat' || pathname === '/dashboard';
-    const isCreateGroup = pathname === '/dashboard/create_group';
+    const isCreateGroup = pathname === '/dashboard/users';
 
     const page = (() => {
-        if (pathname === '/dashboard/chat') return 'Chat';
+        if (pathname === '/dashboard/chat') return 'Chat Application';
         if (pathname === '/dashboard/create_group') return 'Group';
         return 'Dashboard';
     })();
 
     const pageHeading = (() => {
-        if (pathname === '/dashboard/chat') return 'Chat with Friends/Family';
+        if (pathname === '/dashboard/chat') return 'Chat Application';
         if (pathname === '/dashboard/create_group') return 'Create Groups Here';
         return 'Dashboard';
     })();
@@ -32,7 +32,7 @@ const Dashboard = () => {
                         <Navbar page={page} pageHeading={pageHeading} />
                         
                         {isChat && <ChatRoom />}
-                        {/* {isCreateGroup && <CreateGroup />} */}
+                        {isCreateGroup && <CreateGroup />}
 
                     </div>
                 </div>

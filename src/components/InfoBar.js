@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
+import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import AddMemberModal from './AddMemberModal';
 
 const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGroupName, getGroupDetails, onlineUsers }) => {
     const [isEditing, setIsEditing] = useState(false);
@@ -8,6 +10,8 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
     const [isNameChanged, setIsNameChanged] = useState(false);
     const [users, setUsers] = useState([])
     const [selectedMembers, setSelectedMembers] = useState([])
+
+    const [showModal, setShowModal] = useState(false);
 
 
     const handleEditClick = () => {
@@ -152,7 +156,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
             const data = await res.json();
 
             if (data.status) {
-                toast.error(data.message || 'member removed!');
+                toast.success(data.message || 'member removed!');
                 getGroupDetails();
             }
             else {
@@ -165,7 +169,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
         }
     }
 
-    const handleRouteClick = () =>{
+    const handleRouteClick = () => {
         setShowDetails(false)
     }
 
@@ -188,19 +192,19 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                     ) : (
                         <>
                             <h5 className='me-1' style={{ display: 'inline-block' }}>{groupName}</h5>
-                            <em
+                            {(loggedInUser.role === 1 || loggedInUser.groupCreateAccess) && <em
                                 onClick={handleEditClick}
                                 className="icon ni ni-edit-alt-fill"
                                 style={{ cursor: 'pointer' }}
                                 title="Edit group name"
-                            ></em>
+                            ></em>}
                         </>
                     )}
                     {/* <h5 style={{ display: 'inline-block' }}>{groupName}</h5> <em onClick={handleChangeName} className="icon ni ni-edit-alt-fill" style={{ cursor: 'pointer' }}></em> */}
                     <span className="sub-text">
-                        <button className='btn ' onClick={() => { setShowMembers(!showMembers) }}>
+                        <span style={{ fontWeight: '700' }}>
                             Total Members : {groupDetails?.members?.length}
-                        </button>
+                        </span>
                     </span>
 
                     {showMembers && <div className="members-list">
@@ -226,7 +230,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                                             </div>
                                         </div>
                                     </div>
-                                    {(group?._id !== loggedInUser?._id ) && <div className="chat-actions">
+                                    {(group?._id !== loggedInUser?._id) && <div className="chat-actions">
                                         <div className="dropdown">
                                             <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
                                             <div className="dropdown-menu dropdown-menu-right">
@@ -241,9 +245,9 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                             ))}
                         </ul>
 
-                        {users.length > 0 && <span className="sub-text justify-content-start mt-1">Add New Members 
-                            {/* {users?.length}  */}
-                            </span>}
+                        {(loggedInUser?.role === 1) && <Button onClick={() => setShowModal(true)} className="sub-text justify-content-start mt-1 123">
+                            Add New Members
+                        </Button>}
 
                         <ul className='chat-list'>
                             {users.map((group, index) => (
@@ -282,7 +286,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                         </ul>
                     </div>}
                 </div>
-                <div className="user-card-menu dropdown">
+                {/* <div className="user-card-menu dropdown">
                     <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
                     <div className="dropdown-menu dropdown-menu-right">
                         <ul className="link-list-opt no-bdr">
@@ -290,10 +294,56 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                             <li><a href="#"><em className="icon ni ni-na"></em><span>Block Messages</span></a></li>
                         </ul>
                     </div>
-                </div>
+                </div> */}
             </div>
-            <div className="chat-profile">
-                <div className="chat-profile-group">
+            <div className="chat-profile ">
+                <div className="members-list position-static border-0">
+                    
+                    <span className="sub-text d-flex justify-content-between">
+                        Members : {groupDetails?.members?.length} 
+                        {/* <span className='add-members'  >Add Members</span>  */}
+                        {(loggedInUser?.role === 1 || loggedInUser?.groupCreateAccess) && <Button onClick={() => setShowModal(true)} className="sub-text justify-content-start m-0 p-0 border-0 add-member-btn" style={{ backgroundColor: 'transparent' }}>
+                            Add New Members
+                        </Button>}
+                    </span>
+                    <ul className={`chat-list`} >
+                        {groupDetails?.members?.map((group, index) => (
+                            <li key={index} className={`chat-item`}>
+                                <div className="chat-link chat-open current" >
+                                    <div className="chat-media user-avatar bg-purple">
+                                        <span>{group?.name?.slice(0, 2).toUpperCase()}</span>
+                                        <span className={`status dot dot-lg ${onlineUsers[group._id] ? 'dot-success' : 'dot-gray'} `}></span>
+                                    </div>
+                                    <div className="chat-info">
+                                        <div className="chat-from">
+                                            <div className="name">{group?.name}</div>
+                                            {/* <span className="time">Now</span> */}
+                                        </div>
+                                        <div className="chat-context">
+                                            {/* <div className="text">{group?.email}</div> */}
+                                            {/* <div className="status delivered">
+                                                <em className="icon ni ni-check-circle-fill"></em>
+                                            </div> */}
+                                        </div>
+                                    </div>
+                                </div>
+                                {(loggedInUser?._id !== group?._id) && (loggedInUser?.oneOnOneAccess || loggedInUser?.groupCreateAccess || loggedInUser?.role === 1) && <div className="chat-actions">
+                                    <div className="dropdown">
+                                        <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                        <div className="dropdown-menu dropdown-menu-right">
+                                            <ul className="link-list-opt no-bdr">
+                                                {(loggedInUser?.role === 1 || loggedInUser?.groupCreateAccess) && <li><a href="#" onClick={() => removeMembers(group._id)}>Remove Member</a></li>}
+                                                {(loggedInUser?.role === 1 || loggedInUser?.oneOnOneAccess) && <li><Link to={`/dashboard/chat?user=${group._id}`} onClick={handleRouteClick}>Start Chat</Link></li>}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                {/* <div className="chat-profile-group">
                     <a href="#" className="chat-profile-head" data-bs-toggle="collapse" data-bs-target="#chat-options">
                         <h6 className="title overline-title">Options</h6>
                         <span className="indicator-icon"><em className="icon ni ni-chevron-down"></em></span>
@@ -358,8 +408,19 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                             </ul>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
+
+            <AddMemberModal
+                show={showModal}
+                handleClose={() => setShowModal(false)}
+                onUserAdded={fetchUsers}
+                users={users}
+                onlineUsers={onlineUsers}
+                addMembers={addMembers}
+                loggedInUser={loggedInUser}
+            />
+
         </div>
     )
 }

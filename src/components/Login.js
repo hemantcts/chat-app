@@ -13,7 +13,7 @@ const Login = () => {
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      navigate("/dashboard");
+      navigate("/dashboard/chat");
     }
   }, [])
 
@@ -36,7 +36,7 @@ const Login = () => {
         socket.emit('connectUser', { userId: data.user.id });
         localStorage.setItem('token', data.token);
         localStorage.setItem('userData', JSON.stringify(data.user));
-        navigate('/dashboard'); // redirect after login
+        navigate('/dashboard/chat'); // redirect after login
       }
       else {
         toast.error(data.message || 'error!');
@@ -73,11 +73,11 @@ const Login = () => {
               required
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100">Login</button>
+          <button type="submit" className="btn btn-primary w-100 justify-content-center">Login</button>
         </form>
-        <div className="text-center mt-3">
+        {/* <div className="text-center mt-3">
           Don't have an account? <a href="/register">Register</a>
-        </div>
+        </div> */}
       </div>
     </div>
   );

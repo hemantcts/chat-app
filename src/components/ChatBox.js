@@ -24,6 +24,7 @@ const ChatBox = ({ userId, groupId }) => {
     const [groupName, setGroupName] = useState(null)
     const [showDetails, setShowDetails] = useState(false);
     const [showUploadOptions, setShowUploadOptions] = useState(false)
+    const [msgSeen, setMsgSeen] = useState(false)
 
 
     const [page, setPage] = useState(1);
@@ -305,6 +306,7 @@ const ChatBox = ({ userId, groupId }) => {
         setMessageArr([])
         setPage(1);
         setHasMoreMessages(true);
+        setIsLoading(true);
 
         if (userId) {
             getUserDetails();
@@ -313,8 +315,21 @@ const ChatBox = ({ userId, groupId }) => {
         else {
             getGroupDetails();
         }
-
     }, [groupId, userId])
+
+    useEffect(() => {
+        if (userId) {
+            socket.emit('mark-seen', { chatUserId: userId });
+
+        }
+        if (groupId) {
+            socket.emit('mark-seen-group', { groupId: groupId });
+        }
+        socket.on('messages-seen', (data) => {
+            setMsgSeen(true);
+        })
+
+    }, [groupId, userId, messageArr])
 
     const scrollToBottom2 = () => {
         const chatPanel = chatPanelRef.current;
@@ -333,11 +348,58 @@ const ChatBox = ({ userId, groupId }) => {
         }
     };
 
+    function getDisplayDate(index, messageArr) {
+        const currentDate = messageArr[index]?.createdDate;
+        const prevDate = messageArr[index - 1]?.createdDate;
+
+        if (currentDate === prevDate) {
+            return false;
+        }
+        return currentDate;
+    }
+
+
+    function getDisplayTime(index, messageArr) {
+        const currentTime = messageArr[index]?.createdAt;
+        const nextTime = messageArr[index + 1]?.createdAt;
+
+        if (messageArr[index]?.receiverId !== messageArr[index + 1]?.receiverId) {
+            return currentTime;
+        }
+
+        if (currentTime === nextTime) {
+            return false;
+        }
+        return currentTime; // or return formattedCurrent if formatting
+    }
 
     // useEffect(() => {
 
     //         scrollToBottom();
     // }, [messageArr]);
+    const [isTyping, setIsTyping] = useState(false);
+    const [typingSender, setTypingSender] = useState(false);
+
+    useEffect(() => {
+        socket.on('show-typing', ({ senderId, senderDetails, isGroup }) => {
+            if (!isGroup && senderId === userId) {
+                setIsTyping(true);
+                setTypingSender(senderDetails);
+            }
+        });
+
+        socket.on('hide-typing', ({ senderId, isGroup }) => {
+            if (!isGroup && senderId === userId) {
+                setIsTyping(false);
+            }
+        });
+
+        return () => {
+            socket.off('show-typing');
+            socket.off('hide-typing');
+        };
+    }, [userId]);
+
 
 
     useEffect(() => {
@@ -355,8 +417,46 @@ const ChatBox = ({ userId, groupId }) => {
     }, [])
 
 
+    const handleTyping = () => {
+        let receiverId = room;
+        let isGroup = false;
+        if(groupId){
+            receiverId = groupId;
+            isGroup = true;
+        }
+        socket.emit('typing', {
+            senderId: loggedInUser._id,
+            receiverId: receiverId, // or groupId
+            isGroup: isGroup // or true for group chats
+        });
+    };
+
+    const handleStopTyping = () => {
+        let receiverId = room;
+        let isGroup = false;
+        if(groupId){
+            receiverId = groupId;
+            isGroup = true;
+        }
+        socket.emit('stop-typing', {
+            senderId: loggedInUser._id,
+            receiverId: receiverId,
+            isGroup: isGroup
+        });
+    };
+
+    const typingTimeout = useRef(null);
+
+    // On input change
     const handleChangeMessage = (event) => {
         setMessage(event.target.value);
+
+        handleTyping();
+
+        clearTimeout(typingTimeout.current);
+        typingTimeout.current = setTimeout(() => {
+            handleStopTyping();
+        }, 3000);
     };
 
     const handleKeyDown = (e) => {
@@ -371,6 +471,7 @@ const ChatBox = ({ userId, groupId }) => {
         if (!message.trim() && filesArr.length === 0) {
             return;
         }
+        setMsgSeen(false);
 
         let uploadedFiles = [];
 
@@ -555,88 +656,93 @@ const ChatBox = ({ userId, groupId }) => {
                             </div>
                         )}
                         {messageArr.map((msg, index) => (
-                            <div key={index} className={`chat ${msg?.senderDetails?.id === loggedInUser._id ? 'is-me' : 'is-you'}`}>
-                                {/* <div key={index} className={`chat ${false ? 'is-me' : 'is-you'}`}> */}
-                                {msg?.senderDetails?.id !== loggedInUser._id && <div className="chat-avatar">
-                                    <div className="user-avatar bg-purple">
-                                        <span>{msg?.senderDetails?.name?.slice(0, 2).toUpperCase()}</span>
-                                        {/* <span>he</span> */}
-                                    </div>
-                                </div>}
-                                <div className="chat-content">
-                                    {msg?.senderDetails?.id === loggedInUser._id ? (
-                                        msg?.replyTo && <ul className="chat-meta">
-                                            <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
-                                        </ul>
-                                    ) : (
-                                        msg?.replyTo && <ul className="chat-meta">
-                                            <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
-                                        </ul>
-                                    )
-                                    }
-                                    <div className="chat-bubbles">
+                            <div key={index} className='chat' style={{ display: 'block' }}>
+
+                                {getDisplayDate(index, messageArr) && <div className="msg-date text-center">{getDisplayDate(index, messageArr)}</div>}
+
+                                <div className={`chat ${msg?.senderDetails?.id === loggedInUser._id ? 'is-me' : 'is-you'}`}>
+                                    {/* <div key={index} className={`chat ${false ? 'is-me' : 'is-you'}`}> */}
+                                    {/* {msg?.senderDetails?.id !== loggedInUser._id && <div className="chat-avatar"> */}
+                                    {msg?.senderDetails?.id !== loggedInUser._id && <div className={`chat-avatar ${getDisplayTime(index, messageArr) ? '' : 'mb-0'}`}>
+                                        <div className="user-avatar bg-purple">
+                                            <span>{msg?.senderDetails?.name?.slice(0, 2).toUpperCase()}</span>
+                                            {/* <span>he</span> */}
+                                        </div>
+                                    </div>}
+                                    <div className="chat-content">
                                         {msg?.senderDetails?.id === loggedInUser._id ? (
-                                            msg?.replyTo && <div className="chat-bubble my-reply-bubble">
-                                                <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
-                                            </div>
-                                            // msg?.replyTo && <ul className="chat-meta">
-                                            //     <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
-                                            // </ul>
+                                            msg?.replyTo && <ul className="chat-meta">
+                                                <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
+                                            </ul>
                                         ) : (
-                                            msg?.replyTo && <div className="chat-bubble user-reply-bubble">
-                                                <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
-                                            </div>
-                                            // msg?.replyTo && <ul className="chat-meta">
-                                            //     <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
-                                            // </ul>
+                                            msg?.replyTo && <ul className="chat-meta">
+                                                <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
+                                            </ul>
                                         )
                                         }
-                                        {msg.files && msg.files.length > 0 && <div className="chat-bubble">
-                                            {/* Files preview */}
-                                            {msg.files && msg.files.length > 0 && (
-                                                <div className={`message-files ${msg?.senderDetails?.id === loggedInUser._id ? 'text-end' : 'text-start'}`}>
-                                                    {msg.files.map((f, index) => {
-                                                        if (f.fileType === 'image') {
-                                                            return (
-                                                                <div className='inner-file'>
-                                                                    <img
-                                                                        key={index}
-                                                                        src={`https://chat.quanteqsolutions.com${f.url}`}
-                                                                        alt={f.fileName}
-                                                                        style={{ margin: '5px', maxWidth: '200px', maxHeight: '200px' }}
-                                                                    />
-                                                                </div>
-                                                            );
-                                                        } else if (f.fileType === 'video') {
-                                                            return (
-                                                                <div className="inner-file">
-                                                                    <video
-                                                                        key={index}
-                                                                        src={`https://chat.quanteqsolutions.com${f.url}`}
-                                                                        controls
-                                                                        style={{ margin: '5px', maxWidth: '300px', maxHeight: '300px' }}
-                                                                    ></video>
-                                                                </div>
-                                                            );
-                                                        } else {
-                                                            return (
-                                                                <div className='inner-file' style={{ border: '1px solid rgb(204, 204, 204)', margin: '5px', padding: '5px' }} key={index}>
-                                                                    <a
-                                                                        href={`https://chat.quanteqsolutions.com${f.url}`}
-                                                                        target="_blank"
-                                                                        rel="noopener noreferrer"
-                                                                        style={{ display: 'block' }}
-                                                                    >
-                                                                        📄 {f.fileName}
-                                                                    </a>
-                                                                </div>
-                                                            );
-                                                        }
-                                                    })}
+                                        <div className="chat-bubbles">
+                                            {msg?.senderDetails?.id === loggedInUser._id ? (
+                                                msg?.replyTo && <div className="chat-bubble my-reply-bubble">
+                                                    <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
                                                 </div>
-                                            )}
+                                                // msg?.replyTo && <ul className="chat-meta">
+                                                //     <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
+                                                // </ul>
+                                            ) : (
+                                                msg?.replyTo && <div className="chat-bubble user-reply-bubble">
+                                                    <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
+                                                </div>
+                                                // msg?.replyTo && <ul className="chat-meta">
+                                                //     <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
+                                                // </ul>
+                                            )
+                                            }
+                                            {msg.files && msg.files.length > 0 && <div className="chat-bubble">
+                                                {/* Files preview */}
+                                                {msg.files && msg.files.length > 0 && (
+                                                    <div className={`message-files ${msg?.senderDetails?.id === loggedInUser._id ? 'text-end' : 'text-start'}`}>
+                                                        {msg.files.map((f, index) => {
+                                                            if (f.fileType === 'image') {
+                                                                return (
+                                                                    <div className='inner-file'>
+                                                                        <img
+                                                                            key={index}
+                                                                            src={`https://chat.quanteqsolutions.com${f.url}`}
+                                                                            alt={f.fileName}
+                                                                            style={{ margin: '5px', maxWidth: '200px', maxHeight: '200px' }}
+                                                                        />
+                                                                    </div>
+                                                                );
+                                                            } else if (f.fileType === 'video') {
+                                                                return (
+                                                                    <div className="inner-file">
+                                                                        <video
+                                                                            key={index}
+                                                                            src={`https://chat.quanteqsolutions.com${f.url}`}
+                                                                            controls
+                                                                            style={{ margin: '5px', maxWidth: '300px', maxHeight: '300px' }}
+                                                                        ></video>
+                                                                    </div>
+                                                                );
+                                                            } else {
+                                                                return (
+                                                                    <div className='inner-file' style={{ border: '1px solid rgb(204, 204, 204)', margin: '5px', padding: '5px' }} key={index}>
+                                                                        <a
+                                                                            href={`https://chat.quanteqsolutions.com${f.url}`}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            style={{ display: 'block' }}
+                                                                        >
+                                                                            📄 {f.fileName}
+                                                                        </a>
+                                                                    </div>
+                                                                );
+                                                            }
+                                                        })}
+                                                    </div>
+                                                )}
 
-                                            {/* <ul className="chat-msg-more">
+                                                {/* <ul className="chat-msg-more">
                                                 <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name)}><em className="icon ni ni-reply-fill"></em></button></li>
                                                 <li>
                                                     <div className="dropdown">
@@ -652,13 +758,13 @@ const ChatBox = ({ userId, groupId }) => {
                                                 </li>
                                             </ul> */}
 
-                                        </div>}
-                                        {msg?.content && <div className="chat-bubble">
+                                            </div>}
+                                            {msg?.content && <div className="chat-bubble">
 
-                                            <div className="chat-msg"> {msg?.content} </div>
-                                            <ul className="chat-msg-more">
-                                                <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name)}><em className="icon ni ni-reply-fill"></em></button></li>
-                                                <li>
+                                                <div className="chat-msg"> {msg?.content} </div>
+                                                <ul className="chat-msg-more">
+                                                    <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name)}><em className="icon ni ni-reply-fill"></em></button></li>
+                                                    {/* <li>
                                                     <div className="dropdown">
                                                         <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
                                                         <div className="dropdown-menu dropdown-menu-sm dropdown-menu-right">
@@ -669,14 +775,23 @@ const ChatBox = ({ userId, groupId }) => {
                                                             </ul>
                                                         </div>
                                                     </div>
-                                                </li>
-                                            </ul>
-                                        </div>}
-                                    </div>
-                                    <ul className="chat-meta">
+                                                </li> */}
+                                                </ul>
+                                            </div>}
+                                        </div>
+                                        {getDisplayTime(index, messageArr) && <ul className="chat-meta">
+                                            {/* <li>{msg?.senderDetails?.name}</li> */}
+                                            <li>
+                                                {getDisplayTime(index, messageArr) && getDisplayTime(index, messageArr)}
+                                                {/* {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <em className={`icon ni ni-check-circle-fill ms-1 ${(msg?.seen || msgSeen) ? 'message-seen' : ''}`}></em> } 
+                                            {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <span>{(msg?.seen || msgSeen) ? 'seen' : 'sent'}</span> }  */}
+                                            </li>
+                                        </ul>}
+                                        {/* <ul className="chat-meta">
                                         <li>{msg?.senderDetails?.name}</li>
-                                        {/* <li>{msg?.time}</li> */}
-                                    </ul>
+                                        <li>{msg?.createdAt} <em className="icon ni ni-check-circle-fill"></em></li>
+                                    </ul> */}
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -725,7 +840,21 @@ const ChatBox = ({ userId, groupId }) => {
 
                     <div className="nk-chat-editor">
                         <div className="nk-chat-editor-upload  ml-n1">
-                            <button onClick={() => setShowUploadOptions(!showUploadOptions)} className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" data-bs-target="chat-upload"><em className="icon ni ni-plus-circle-fill"></em></button>
+                            {/* <button onClick={() => setShowUploadOptions(!showUploadOptions)} className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" data-bs-target="chat-upload"><em className="icon ni ni-plus-circle-fill"></em></button> */}
+
+                            <button className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" >
+                                <label className="upload-files m-0 d-flex" style={{ cursor: 'pointer' }}>
+                                    <em className="icon ni ni-plus-circle-fill"></em>
+                                    <input
+                                        type="file"
+                                        multiple
+                                        style={{ display: 'none' }}
+                                        onChange={(e) => { handleFileUpload(e.target.files) }}
+                                    />
+                                </label>
+
+                            </button>
+
                             {showUploadOptions && <div className="chat-upload-option" data-content="chat-upload">
                                 <ul>
                                     <li>
@@ -761,11 +890,11 @@ const ChatBox = ({ userId, groupId }) => {
                             </div>
                         </div>
                         <ul className="nk-chat-editor-tools g-2">
-                            <li>
+                            {/* <li>
                                 <a href="#" className="btn btn-sm btn-icon btn-trigger text-primary"><em className="icon ni ni-happyf-fill"></em></a>
-                            </li>
+                            </li> */}
                             <li>
-                                <button className="btn btn-round btn-primary btn-icon" onClick={sendMessage}><em className="icon ni ni-send-alt"></em></button>
+                                <button disabled={!message && filesArr.length === 0} className="btn btn-round btn-primary btn-icon" onClick={sendMessage}><em className="icon ni ni-send-alt"></em></button>
                             </li>
                         </ul>
                     </div>
@@ -831,89 +960,96 @@ const ChatBox = ({ userId, groupId }) => {
                             </div>
                         )}
                         {messageArr.map((msg, index) => (
-                            <div key={index} className={`chat ${msg?.senderDetails?.id === loggedInUser._id ? 'is-me' : 'is-you'}`}>
-                                {/* <div key={index} className={`chat ${false ? 'is-me' : 'is-you'}`}> */}
-                                {msg?.senderDetails?.id !== loggedInUser._id && <div className="chat-avatar">
-                                    <div className="user-avatar bg-purple">
-                                        <span>{msg?.senderDetails?.name?.slice(0, 2).toUpperCase()}</span>
-                                        {/* <span>he</span> */}
-                                    </div>
-                                </div>}
+                            <div key={index} className='chat' style={{ display: 'block' }}>
 
-                                <div className="chat-content">
-                                    {msg?.senderDetails?.id === loggedInUser._id ? (
-                                        msg?.replyTo && <ul className="chat-meta">
-                                            <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
-                                        </ul>
-                                    ) : (
-                                        msg?.replyTo && <ul className="chat-meta">
-                                            <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
-                                        </ul>
-                                    )
-                                    }
-                                    <div className="chat-bubbles">
+                                {getDisplayDate(index, messageArr) && <div className="msg-date text-center">{getDisplayDate(index, messageArr)}</div>}
+
+                                <div className={`chat ${msg?.senderDetails?.id === loggedInUser._id ? 'is-me' : 'is-you'}`}>
+
+                                    {/* <div key={index} className={`chat ${false ? 'is-me' : 'is-you'}`}> */}
+                                    {msg?.senderDetails?.id !== loggedInUser._id && <div className={`chat-avatar ${getDisplayTime(index, messageArr) ? '' : 'mb-0'}`}>
+                                        <div className="user-avatar bg-purple">
+                                            <span>{msg?.senderDetails?.name?.slice(0, 2).toUpperCase()}</span>
+                                            {/* <span>he</span> */}
+                                        </div>
+                                    </div>}
+
+
+                                    <div className="chat-content pt-0">
+
                                         {msg?.senderDetails?.id === loggedInUser._id ? (
-                                            msg?.replyTo && <div className="chat-bubble my-reply-bubble">
-                                                <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
-                                            </div>
-                                            // msg?.replyTo && <ul className="chat-meta">
-                                            //     <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
-                                            // </ul>
+                                            msg?.replyTo && <ul className="chat-meta">
+                                                <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
+                                            </ul>
                                         ) : (
-                                            msg?.replyTo && <div className="chat-bubble user-reply-bubble">
-                                                <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
-                                            </div>
-                                            // msg?.replyTo && <ul className="chat-meta">
-                                            //     <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
-                                            // </ul>
+                                            msg?.replyTo && <ul className="chat-meta">
+                                                <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
+                                            </ul>
                                         )
                                         }
-                                        {msg.files && msg.files.length > 0 && <div className="chat-bubble">
-                                            {/* Files preview */}
-                                            {msg.files && msg.files.length > 0 && (
-                                                <div className={`message-files ${msg?.senderDetails?.id === loggedInUser._id ? 'text-end' : 'text-start'}`}>
-                                                    {msg.files.map((f, index) => {
-                                                        if (f.fileType === 'image') {
-                                                            return (
-                                                                <div className='inner-file'>
-                                                                    <img
-                                                                        key={index}
-                                                                        src={`https://chat.quanteqsolutions.com${f.url}`}
-                                                                        alt={f.fileName}
-                                                                        style={{ margin: '5px', maxWidth: '200px', maxHeight: '200px' }}
-                                                                    />
-                                                                </div>
-                                                            );
-                                                        } else if (f.fileType === 'video') {
-                                                            return (
-                                                                <div className="inner-file">
-                                                                    <video
-                                                                        key={index}
-                                                                        src={`https://chat.quanteqsolutions.com${f.url}`}
-                                                                        controls
-                                                                        style={{ margin: '5px', maxWidth: '300px', maxHeight: '300px' }}
-                                                                    ></video>
-                                                                </div>
-                                                            );
-                                                        } else {
-                                                            return (
-                                                                <div className='inner-file' style={{ border: '1px solid rgb(204, 204, 204)', margin: '5px', padding: '5px' }} key={index}>
-                                                                    <a
-                                                                        href={`https://chat.quanteqsolutions.com${f.url}`}
-                                                                        target="_blank"
-                                                                        rel="noopener noreferrer"
-                                                                        style={{ display: 'block' }}
-                                                                    >
-                                                                        📄 {f.fileName}
-                                                                    </a>
-                                                                </div>
-                                                            );
-                                                        }
-                                                    })}
+                                        <div className="chat-bubbles">
+                                            {msg?.senderDetails?.id === loggedInUser._id ? (
+                                                msg?.replyTo && <div className="chat-bubble my-reply-bubble">
+                                                    <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
                                                 </div>
-                                            )}
+                                                // msg?.replyTo && <ul className="chat-meta">
+                                                //     <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
+                                                // </ul>
+                                            ) : (
+                                                msg?.replyTo && <div className="chat-bubble user-reply-bubble">
+                                                    <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
+                                                </div>
+                                                // msg?.replyTo && <ul className="chat-meta">
+                                                //     <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
+                                                // </ul>
+                                            )
+                                            }
+                                            {msg.files && msg.files.length > 0 && <div className="chat-bubble">
+                                                {/* Files preview */}
+                                                {msg.files && msg.files.length > 0 && (
+                                                    <div className={`message-files ${msg?.senderDetails?.id === loggedInUser._id ? 'text-end' : 'text-start'}`}>
+                                                        {msg.files.map((f, index) => {
+                                                            if (f.fileType === 'image') {
+                                                                return (
+                                                                    <div className='inner-file'>
+                                                                        <img
+                                                                            key={index}
+                                                                            src={`https://chat.quanteqsolutions.com${f.url}`}
+                                                                            alt={f.fileName}
+                                                                            style={{ margin: '5px', maxWidth: '200px', maxHeight: '200px' }}
+                                                                        />
+                                                                    </div>
+                                                                );
+                                                            } else if (f.fileType === 'video') {
+                                                                return (
+                                                                    <div className="inner-file">
+                                                                        <video
+                                                                            key={index}
+                                                                            src={`https://chat.quanteqsolutions.com${f.url}`}
+                                                                            controls
+                                                                            style={{ margin: '5px', maxWidth: '300px', maxHeight: '300px' }}
+                                                                        ></video>
+                                                                    </div>
+                                                                );
+                                                            } else {
+                                                                return (
+                                                                    <div className='inner-file' style={{ border: '1px solid rgb(204, 204, 204)', margin: '5px', padding: '5px' }} key={index}>
+                                                                        <a
+                                                                            href={`https://chat.quanteqsolutions.com${f.url}`}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            style={{ display: 'block' }}
+                                                                        >
+                                                                            📄 {f.fileName}
+                                                                        </a>
+                                                                    </div>
+                                                                );
+                                                            }
+                                                        })}
+                                                    </div>
+                                                )}
 
-                                            {/* <ul className="chat-msg-more">
+                                                {/* <ul className="chat-msg-more">
                                                 <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name)}><em className="icon ni ni-reply-fill"></em></button></li>
                                                 <li>
                                                     <div className="dropdown">
@@ -929,14 +1065,14 @@ const ChatBox = ({ userId, groupId }) => {
                                                 </li>
                                             </ul> */}
 
-                                        </div>}
-                                        {msg?.content && <div className="chat-bubble">
-                                            <div className="chat-msg"> {msg?.content} </div>
+                                            </div>}
+                                            {msg?.content && <div className="chat-bubble p-0">
+                                                <div className="chat-msg"> {msg?.content} </div>
 
 
-                                            <ul className="chat-msg-more">
-                                                <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name)}><em className="icon ni ni-reply-fill"></em></button></li>
-                                                <li>
+                                                <ul className="chat-msg-more">
+                                                    <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name)}><em className="icon ni ni-reply-fill"></em></button></li>
+                                                    {/* <li>
                                                     <div className="dropdown">
                                                         <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
                                                         <div className="dropdown-menu dropdown-menu-sm dropdown-menu-right">
@@ -947,17 +1083,44 @@ const ChatBox = ({ userId, groupId }) => {
                                                             </ul>
                                                         </div>
                                                     </div>
-                                                </li>
-                                            </ul>
-                                        </div>}
+                                                </li> */}
+                                                </ul>
+                                            </div>}
+                                        </div>
+                                        {getDisplayTime(index, messageArr) && <ul className="chat-meta">
+                                            {/* <li>{msg?.senderDetails?.name}</li> */}
+                                            <li>
+                                                {getDisplayTime(index, messageArr) && getDisplayTime(index, messageArr)}
+                                                {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <em className={`icon ni ni-check-circle-fill ms-1 ${(msg?.seen || msgSeen) ? 'message-seen' : ''}`}></em>}
+                                                {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <span>{(msg?.seen || msgSeen) ? 'seen' : 'sent'}</span>}
+                                            </li>
+                                        </ul>}
                                     </div>
-                                    <ul className="chat-meta">
-                                        <li>{msg?.senderDetails?.name}</li>
-                                        {/* <li>{msg?.time}</li> */}
-                                    </ul>
                                 </div>
                             </div>
                         ))}
+                        {isTyping && <div className="chat is-you">
+                            <div className={`chat-avatar mb-0`}>
+                                <div className="user-avatar bg-purple">
+                                    <span>{typingSender?.name?.slice(0, 2).toUpperCase()}</span>
+                                    {/* <span>qw</span> */}
+                                </div>
+                            </div>
+                            <div className="chat-content">
+                                <div className="chat-bubbles">
+                                    <div className="chat-bubble">
+                                        {/* <div className="chat-msg"> Thanks for inform. We just solved the issues. Please check now. </div> */}
+                                        <div className="chat-msg">
+                                            <div class="typing">
+                                                <div class="dot"></div>
+                                                <div class="dot"></div>
+                                                <div class="dot"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>}
                     </div>
 
                     {!(Object.keys(reply).length === 0) && <div className="reply position-relative">
@@ -1005,7 +1168,21 @@ const ChatBox = ({ userId, groupId }) => {
 
                     <div className="nk-chat-editor position-relative">
                         <div className="nk-chat-editor-upload  ml-n1">
-                            <button onClick={() => setShowUploadOptions(!showUploadOptions)} className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" data-bs-target="chat-upload"><em className="icon ni ni-plus-circle-fill"></em></button>
+                            {/* <button onClick={() => setShowUploadOptions(!showUploadOptions)} className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" data-bs-target="chat-upload"><em className="icon ni ni-plus-circle-fill"></em></button> */}
+
+                            <button className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" >
+                                <label className="upload-files m-0 d-flex" style={{ cursor: 'pointer' }}>
+                                    <em className="icon ni ni-plus-circle-fill"></em>
+                                    <input
+                                        type="file"
+                                        multiple
+                                        style={{ display: 'none' }}
+                                        onChange={(e) => { handleFileUpload(e.target.files) }}
+                                    />
+                                </label>
+
+                            </button>
+
                             {showUploadOptions && <div className="chat-upload-option" data-content="chat-upload">
                                 <ul>
                                     <li>
@@ -1040,9 +1217,9 @@ const ChatBox = ({ userId, groupId }) => {
                             </div>
                         </div>
                         <ul className="nk-chat-editor-tools g-2">
-                            <li>
+                            {/* <li>
                                 <a href="#" className="btn btn-sm btn-icon btn-trigger text-primary"><em className="icon ni ni-happyf-fill"></em></a>
-                            </li>
+                            </li> */}
                             <li>
                                 <button disabled={!message && filesArr.length === 0} className="btn btn-round btn-primary btn-icon" onClick={sendMessage}><em className="icon ni ni-send-alt"></em></button>
                             </li>

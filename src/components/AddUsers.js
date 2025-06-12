@@ -111,9 +111,9 @@ const AddUsers = () => {
               required
             >
               <option value="">Select Department</option>
-              <option value="Sales">Sales</option>
-              <option value="Marketing">Marketing</option>
-              <option value="Management">Management</option>
+              <option value="sales">Sales</option>
+              <option value="marketing">Marketing</option>
+              <option value="management">Management</option>
             </Form.Control>
           </Form.Group>
 

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useOnlineUsers } from '../context-api/OnlineUsersContext';
+import socket from '../utils/socket';
 
 const Chats = () => {
     const onlineUsers = useOnlineUsers();
@@ -13,22 +14,33 @@ const Chats = () => {
 
     const selectedUserId = queryParams.get('user');
     const selectedGroupId = queryParams.get('group');
+    const hasGroup = queryParams.has('group');
 
+    const [groupEnable, setGroupEnable] = useState(hasGroup ? true : false)
     const [groups, setGroups] = useState([])
-    const [groupEnable, setGroupEnable] = useState(selectedUserId ? false : true)
 
     const [users, setUsers] = useState([]);
+    const [unreadUsers, setUnreadUsers] = useState(0);
 
     const loggedInUser = JSON.parse(localStorage.getItem('userData'))
 
+    // useEffect(() => {
+    //     if (selectedGroupId) {
+    //         setGroupEnable(true);
+    //     }
+    //     else {
+    //         setGroupEnable(false);
+    //     }
+    // }, [selectedUserId, selectedGroupId])
+
     useEffect(() => {
-        if (selectedGroupId) {
+        if (hasGroup) {
             setGroupEnable(true);
         }
         else {
             setGroupEnable(false);
         }
-    }, [selectedUserId, selectedGroupId])
+    }, [hasGroup])
 
 
     const getUser = async () => {
@@ -59,7 +71,7 @@ const Chats = () => {
     // Fetch list of users
     const fetchGroups = async () => {
         try {
-            const res = await fetch('https://chat.quanteqsolutions.com/api/groups/get_groups', {
+            const res = await fetch('https://chat.quanteqsolutions.com/api/groups/my_groups', {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
@@ -92,10 +104,13 @@ const Chats = () => {
 
                 console.log('login users,', allUsers)
 
-                // const filteredUsers = allUsers.filter(user => user._id != loggedInUser._id);
-                const filteredUsers = allUsers;
+                setUsers(allUsers || []);
 
-                setUsers(filteredUsers || []);
+                const unreadUsers = allUsers.filter(user => user.unreadCount > 0);
+
+                // Example: If you want to store only the count:
+                setUnreadUsers(unreadUsers.length);
+                // setUnreadUsers(unreadUsersCount)
 
                 // setLoading(false);
             }
@@ -118,7 +133,7 @@ const Chats = () => {
                     'Content-Type': 'application/json',
                     'Authorization': localStorage.getItem('token')
                 },
-                body: JSON.stringify({ senderId : selectedUserId})
+                body: JSON.stringify({ senderId: selectedUserId })
             });
             const data = await res.json();
 
@@ -136,15 +151,28 @@ const Chats = () => {
     }
 
 
+    useEffect(() => {
+        socket.on('notification', ({ message }) => {
+            fetchUsers();
+        })
+    }, [])
+
 
     useEffect(() => {
-        markSeen();
+        if(selectedUserId){
+            markSeen();
+        }
         fetchUsers();
         fetchGroups();
         getUser();
     }, [selectedUserId, selectedGroupId]);
 
     const handleDelete = async (groupId) => {
+        if(!loggedInUser?.groupCreateAccess && loggedInUser?.role!==1){
+            toast.error("You don't have access")
+            return;
+        }
+            
         try {
             const res = await fetch(`https://chat.quanteqsolutions.com/api/groups/delete/${groupId}`, {
                 method: 'DELETE',
@@ -157,7 +185,7 @@ const Chats = () => {
             if (data.status) {
                 toast.success(data.message || 'group deleted');
                 fetchGroups();
-                navigate('/dashboard/chat')
+                navigate('/dashboard/chat?group')
             }
             else {
                 toast.error(data.message || 'error!');
@@ -169,17 +197,24 @@ const Chats = () => {
         }
     }
 
+    const handleChangeGroup = () => {
+        navigate(`/dashboard/chat?group`)
+    }
+    const handleChangeUser = () => {
+        navigate(`/dashboard/chat?chats`)
+    }
+
     return (
         <div className="nk-chat-aside">
             <div className="nk-chat-aside-head">
                 <div className="nk-chat-aside-user">
                     <div className="dropdown">
-                        <a href="#" className="dropdown-toggle dropdown-indicator" data-bs-toggle="dropdown">
-                            <div className="user-avatar">
+                        {/* <a href="#" className="dropdown-toggle dropdown-indicator" data-bs-toggle="dropdown"> */}
+                        {/* <div className="user-avatar">
                                 <img src="./images/avatar/b-sm.jpg" alt="" />
-                            </div>
-                            <div className="title">Chats</div>
-                        </a>
+                            </div> */}
+                        <div className="title">Chats</div>
+                        {/* </a> */}
                         <div className="dropdown-menu">
                             <ul className="link-list-opt no-bdr">
                                 <li><a href="html/apps/chats-contacts.html"><span>Contacts</span></a></li>
@@ -208,16 +243,16 @@ const Chats = () => {
                             </div>
                         </div>
                     </li> */}
-                    {(userData?.groupCreateAccess || userData?.role == 1) && <li>
+                    {(userData?.role == 1 || userData?.groupCreateAccess || userData?.oneOnOneAccess) && <li>
                         <div className="dropdown">
                             <a href="#" className="btn btn-round btn-icon btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 <em className="icon ni ni-edit-alt-fill"></em>
                             </a>
                             <div className="dropdown-menu dropdown-menu-start">
                                 <ul className="link-list-opt no-bdr">
-                                    <li><Link to="/dashboard/chat?create_group"><span>Create Group</span></Link></li>
-                                    <li><Link to="/dashboard/chat?add_user"><span>Add User</span></Link></li>
-                                    <li><Link to="/dashboard/chat?new_chat"><span>New Chat</span></Link></li>
+                                    {(userData?.groupCreateAccess || userData?.role == 1) && <li><Link to="/dashboard/chat?create_group"><span>Create Group</span></Link></li>}
+                                    {(userData?.role == 1) && <li><Link to="/dashboard/chat?add_user"><span>Add User</span></Link></li>}
+                                    {(userData?.oneOnOneAccess || userData?.role == 1) && <li><Link to="/dashboard/chat?new_chat"><span>New Chat</span></Link></li>}
                                 </ul>
                             </div>
                         </div>
@@ -238,19 +273,22 @@ const Chats = () => {
             </div>
             <div className="nk-chat-aside-body" data-simplebar>
                 <div className="nk-chat-aside-search">
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <div className="form-control-wrap">
                             <div className="form-icon form-icon-left">
                                 <em className="icon ni ni-search"></em>
                             </div>
                             <input type="text" className="form-control form-round" id="default-03" placeholder="Search by name" />
                         </div>
-                    </div>
+                    </div> */}
 
                     <div className="select-chat">
                         <ul className='d-flex'>
-                            <li className={`disabled ${!groupEnable ? 'active' : ''}`} onClick={() => { setGroupEnable(false) }}>Chats</li>
-                            <li className={`${groupEnable ? 'active' : ''}`} onClick={() => { setGroupEnable(true) }}>Groups</li>
+                            <li className={`disabled position-relative ${!groupEnable ? 'active' : ''}`} onClick={handleChangeUser}>
+                                Chats
+                                {unreadUsers > 0 && <span className="unread-users">{unreadUsers}</span>}
+                            </li>
+                            <li className={`${groupEnable ? 'active' : ''}`} onClick={handleChangeGroup}>Groups</li>
                         </ul>
                     </div>
                 </div>
@@ -341,18 +379,18 @@ const Chats = () => {
                                     <Link className="chat-link chat-open current" to={`/dashboard/chat?group=${group._id}`}>
                                         <div className="chat-media user-avatar bg-purple">
                                             <span>{group?.name?.slice(0, 2).toUpperCase()}</span>
-                                            <span className={`status dot dot-lg ${onlineUsers[group._id] ? 'dot-success' : 'dot-gray'} `}></span>
+                                            {/* <span className={`status dot dot-lg ${onlineUsers[group._id] ? 'dot-success' : 'dot-gray'} `}></span> */}
                                         </div>
                                         <div className="chat-info">
                                             <div className="chat-from">
                                                 <div className="name">{group?.name}</div>
-                                                <span className="time">Now</span>
+                                                <span className="time">{group?.latestTimestamp}</span>
                                             </div>
                                             <div className="chat-context">
-                                                <div className="text">need to work here</div>
-                                                <div className="status delivered">
+                                                <div className="text">{group?.latestMessage}</div>
+                                                {/* <div className="status delivered">
                                                     <em className="icon ni ni-check-circle-fill"></em>
-                                                </div>
+                                                </div> */}
                                             </div>
                                         </div>
                                     </Link>
@@ -387,10 +425,10 @@ const Chats = () => {
                                         <div className="chat-info">
                                             <div className="chat-from">
                                                 <div className="name">{user?.name}</div>
-                                                <span className="time">Now</span>
+                                                <span className="time">{user?.latestTimestamp}</span>
                                             </div>
                                             <div className="chat-context">
-                                                <div className="text">{user?.latestMessage}</div>
+                                                <div className="text">{user?.latestSenderId === loggedInUser?._id ? 'you :' : ''} {user?.latestMessage}</div>
                                                 {user?.unreadCount > 0 && <div className="status unread">{user?.unreadCount}</div>}
                                                 {/* <div className="status delivered">
                                                     <em className="icon ni ni-check-circle-fill"></em>

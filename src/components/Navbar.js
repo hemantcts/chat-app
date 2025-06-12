@@ -9,7 +9,6 @@ const Navbar = ({page, pageHeading}) => {
 
     useEffect(() => {
         if (!localStorage.getItem("token")) {
-
             navigate("/");
         }
         else {
@@ -33,7 +32,7 @@ const Navbar = ({page, pageHeading}) => {
             if (data.status) {
                 console.log("Authentication completed");
                 socket.emit('connectUser', {userId: data.userData._id});
-                
+                localStorage.setItem('userData', JSON.stringify(data.userData))
                 setUserId(data.userData._id);
                 
             }
@@ -57,14 +56,14 @@ const Navbar = ({page, pageHeading}) => {
         <div className="nk-header nk-header-fixed is-light">
             <div className="container-fluid">
                 <div className="nk-header-wrap">
-                    <div className="nk-menu-trigger d-xl-none ml-n1">
+                    {/* <div className="nk-menu-trigger d-xl-none ml-n1">
                         <a href="#" className="nk-nav-toggle nk-quick-nav-icon" data-target="sidebarMenu"><em className="icon ni ni-menu"></em></a>
-                    </div>
+                    </div> */}
                     <div className="nk-header-app-name">
-                        <div className="nk-header-app-logo">
+                        {/* <div className="nk-header-app-logo">
                             {page === 'Chat' && <em className="icon ni ni-chat-circle bg-info-dim"></em>}
                             {page !== 'Chat' && <em className="icon ni ni-inbox bg-purple-dim"></em>}
-                        </div>
+                        </div> */}
                         <div className="nk-header-app-info">
                             <span className="sub-text">{page}</span>
                             <span className="lead-text">{pageHeading}</span>
@@ -392,14 +391,14 @@ const Navbar = ({page, pageHeading}) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="dropdown-inner">
+                                    {/* <div className="dropdown-inner">
                                         <ul className="link-list">
                                             <li><a href="#"><em className="icon ni ni-user-alt"></em><span>View Profile</span></a></li>
                                             <li><a href="#"><em className="icon ni ni-setting-alt"></em><span>Account Setting</span></a></li>
                                             <li><a href="#"><em className="icon ni ni-activity-alt"></em><span>Login Activity</span></a></li>
                                             <li><a className="dark-switch" href="#"><em className="icon ni ni-moon"></em><span>Dark Mode</span></a></li>
                                         </ul>
-                                    </div>
+                                    </div> */}
                                     <div className="dropdown-inner">
                                         <ul className="link-list">
                                             <li><a href="#" onClick={handleLogout}><em className="icon ni ni-signout"></em><span>Sign out</span></a></li>

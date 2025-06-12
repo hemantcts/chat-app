@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import React from 'react'
+import AllUsers from "./AllUsers";
 
 const CreateGroup = () => {
     const [groupName, setGroupName] = useState('');
@@ -43,7 +44,12 @@ const CreateGroup = () => {
         <div className="nk-content p-0 mt-0">
             <div className="nk-content-inner">
                 <div className="nk-content-body">
-                    <div className="nk-ibx">
+                    <AllUsers />
+
+
+
+
+                    {/* <div className="nk-ibx">
                         <div className="nk-ibx-aside" data-content="inbox-aside" data-toggle-overlay="true" data-toggle-screen="lg">
                             <div className="nk-ibx-head">
                                 <div className="mr-n1"><a href="#" className="link link-text" data-toggle="modal" data-target="#compose-mail"><em className="icon-circle icon ni ni-plus"></em> <span>Compose Mail</span></a> </div>
@@ -659,7 +665,7 @@ const CreateGroup = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>

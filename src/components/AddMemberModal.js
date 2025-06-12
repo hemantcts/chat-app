@@ -1,0 +1,115 @@
+import React, { useState, useEffect } from 'react';
+import { Modal, Button, Form } from 'react-bootstrap';
+import { toast } from 'react-toastify';
+
+const AddMemberModal = ({ show, handleClose, onUserAdded, users, onlineUsers, addMembers, loggedInUser }) => {
+    const [selectedMembers, setSelectedMembers] = useState([]);
+    const [selectAll, setSelectAll] = useState(false);
+
+    // Handle individual checkbox
+    const handleCheckboxChange = (userId) => {
+        setSelectedMembers((prevSelected) =>
+            prevSelected.includes(userId)
+                ? prevSelected.filter((id) => id !== userId)
+                : [...prevSelected, userId]
+        );
+    };
+
+    // Handle "Select All" checkbox
+    const handleSelectAll = () => {
+        if (selectAll) {
+            setSelectedMembers([]);
+        } else {
+            const allUserIds = users.map((user) => user._id);
+            setSelectedMembers(allUserIds);
+        }
+        setSelectAll(!selectAll);
+    };
+
+    // Keep selectAll checkbox in sync
+    useEffect(() => {
+        if (selectedMembers.length === users.length && users.length > 0) {
+            setSelectAll(true);
+        } else {
+            setSelectAll(false);
+        }
+    }, [selectedMembers, users]);
+
+    const handleSubmit = () => {
+        addMembers(selectedMembers)
+        handleClose()
+    }
+
+    return (
+        <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+                <Modal.Title>Add New Members</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <div>
+
+                    <div className='position-relative'>
+                        <Form.Check
+                            type="checkbox"
+                            checked={selectAll}
+                            label="Select All"
+                            onChange={handleSelectAll}
+                            
+                        />
+                        {/* <div className="form-icon form-icon-left ms-3">
+                            <em className="icon ni ni-search"></em>
+                        </div>
+                        <Form.Control
+                            type="text"
+                            placeholder="Search by name or email"
+                            className='form-round ms-3'
+                        /> */}
+                    </div>
+
+                    <ul className='chat-list'>
+                        {users.map((user) => (
+                            <li key={user._id} className="chat-item">
+                                <div className="chat-link chat-open current">
+                                    <div className="checkbox">
+                                        <Form.Check
+                                            type="checkbox"
+                                            className="add-member-checkbox"
+                                            checked={selectedMembers.includes(user._id)}
+                                            onChange={() => handleCheckboxChange(user._id)}
+                                        />
+                                    </div>
+                                    <div className="chat-media user-avatar bg-purple">
+                                        <span>{user?.name?.slice(0, 2).toUpperCase()}</span>
+                                        <span className={`status dot dot-lg ${onlineUsers[user._id] ? 'dot-success' : 'dot-gray'}`}></span>
+                                    </div>
+                                    <div className="chat-info">
+                                        <div className="chat-from">
+                                            <div className="name">{user?.name}</div>
+                                        </div>
+                                        <div className="chat-context">
+                                            {/* <div className="text">{user?.email}</div> */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                    Cancel
+                </Button>
+                <Button
+                    variant="primary"
+                    onClick={handleSubmit}
+                    disabled={selectedMembers.length === 0}
+                >
+                    Add Members
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
+};
+
+export default AddMemberModal;

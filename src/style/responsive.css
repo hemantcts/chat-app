@@ -42,7 +42,7 @@
     }
 
     ul li.active {
-        background-color: #798bff;
+        background-color: #7B83EB;
         color: #fff;
     }
 }
@@ -75,7 +75,7 @@
 
 .user-info input:focus-visible {
     outline: 0 !important;
-    border-color: #798bff !important;
+    border-color: #7B83EB !important;
 }
 
 .members-list {
@@ -88,7 +88,7 @@
     padding: 0.5rem;
     text-align: start;
     max-height: 50vh;
-    border: 2px solid #798bff;
+    border: 2px solid #7B83EB;
     overflow: auto;
     z-index: 2;
     margin-top: 0.5rem;
@@ -179,8 +179,8 @@
 
 .reply {
     padding: 0.7rem 1.25rem;
-    border-bottom: 1px solid #6576ff;
-    border-top: 1px solid #6576ff;
+    border-bottom: 1px solid #7B83EB;
+    border-top: 1px solid #7B83EB;
 }
 
 .my-reply-bubble {
@@ -202,7 +202,7 @@
     margin-bottom: 0.25rem;
 
     .reply-chat-msg {
-        background-color: #6576ff !important;
+        background-color: #7B83EB !important;
         color: #fff !important;
     }
 }
@@ -220,7 +220,7 @@
 }
 
 .chat-upload-option .upload-files {
-    color: #6576ff;
+    color: #7B83EB;
     font-size: 1.25rem;
     height: 36px;
     width: 36px;
@@ -232,11 +232,138 @@
 
 
 .is-unread .chat-context .status {
-    background-color: #6576ff;
+    background-color: #7B83EB;
     color: #fff !important;
     border-radius: 50%;
     height: 19px;
     width: 18px;
     align-items: center;
     justify-content: center;
+}
+
+.message-seen {
+    color: #7B83EB !important;
+}
+
+.add-members:hover{
+    color: #816bff;
+}
+
+.unread-users{
+    /* position: absolute;
+    top: -8px;
+    right: -7px; */
+    background-color: red;
+    color: #fff;
+    padding: 0px 4px;
+    border-radius: 50%;
+    margin-left: 0.25rem;
+}
+
+.nk-chat-aside-search {
+    margin-top: 0.75rem !important;
+}
+
+.admin-users-list{
+    .form-check-input{
+        margin: 0;
+    }
+}
+
+.chat-msg{
+    word-break: break-all !important;
+}
+
+.add-member-btn{
+    cursor: pointer;
+    margin: 0 !important;
+    padding: 0;
+    background-color: transparent;
+    border: 0;
+}
+
+.add-member-btn:focus, .add-member-btn:hover {
+    color: #7b83eb !important;
+    box-shadow: unset !important;
+}
+
+.add-member-checkbox .form-check-input{
+    position: static !important;
+    cursor: pointer;
+}
+.add-member-checkbox .form-check-input:checked[type=checkbox]{
+    background-color: #7b83eb;
+    border-color: #7b83eb;
+}
+
+.position-relative .form-check{
+    padding: 0 0.75rem;
+}
+
+.position-relative .form-check .form-check-input{
+    margin-right: 1rem;
+    position: static;
+}
+
+.position-relative .form-check .form-check-input:checked[type=checkbox]{
+    background-color: #7b83eb;
+    border-color: #7b83eb;
+}
+
+.modal-body .chat-item:hover {
+    background-color: unset;
+}
+
+.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active{
+    border: 0 !important;
+}
+
+
+
+
+
+.typing {
+  align-items: center;
+  display: flex;
+  height: 17px;
+}
+.typing .dot {
+  animation: mercuryTypingAnimation 1.8s infinite ease-in-out;
+  background-color: #7b83eb ;
+  border-radius: 50%;
+  height: 7px;
+  margin-right: 4px;
+  vertical-align: middle;
+  width: 7px;
+  display: inline-block;
+}
+.typing .dot:nth-child(1) {
+  animation-delay: 200ms;
+}
+.typing .dot:nth-child(2) {
+  animation-delay: 300ms;
+}
+.typing .dot:nth-child(3) {
+  animation-delay: 400ms;
+}
+.typing .dot:last-child {
+  margin-right: 0;
+}
+
+@keyframes mercuryTypingAnimation {
+  0% {
+    transform: translateY(0px);
+    background-color:#6CAD96;
+    background-color: #7b83eb;
+  }
+  28% {
+    transform: translateY(-7px);
+    background-color:#9ECAB9; 
+    background-color:#9299eb; 
+  }
+  44% {
+    transform: translateY(0px);
+    background-color: #B5D9CB;
+    background-color: #acb1e9;
+  }
 }

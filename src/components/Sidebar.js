@@ -3,14 +3,16 @@ import { Link } from 'react-router-dom'
 // import '../assets/images'
 
 const Sidebar = () => {
+    const loggedInUser = JSON.parse(localStorage.getItem('userData'));
+
     return (
 
         <div className="nk-apps-sidebar is-dark">
             <div className="nk-apps-brand">
-                <a href="html/index.html" className="logo-link">
+                {/* <a href="html/index.html" className="logo-link">
                     <img className="logo-light logo-img" src="../assets/images/logo-small.png" srcset="../assets/images/logo-small2x.png 2x" alt="logo" />
                     <img className="logo-dark logo-img" src="../assets/images/logo-dark-small.png" srcset="../assets/images/logo-dark-small2x.png 2x" alt="logo-dark" />
-                </a>
+                </a> */}
             </div>
             <div className="nk-sidebar-element">
                 <div className="nk-sidebar-body">
@@ -45,17 +47,17 @@ const Sidebar = () => {
                                     </a>
                                 </li> */}
                                 {/* <li className="nk-menu-hr"></li> */}
-                                {/* <li className="nk-menu-item">
-                                    <a href="html/apps/mailbox.html" className="nk-menu-link" title="Mailbox">
+                                <li className="nk-menu-item">
+                                    {/* <a href="html/apps/mailbox.html" className="nk-menu-link" title="Mailbox">
                                         <span className="nk-menu-icon"><em className="icon ni ni-inbox"></em></span>
-                                    </a>
+                                    </a> */}
 
-                                    <Link to="/dashboard/create_group" className="nk-menu-link" title="Mailbox">
+                                    {loggedInUser?.role === 1 && <Link to="/dashboard/users" className="nk-menu-link" title="Users">
                                         <span className="nk-menu-icon">
                                             <em className="icon ni ni-inbox"></em>
                                         </span>
-                                    </Link>
-                                </li> */}
+                                    </Link>}
+                                </li>
                                 {/* <li className="nk-menu-item">
                                     <a href="html/apps/messages.html" className="nk-menu-link" title="Messages">
                                         <span className="nk-menu-icon"><em className="icon ni ni-chat"></em></span>
@@ -106,11 +108,11 @@ const Sidebar = () => {
                         </div> */}
                     </div>
                     <div className="nk-sidebar-profile nk-sidebar-profile-fixed dropdown">
-                        <a href="#" data-toggle="dropdown" data-offset="50,-60">
+                        {/* <a href="#" data-toggle="dropdown" data-offset="50,-60">
                             <div className="user-avatar">
                                 <span>AB</span>
                             </div>
-                        </a>
+                        </a> */}
                         <div className="dropdown-menu dropdown-menu-md ml-4">
                             <div className="dropdown-inner user-card-wrap d-none d-md-block">
                                 <div className="user-card">
