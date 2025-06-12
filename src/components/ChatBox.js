@@ -670,6 +670,11 @@ const ChatBox = ({ userId, groupId }) => {
                                         </div>
                                     </div>}
                                     <div className="chat-content">
+                                        {/* <div className="sender">
+                                            is-you
+                                        </div> */}
+                                        
+
                                         {msg?.senderDetails?.id === loggedInUser._id ? (
                                             msg?.replyTo && <ul className="chat-meta">
                                                 <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
@@ -759,6 +764,9 @@ const ChatBox = ({ userId, groupId }) => {
                                             </ul> */}
 
                                             </div>}
+                                            {msg?.senderDetails?.id !== loggedInUser?._id && <ul className="chat-meta">
+                                                <li>{msg?.senderDetails?.name}</li>
+                                            </ul>}
                                             {msg?.content && <div className="chat-bubble">
 
                                                 <div className="chat-msg"> {msg?.content} </div>
