@@ -14936,7 +14936,25 @@ p > span > .icon.ni { vertical-align: middle; }
 
 .nk-chat-head-search.show-search { opacity: 1; pointer-events: auto; transform: none; }
 
-.nk-chat-panel { background-color: rgba(235, 238, 242, 0.7); height: 100%; max-height: 100%; overflow: auto; padding: 1.25rem; }
+.nk-chat-panel { background-color: rgba(235, 238, 242, 0.7); height: 100%; max-height: 100%; overflow: auto; padding: 1.25rem;
+.chat:first-child {
+      margin-top: auto;
+  }
+ }
+
+/* .nk-chat-panel {
+    background-color: rgba(235, 238, 242, 0.7);
+    height: 100%;
+    overflow: auto;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    .chat {
+      width: 100%;
+  }
+  
+} */
 
 .nk-chat-editor { display: flex; align-items: center; padding: 1rem 1.25rem; background-color: #fff; }
 

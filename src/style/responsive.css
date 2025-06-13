@@ -11,7 +11,8 @@
     z-index: 5 !important;
 } */
 
-.group-create-form, .add-user-form {
+.group-create-form,
+.add-user-form {
 
     input.form-control,
     .search-wrapper {
@@ -215,7 +216,7 @@
     color: #b6c6e3;
 }
 
-.chat-upload-option{
+.chat-upload-option {
     display: block !important;
 }
 
@@ -245,11 +246,11 @@
     color: #7B83EB !important;
 }
 
-.add-members:hover{
+.add-members:hover {
     color: #816bff;
 }
 
-.unread-users{
+.unread-users {
     /* position: absolute;
     top: -8px;
     right: -7px; */
@@ -264,17 +265,17 @@
     margin-top: 0.75rem !important;
 }
 
-.admin-users-list{
-    .form-check-input{
+.admin-users-list {
+    .form-check-input {
         margin: 0;
     }
 }
 
-.chat-msg{
+.chat-msg {
     word-break: break-all !important;
 }
 
-.add-member-btn{
+.add-member-btn {
     cursor: pointer;
     margin: 0 !important;
     padding: 0;
@@ -282,30 +283,32 @@
     border: 0;
 }
 
-.add-member-btn:focus, .add-member-btn:hover {
+.add-member-btn:focus,
+.add-member-btn:hover {
     color: #7b83eb !important;
     box-shadow: unset !important;
 }
 
-.add-member-checkbox .form-check-input{
+.add-member-checkbox .form-check-input {
     position: static !important;
     cursor: pointer;
 }
-.add-member-checkbox .form-check-input:checked[type=checkbox]{
+
+.add-member-checkbox .form-check-input:checked[type=checkbox] {
     background-color: #7b83eb;
     border-color: #7b83eb;
 }
 
-.position-relative .form-check{
+.position-relative .form-check {
     padding: 0 0.75rem;
 }
 
-.position-relative .form-check .form-check-input{
+.position-relative .form-check .form-check-input {
     margin-right: 1rem;
     position: static;
 }
 
-.position-relative .form-check .form-check-input:checked[type=checkbox]{
+.position-relative .form-check .form-check-input:checked[type=checkbox] {
     background-color: #7b83eb;
     border-color: #7b83eb;
 }
@@ -314,7 +317,11 @@
     background-color: unset;
 }
 
-.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active{
+.btn-check:checked+.btn,
+.btn.active,
+.btn.show,
+.btn:first-child:active,
+:not(.btn-check)+.btn:active {
     border: 0 !important;
 }
 
@@ -323,47 +330,85 @@
 
 
 .typing {
-  align-items: center;
-  display: flex;
-  height: 17px;
+    align-items: center;
+    display: flex;
+    height: 17px;
 }
+
 .typing .dot {
-  animation: mercuryTypingAnimation 1.8s infinite ease-in-out;
-  background-color: #7b83eb ;
-  border-radius: 50%;
-  height: 7px;
-  margin-right: 4px;
-  vertical-align: middle;
-  width: 7px;
-  display: inline-block;
+    animation: mercuryTypingAnimation 1.8s infinite ease-in-out;
+    background-color: #7b83eb;
+    border-radius: 50%;
+    height: 7px;
+    margin-right: 4px;
+    vertical-align: middle;
+    width: 7px;
+    display: inline-block;
 }
+
 .typing .dot:nth-child(1) {
-  animation-delay: 200ms;
+    animation-delay: 200ms;
 }
+
 .typing .dot:nth-child(2) {
-  animation-delay: 300ms;
+    animation-delay: 300ms;
 }
+
 .typing .dot:nth-child(3) {
-  animation-delay: 400ms;
+    animation-delay: 400ms;
 }
+
 .typing .dot:last-child {
-  margin-right: 0;
+    margin-right: 0;
 }
 
 @keyframes mercuryTypingAnimation {
-  0% {
-    transform: translateY(0px);
-    background-color:#6CAD96;
+    0% {
+        transform: translateY(0px);
+        background-color: #6CAD96;
+        background-color: #7b83eb;
+    }
+
+    28% {
+        transform: translateY(-7px);
+        background-color: #9ECAB9;
+        background-color: #9299eb;
+    }
+
+    44% {
+        transform: translateY(0px);
+        background-color: #B5D9CB;
+        background-color: #acb1e9;
+    }
+}
+
+.user-seen-avatar {
+    font-size: 9px !important;
+    height: 12px !important;
+    width: 12px !important;
+
+    background-size: contain !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+.chat-seen-meta li {
+    padding: 0 0.1rem !important;
+    position: relative;
+}
+
+.chat-seen-meta li:not(:first-child):before {
+    content: unset !important;
+}
+
+
+.users_detail {
     background-color: #7b83eb;
-  }
-  28% {
-    transform: translateY(-7px);
-    background-color:#9ECAB9; 
-    background-color:#9299eb; 
-  }
-  44% {
-    transform: translateY(0px);
-    background-color: #B5D9CB;
-    background-color: #acb1e9;
-  }
+    color: #fff;
+    padding: 0 0.5rem;
+    border-radius: 10px;
+    position: absolute;
+    bottom: 100%;
+    right: 100%;
+    width: max-content;
 }

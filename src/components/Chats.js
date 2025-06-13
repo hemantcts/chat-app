@@ -58,7 +58,7 @@ const Chats = () => {
                 setUserData(data.userData);
             }
             else {
-                toast.error(data.message || 'error!');
+                // toast.error(data.message || 'error!');
             }
         }
         catch (error) {
@@ -81,7 +81,7 @@ const Chats = () => {
                 setGroups(data.groups || []);
             }
             else {
-                toast.error(data.message || 'error!');
+                // toast.error(data.message || 'error!');
             }
             // setLoading(false);
         } catch (err) {
@@ -115,7 +115,7 @@ const Chats = () => {
                 // setLoading(false);
             }
             else {
-                toast.error(data.message || 'error!');
+                // toast.error(data.message || 'error!');
             }
 
         } catch (err) {
@@ -141,7 +141,7 @@ const Chats = () => {
                 console.log(data.message);
             }
             else {
-                toast.error(data.message || 'error!');
+                // toast.error(data.message || 'error!');
             }
 
         } catch (err) {
@@ -387,7 +387,8 @@ const Chats = () => {
                                                 <span className="time">{group?.latestTimestamp}</span>
                                             </div>
                                             <div className="chat-context">
-                                                <div className="text">{group?.latestMessage}</div>
+                                                
+                                                <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${group?.latestSenderName} :`} {group?.latestMessage}</div>
                                                 {/* <div className="status delivered">
                                                     <em className="icon ni ni-check-circle-fill"></em>
                                                 </div> */}

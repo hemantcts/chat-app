@@ -25,7 +25,7 @@ const ChatBox = ({ userId, groupId }) => {
     const [showDetails, setShowDetails] = useState(false);
     const [showUploadOptions, setShowUploadOptions] = useState(false)
     const [msgSeen, setMsgSeen] = useState(false)
-
+    const [mySeenMessages, setMySeenMessages] = useState([])
 
     const [page, setPage] = useState(1);
     const [hasMoreMessages, setHasMoreMessages] = useState(true);
@@ -130,6 +130,8 @@ const ChatBox = ({ userId, groupId }) => {
                 } else {
                     setHasMoreMessages(true);
                 }
+
+                setMySeenMessages(data.messages);
                 socket.emit('join-room', { room: groupId });
             }
 
@@ -317,16 +319,28 @@ const ChatBox = ({ userId, groupId }) => {
         }
     }, [groupId, userId])
 
+
+
     useEffect(() => {
         if (userId) {
             socket.emit('mark-seen', { chatUserId: userId });
-
         }
         if (groupId) {
             socket.emit('mark-seen-group', { groupId: groupId });
         }
         socket.on('messages-seen', (data) => {
             setMsgSeen(true);
+        })
+        socket.on('group-messages-seen', (data) => {
+            // setMsgSeen(true);
+
+            const { messages, byUserId } = data;
+            let seenMessages = messages.filter(msg => msg?.senderId === loggedInUser?._id);
+            setMySeenMessages(seenMessages);
+
+
+            console.log(seenMessages, 'group seen members');
+
         })
 
     }, [groupId, userId, messageArr])
@@ -371,6 +385,38 @@ const ChatBox = ({ userId, groupId }) => {
             return false;
         }
         return currentTime; // or return formattedCurrent if formatting
+    }
+
+    function getDisplaySeenUsers(seenMsgArr, messageArr, index, userId) {
+        // const currentUser = userArr[index]?._id;
+        // const nextUser = userArr[index + 1]?._id;
+
+        let messageArrId = messageArr[index]?._id;
+
+        let myMessages = messageArr.filter(msg => msg?.senderDetails?.id === loggedInUser?._id)
+
+        for (let i = 0; i < myMessages.length; i++) {
+            if (myMessages[i]?._id === messageArrId) {
+                index = i;
+            }
+        }
+
+        const nextMsgId = myMessages[index + 1]?._id;
+
+        let userMessages = seenMsgArr.filter(msg => msg._id === nextMsgId)
+
+        console.log(userMessages, userId?._id, "testing seen")
+
+        let flag = true;
+
+        userMessages[0]?.groupSeen?.forEach(element => {
+            if (element?.userId?._id === userId?._id) {
+                flag = false;
+            }
+        });
+
+
+        return flag;
     }
 
     // useEffect(() => {
@@ -420,7 +466,7 @@ const ChatBox = ({ userId, groupId }) => {
     const handleTyping = () => {
         let receiverId = room;
         let isGroup = false;
-        if(groupId){
+        if (groupId) {
             receiverId = groupId;
             isGroup = true;
         }
@@ -434,7 +480,7 @@ const ChatBox = ({ userId, groupId }) => {
     const handleStopTyping = () => {
         let receiverId = room;
         let isGroup = false;
-        if(groupId){
+        if (groupId) {
             receiverId = groupId;
             isGroup = true;
         }
@@ -597,6 +643,35 @@ const ChatBox = ({ userId, groupId }) => {
         );
     };
 
+    const [showingUser, setShowingUser] = useState(null)
+
+    // const showUserSeen = (user) => {
+    //     setShowingUser(user);
+    // }
+
+    const tooltipRef = useRef(null);
+
+    const showUserSeen = (user) => {
+        if (showingUser?._id === user._id) {
+            setShowingUser(null); // Hide if clicking the same user again
+        } else {
+            setShowingUser(user);
+        }
+    };
+
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (tooltipRef.current && !tooltipRef.current.contains(event.target)) {
+                setShowingUser(null);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
 
     return (
@@ -673,7 +748,7 @@ const ChatBox = ({ userId, groupId }) => {
                                         {/* <div className="sender">
                                             is-you
                                         </div> */}
-                                        
+
 
                                         {msg?.senderDetails?.id === loggedInUser._id ? (
                                             msg?.replyTo && <ul className="chat-meta">
@@ -794,6 +869,31 @@ const ChatBox = ({ userId, groupId }) => {
                                                 {/* {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <em className={`icon ni ni-check-circle-fill ms-1 ${(msg?.seen || msgSeen) ? 'message-seen' : ''}`}></em> } 
                                             {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <span>{(msg?.seen || msgSeen) ? 'seen' : 'sent'}</span> }  */}
                                             </li>
+                                        </ul>}
+                                        {msg?.senderDetails?.id === loggedInUser._id && <ul className="chat-meta chat-seen-meta mt-0">
+                                            {mySeenMessages.map((seenMsg) => (
+                                                seenMsg?._id === msg?._id && (
+                                                    seenMsg?.groupSeen.map((user, i) => {
+                                                        const isCurrentUser = showingUser?._id === user?.userId?._id;
+                                                        return user?.userId && getDisplaySeenUsers(mySeenMessages, messageArr, index, user?.userId) && (
+                                                            <li key={i} ref={isCurrentUser ? tooltipRef : null}>
+                                                                <button
+                                                                    onClick={() => showUserSeen(user?.userId)}
+                                                                    className="user-avatar user-seen-avatar bg-purple border-0"
+                                                                    style={{ background: `url(${user?.userId?.imagePath})` }}
+                                                                ></button>
+
+                                                                {isCurrentUser && (
+                                                                    <div className="users_detail">
+                                                                        {showingUser?.name}
+                                                                    </div>
+                                                                )}
+                                                            </li>
+                                                        );
+                                                    })
+                                                )
+                                            ))}
+
                                         </ul>}
                                         {/* <ul className="chat-meta">
                                         <li>{msg?.senderDetails?.name}</li>

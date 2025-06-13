@@ -343,3 +343,64 @@
                         </ul>
                     </div>
                 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{mySeenMessages.map((seenMsg) => (
+                                                seenMsg?._id === msg?._id && (
+                                                    seenMsg?.groupSeen.map((user, i) => (
+                                                        // <li key={i}>{user?.userId?.name}</li>
+                                                        (user?.userId && getDisplaySeenUsers(mySeenMessages, messageArr, index, user?.userId)) && 
+                                                        <li>
+                                                            <button onClick={()=>showUserSeen(user?.userId)} className="user-avatar user-seen-avatar bg-purple border-0" style={{background:`url(${user?.userId?.imagePath})`}}></button>
+
+                                                            {showingUser && <div className="users_detail">
+                                                                {showingUser?.name}
+                                                            </div>}
+                                                        </li> 
+                                                    ))
+                                                )
+                                            ))}
+
+
+listen, I want to show only those user, on which i have clicked and when I click on the li button again, thyen it will hide the showingUser, or I click anywhere else on the window it should hide the showing users
+
+
+const showUserSeen = (user) => {
+        setShowingUser(user);
+    }
