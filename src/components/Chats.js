@@ -21,6 +21,7 @@ const Chats = () => {
 
     const [users, setUsers] = useState([]);
     const [unreadUsers, setUnreadUsers] = useState(0);
+    const [unreadGroups, setUnreadGroups] = useState(0);
 
     const loggedInUser = JSON.parse(localStorage.getItem('userData'))
 
@@ -78,7 +79,15 @@ const Chats = () => {
             });
             const data = await res.json();
             if (data.status) {
-                setGroups(data.groups || []);
+                
+                const allGroups = data.groups;
+
+                setGroups(allGroups || []);
+
+                const unreadGroups = allGroups.filter(user => user.unseenCount > 0);
+
+                // Example: If you want to store only the count:
+                setUnreadGroups(unreadGroups.length);
             }
             else {
                 // toast.error(data.message || 'error!');
@@ -154,12 +163,13 @@ const Chats = () => {
     useEffect(() => {
         socket.on('notification', ({ message }) => {
             fetchUsers();
+            fetchGroups();
         })
     }, [])
 
 
     useEffect(() => {
-        if(selectedUserId){
+        if (selectedUserId) {
             markSeen();
         }
         fetchUsers();
@@ -168,11 +178,11 @@ const Chats = () => {
     }, [selectedUserId, selectedGroupId]);
 
     const handleDelete = async (groupId) => {
-        if(!loggedInUser?.groupCreateAccess && loggedInUser?.role!==1){
+        if (!loggedInUser?.groupCreateAccess && loggedInUser?.role !== 1) {
             toast.error("You don't have access")
             return;
         }
-            
+
         try {
             const res = await fetch(`https://chat.quanteqsolutions.com/api/groups/delete/${groupId}`, {
                 method: 'DELETE',
@@ -288,7 +298,10 @@ const Chats = () => {
                                 Chats
                                 {unreadUsers > 0 && <span className="unread-users">{unreadUsers}</span>}
                             </li>
-                            <li className={`${groupEnable ? 'active' : ''}`} onClick={handleChangeGroup}>Groups</li>
+                            <li className={`${groupEnable ? 'active' : ''}`} onClick={handleChangeGroup}>
+                                Groups
+                                {unreadGroups > 0 && <span className="unread-users">{unreadGroups}</span>}
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -375,20 +388,28 @@ const Chats = () => {
                     {groupEnable ? (
                         <ul className="chat-list">
                             {groups.map((group, index) => (
-                                <li key={index} className={`chat-item ${selectedGroupId === group._id ? 'active' : ''}`}>
+                                <li key={index} className={`chat-item ${selectedGroupId === group._id ? 'active' : ''} ${group?.unseenCount > 0 ? 'is-unread' : ''}`}>
                                     <Link className="chat-link chat-open current" to={`/dashboard/chat?group=${group._id}`}>
-                                        <div className="chat-media user-avatar bg-purple">
-                                            <span>{group?.name?.slice(0, 2).toUpperCase()}</span>
-                                            {/* <span className={`status dot dot-lg ${onlineUsers[group._id] ? 'dot-success' : 'dot-gray'} `}></span> */}
-                                        </div>
+
+                                        {group?.groupImage ? (
+                                            <div className="chat-media user-avatar bg-purple group-image" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${group?.groupImage})` }}
+                                            ></div>
+                                        ) : (
+                                            <div className="chat-media user-avatar bg-purple"
+                                            >
+                                                <span>{group?.name?.slice(0, 2).toUpperCase()}</span>
+                                                {/* <span className={`status dot dot-lg ${onlineUsers[group._id] ? 'dot-success' : 'dot-gray'} `}></span> */}
+                                            </div>
+                                        )}
                                         <div className="chat-info">
                                             <div className="chat-from">
                                                 <div className="name">{group?.name}</div>
                                                 <span className="time">{group?.latestTimestamp}</span>
                                             </div>
                                             <div className="chat-context">
-                                                
+
                                                 <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${group?.latestSenderName} :`} {group?.latestMessage}</div>
+                                                {group?.unseenCount > 0 && <div className="status unread">{group?.unseenCount}</div>}
                                                 {/* <div className="status delivered">
                                                     <em className="icon ni ni-check-circle-fill"></em>
                                                 </div> */}

@@ -45,7 +45,36 @@ import { OnlineUsersContext } from './context-api/OnlineUsersContext';
 
 
 
+import { getFcmToken, onMessageListener } from './firebase';
+
+// In your main App component or chat component
+
 const App = () => {
+  useEffect(() => {
+    const setupFcm = async () => {
+      const token = await getFcmToken();
+
+      if (token) {
+        // Send to your backend
+        fetch('https://chat.quanteqsolutions.com/api/user/save-fcm-token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: localStorage.getItem('token') // or however you store JWT
+          },
+          body: JSON.stringify({ fcmToken: token }),
+        });
+      }
+    };
+
+    Notification.requestPermission().then((permission) => {
+      if (permission === 'granted') {
+        setupFcm();
+      } else {
+        console.warn('Notification permission denied');
+      }
+    });
+  }, []);
 
   const [onlineUsers, setOnlineUsers] = useState({});
 
@@ -67,9 +96,9 @@ const App = () => {
 
   useEffect(() => {
     let user = localStorage.getItem('userData');
-    if(user){
-      let userData  = JSON.parse(user)
-      socket.emit('connectUser', {userId: userData.id});
+    if (user) {
+      let userData = JSON.parse(user)
+      socket.emit('connectUser', { userId: userData.id });
     }
   }, [])
 

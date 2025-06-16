@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import AddMemberModal from './AddMemberModal';
+import ImageCropperModal from './ImageCropperModal';
 
 const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGroupName, getGroupDetails, onlineUsers }) => {
     const [isEditing, setIsEditing] = useState(false);
@@ -173,12 +174,88 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
         setShowDetails(false)
     }
 
+
+    const [cropperOpen, setCropperOpen] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setSelectedImage(reader.result);
+                setCropperOpen(true);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleCropDone = async (croppedBlob) => {
+        setCropperOpen(false);
+
+        const formData = new FormData();
+        formData.append('groupId', groupDetails?._id);
+        formData.append('files', croppedBlob, 'group.jpg');
+
+        const res = await fetch('https://chat.quanteqsolutions.com/api/groups/upload', {
+            method: 'POST',
+            headers: {
+                Authorization: `${localStorage.getItem('token')}`
+            },
+            body: formData
+        });
+
+        const data = await res.json();
+
+        if (data.status) {
+            toast.success(data.message)
+            getGroupDetails();
+        }
+    };
+
     return (
         <div className={`nk-chat-profile ${showDetails ? 'visible' : ''}`} data-simplebar>
             <div className="user-card user-card-s2 my-4">
-                <div className="user-avatar md bg-purple">
-                    <span>{groupDetails?.name?.slice(0, 2).toUpperCase()}</span>
+                <div
+                    className="user-avatar-wrapper"
+                    onClick={() => document.getElementById('group-image-upload').click()}
+                >
+                    <div
+                        className="user-avatar md bg-purple group-image group-image-change"
+                        style={{
+                            backgroundImage: groupDetails?.groupImage
+                                ? `url(https://chat.quanteqsolutions.com/${groupDetails.groupImage})`
+                                : 'none',
+                        }}
+                    >
+                        {!groupDetails?.groupImage && (
+                            <span>{groupDetails?.name?.slice(0, 2).toUpperCase()}</span>
+                        )}
+                        <div className="avatar-hover-overlay">
+                            <span className="camera-icon">📷</span>
+                            <span className="hover-text">edit</span>
+                        </div>
+                    </div>
+
+                    <input
+                        type="file"
+                        id="group-image-upload"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        style={{ display: 'none' }}
+                    />
                 </div>
+
+
+                {cropperOpen && (
+                    <ImageCropperModal
+                        imageSrc={selectedImage}
+                        onClose={() => setCropperOpen(false)}
+                        onCropDone={handleCropDone}
+                    />
+                )}
+
+
                 <div className="user-info position-relative">
                     {isEditing ? (
                         <input
@@ -298,9 +375,9 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
             </div>
             <div className="chat-profile ">
                 <div className="members-list position-static border-0">
-                    
+
                     <span className="sub-text d-flex justify-content-between">
-                        Members : {groupDetails?.members?.length} 
+                        Members : {groupDetails?.members?.length}
                         {/* <span className='add-members'  >Add Members</span>  */}
                         {(loggedInUser?.role === 1 || loggedInUser?.groupCreateAccess) && <Button onClick={() => setShowModal(true)} className="sub-text justify-content-start m-0 p-0 border-0 add-member-btn" style={{ backgroundColor: 'transparent' }}>
                             Add New Members

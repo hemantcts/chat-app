@@ -116,12 +116,18 @@ const ChatBox = ({ userId, groupId }) => {
                 //     setMessageArr(prev => [...data.messages.reverse(), ...prev]);
                 // }
 
+                let newArr = [];
+
                 if (currentPage === 1) {
-                    setMessageArr(data.messages.reverse()); // show oldest first
+                    newArr = data.messages.reverse()
+                    setMessageArr(newArr); // show oldest first
                     isInitialLoadRef.current = true; // first load → trigger scroll
                 } else {
+                    newArr = messageArr;
                     data.messages.reverse()
-                    setMessageArr(prev => [...data.messages, ...prev]);
+                    newArr = [...data.messages, ...newArr]
+
+                    setMessageArr(newArr);
                     isInitialLoadRef.current = false; // no scroll on older load
                 }
 
@@ -130,8 +136,7 @@ const ChatBox = ({ userId, groupId }) => {
                 } else {
                     setHasMoreMessages(true);
                 }
-
-                setMySeenMessages(data.messages);
+                setMySeenMessages(newArr);
                 socket.emit('join-room', { room: groupId });
             }
 
@@ -335,11 +340,13 @@ const ChatBox = ({ userId, groupId }) => {
             // setMsgSeen(true);
 
             const { messages, byUserId } = data;
-            let seenMessages = messages.filter(msg => msg?.senderId === loggedInUser?._id);
-            setMySeenMessages(seenMessages);
+
+            console.log("messages", messages)
+            // let seenMessages = messages.filter(msg => msg?.senderId === loggedInUser?._id);
+            setMySeenMessages(messages);
 
 
-            console.log(seenMessages, 'group seen members');
+            // console.log(seenMessages, 'group seen members');
 
         })
 
@@ -391,21 +398,28 @@ const ChatBox = ({ userId, groupId }) => {
         // const currentUser = userArr[index]?._id;
         // const nextUser = userArr[index + 1]?._id;
 
+        if (userId?._id === loggedInUser?._id) {
+            return false
+        }
+
+        console.log(userId, loggedInUser?._id, 'here')
+
         let messageArrId = messageArr[index]?._id;
 
-        let myMessages = messageArr.filter(msg => msg?.senderDetails?.id === loggedInUser?._id)
+        // let myMessages = messageArr.filter(msg => msg?.senderDetails?.id === loggedInUser?._id)
+        let myMessages = messageArr;
 
-        for (let i = 0; i < myMessages.length; i++) {
-            if (myMessages[i]?._id === messageArrId) {
-                index = i;
-            }
-        }
+        // for (let i = 0; i < myMessages.length; i++) {
+        //     if (myMessages[i]?._id === messageArrId) {
+        //         index = i;
+        //     }
+        // }
 
         const nextMsgId = myMessages[index + 1]?._id;
 
         let userMessages = seenMsgArr.filter(msg => msg._id === nextMsgId)
 
-        console.log(userMessages, userId?._id, "testing seen")
+        // console.log(userMessages, userId?._id, "testing seen")
 
         let flag = true;
 
@@ -685,9 +699,19 @@ const ChatBox = ({ userId, groupId }) => {
                             </li>
                             <li className="nk-chat-head-user">
                                 <div className="user-card">
-                                    <div className="user-avatar bg-purple">
+
+                                    {groupDetails?.groupImage ? (
+                                        <div className="user-avatar bg-purple group-image" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${groupDetails?.groupImage})` }}
+                                        ></div>
+                                    ) : (
+                                        <div className="user-avatar bg-purple">
+                                            <span>{groupDetails?.name?.slice(0, 2).toUpperCase()}</span>
+                                        </div>
+                                    )}
+
+                                    {/* <div className="user-avatar bg-purple">
                                         <span>{groupDetails?.name?.slice(0, 2).toUpperCase()}</span>
-                                    </div>
+                                    </div> */}
                                     <div className="user-info">
                                         <div className="lead-text">{groupDetails?.name}</div>
                                         <div className="sub-text"><span className="d-none d-sm-inline mr-1">members : </span>{groupDetails?.members?.length}</div>
@@ -870,37 +894,40 @@ const ChatBox = ({ userId, groupId }) => {
                                             {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <span>{(msg?.seen || msgSeen) ? 'seen' : 'sent'}</span> }  */}
                                             </li>
                                         </ul>}
-                                        {msg?.senderDetails?.id === loggedInUser._id && <ul className="chat-meta chat-seen-meta mt-0">
-                                            {mySeenMessages.map((seenMsg) => (
-                                                seenMsg?._id === msg?._id && (
-                                                    seenMsg?.groupSeen.map((user, i) => {
-                                                        const isCurrentUser = showingUser?._id === user?.userId?._id;
-                                                        return user?.userId && getDisplaySeenUsers(mySeenMessages, messageArr, index, user?.userId) && (
-                                                            <li key={i} ref={isCurrentUser ? tooltipRef : null}>
-                                                                <button
-                                                                    onClick={() => showUserSeen(user?.userId)}
-                                                                    className="user-avatar user-seen-avatar bg-purple border-0"
-                                                                    style={{ background: `url(${user?.userId?.imagePath})` }}
-                                                                ></button>
 
-                                                                {isCurrentUser && (
-                                                                    <div className="users_detail">
-                                                                        {showingUser?.name}
-                                                                    </div>
-                                                                )}
-                                                            </li>
-                                                        );
-                                                    })
-                                                )
-                                            ))}
-
-                                        </ul>}
                                         {/* <ul className="chat-meta">
                                         <li>{msg?.senderDetails?.name}</li>
                                         <li>{msg?.createdAt} <em className="icon ni ni-check-circle-fill"></em></li>
                                     </ul> */}
                                     </div>
                                 </div>
+
+
+                                {true && <ul className="chat-meta chat-seen-meta mt-0 justify-content-end">
+                                    {mySeenMessages.map((seenMsg) => (
+                                        seenMsg?._id === msg?._id && (
+                                            seenMsg?.groupSeen.map((user, i) => {
+                                                const isCurrentUser = showingUser?._id === user?.userId?._id;
+                                                return (user?.userId && getDisplaySeenUsers(mySeenMessages, messageArr, index, user?.userId)) && (
+                                                    <li key={i} ref={isCurrentUser ? tooltipRef : null}>
+                                                        <button
+                                                            onClick={() => showUserSeen(user?.userId)}
+                                                            className="user-avatar user-seen-avatar bg-purple border-0"
+                                                            style={{ background: `url(${user?.userId?.imagePath})` }}
+                                                        ></button>
+
+                                                        {isCurrentUser && (
+                                                            <div className="users_detail">
+                                                                {showingUser?.name}
+                                                            </div>
+                                                        )}
+                                                    </li>
+                                                );
+                                            })
+                                        )
+                                    ))}
+
+                                </ul>}
                             </div>
                         ))}
                     </div>
