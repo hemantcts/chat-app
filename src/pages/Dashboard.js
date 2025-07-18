@@ -4,12 +4,14 @@ import ChatRoom from '../components/ChatRoom'
 import Navbar from '../components/Navbar'
 import CreateGroup from '../components/CreateGroup'
 import { useLocation } from 'react-router-dom'
+import UserProfile from '../components/UserProfile'
 
 const Dashboard = () => {
     const { pathname } = useLocation();
 
     const isChat = pathname === '/dashboard/chat' || pathname === '/dashboard';
     const isCreateGroup = pathname === '/dashboard/users';
+    const isViewProfile = pathname === '/dashboard/profile';
 
     const page = (() => {
         if (pathname === '/dashboard/chat') return 'Chat Application';
@@ -33,6 +35,7 @@ const Dashboard = () => {
                         
                         {isChat && <ChatRoom />}
                         {isCreateGroup && <CreateGroup />}
+                        {isViewProfile && <UserProfile />}
 
                     </div>
                 </div>

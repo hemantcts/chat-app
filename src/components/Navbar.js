@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import socket from '../utils/socket';
+import { useProfileImageChanged } from '../context-api/OnlineUsersContext';
 
-const Navbar = ({page, pageHeading}) => {
+const Navbar = ({ page, pageHeading }) => {
+    const { profileImageChanged } = useProfileImageChanged();
+
     const navigate = useNavigate();
     const [userId, setUserId] = useState(null);
     const loggedInUser = JSON.parse(localStorage.getItem('userData'));
@@ -16,7 +19,7 @@ const Navbar = ({page, pageHeading}) => {
         }
 
         // eslint-disable-next-line
-    }, [])
+    }, [profileImageChanged])
 
     const verifyUser = async () => {
         const token = localStorage.getItem("token");
@@ -30,11 +33,15 @@ const Navbar = ({page, pageHeading}) => {
             const data = await response.json();
             console.log("auth_data", data);
             if (data.status) {
+                if (!data.userData.active) {
+                    localStorage.removeItem('token');
+                    navigate("/");
+                }
                 console.log("Authentication completed");
-                socket.emit('connectUser', {userId: data.userData._id});
+                socket.emit('connectUser', { userId: data.userData._id });
                 localStorage.setItem('userData', JSON.stringify(data.userData))
                 setUserId(data.userData._id);
-                
+
             }
             else {
                 localStorage.removeItem('token');
@@ -46,7 +53,7 @@ const Navbar = ({page, pageHeading}) => {
         }
     }
 
-    const handleLogout = ()=>{
+    const handleLogout = () => {
         socket.emit('disconnectUser', userId)
         localStorage.clear();
         navigate('/');
@@ -373,17 +380,18 @@ const Navbar = ({page, pageHeading}) => {
                             <li className="dropdown user-dropdown">
                                 <a href="#" className="dropdown-toggle mr-n1" data-bs-toggle="dropdown" aria-expanded="false">
                                     <div className="user-toggle">
-                                        <div className="user-avatar sm">
-                                            <em className="icon ni ni-user-alt"></em>
+                                        <div className="user-avatar sm" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${loggedInUser?.imagePath})` }}>
+                                            {/* <em className="icon ni ni-user-alt"></em> */}
+                                            {!loggedInUser?.imagePath && <span>{loggedInUser?.name?.slice(0, 2).toUpperCase()}</span>}
                                         </div>
                                     </div>
                                 </a>
-                                
+
                                 <div className="dropdown-menu dropdown-menu-md dropdown-menu-right">
                                     <div className="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
                                         <div className="user-card">
-                                            <div className="user-avatar">
-                                                <span>{loggedInUser?.name?.slice(0,2).toUpperCase()}</span>
+                                            <div className="user-avatar" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${loggedInUser?.imagePath})` }}>
+                                                {!loggedInUser?.imagePath && <span>{loggedInUser?.name?.slice(0, 2).toUpperCase()}</span>}
                                             </div>
                                             <div className="user-info">
                                                 <span className="lead-text">{loggedInUser?.name}</span>
@@ -391,14 +399,14 @@ const Navbar = ({page, pageHeading}) => {
                                             </div>
                                         </div>
                                     </div>
-                                    {/* <div className="dropdown-inner">
+                                    <div className="dropdown-inner">
                                         <ul className="link-list">
-                                            <li><a href="#"><em className="icon ni ni-user-alt"></em><span>View Profile</span></a></li>
-                                            <li><a href="#"><em className="icon ni ni-setting-alt"></em><span>Account Setting</span></a></li>
+                                            <li><Link to="/dashboard/profile"><em className="icon ni ni-user-alt"></em><span>View Profile</span></Link></li>
+                                            {/* <li><a href="#"><em className="icon ni ni-setting-alt"></em><span>Account Setting</span></a></li>
                                             <li><a href="#"><em className="icon ni ni-activity-alt"></em><span>Login Activity</span></a></li>
-                                            <li><a className="dark-switch" href="#"><em className="icon ni ni-moon"></em><span>Dark Mode</span></a></li>
+                                            <li><a className="dark-switch" href="#"><em className="icon ni ni-moon"></em><span>Dark Mode</span></a></li> */}
                                         </ul>
-                                    </div> */}
+                                    </div>
                                     <div className="dropdown-inner">
                                         <ul className="link-list">
                                             <li><a href="#" onClick={handleLogout}><em className="icon ni ni-signout"></em><span>Sign out</span></a></li>

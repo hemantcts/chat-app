@@ -81,7 +81,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
 
                 const members = groupDetails?.members?.map(member => member._id); // extract IDs
 
-                const filteredUsers = allUsers.filter(user => !members.includes(user._id));
+                const filteredUsers = allUsers.filter(user => !members.includes(user._id) && user.active);
                 console.log(members, groupDetails, filteredUsers)
 
                 setUsers(filteredUsers || []);
@@ -128,7 +128,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                 getGroupDetails();
 
                 const allUsers = users;
-                const filteredUsers = allUsers.filter(user => !members.includes(user._id));
+                const filteredUsers = allUsers.filter(user => !members.includes(user._id) && user.active);
                 // fetchUsers();
                 setUsers(filteredUsers);
             }
@@ -224,7 +224,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                         className="user-avatar md bg-purple group-image group-image-change"
                         style={{
                             backgroundImage: groupDetails?.groupImage
-                                ? `url(https://chat.quanteqsolutions.com/${groupDetails.groupImage})`
+                                ? `url(https://chat.quanteqsolutions.com/${groupDetails?.groupImage})`
                                 : 'none',
                         }}
                     >
@@ -290,8 +290,8 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                             {groupDetails?.members?.map((group, index) => (
                                 <li key={index} className={`chat-item`}>
                                     <div className="chat-link chat-open current" >
-                                        <div className="chat-media user-avatar bg-purple">
-                                            <span>{group?.name?.slice(0, 2).toUpperCase()}</span>
+                                        <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${group?.imagePath})` }}>
+                                            {!group?.imagePath && <span>{group?.name?.slice(0, 2).toUpperCase()}</span>}
                                             <span className={`status dot dot-lg ${onlineUsers[group._id] ? 'dot-success' : 'dot-gray'} `}></span>
                                         </div>
                                         <div className="chat-info">
@@ -330,8 +330,8 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                             {users.map((group, index) => (
                                 <li key={index} className={`chat-item`}>
                                     <div className="chat-link chat-open current" >
-                                        <div className="chat-media user-avatar bg-purple">
-                                            <span>{group?.name?.slice(0, 2).toUpperCase()}</span>
+                                        <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${group?.imagePath})` }}>
+                                            {!group?.imagePath && <span>{group?.name?.slice(0, 2).toUpperCase()}</span>}
                                             <span className={`status dot dot-lg ${onlineUsers[group._id] ? 'dot-success' : 'dot-gray'} `}></span>
                                         </div>
                                         <div className="chat-info">
@@ -387,8 +387,8 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                         {groupDetails?.members?.map((group, index) => (
                             <li key={index} className={`chat-item`}>
                                 <div className="chat-link chat-open current" >
-                                    <div className="chat-media user-avatar bg-purple">
-                                        <span>{group?.name?.slice(0, 2).toUpperCase()}</span>
+                                    <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${group?.imagePath})` }}>
+                                            {!group?.imagePath && <span>{group?.name?.slice(0, 2).toUpperCase()}</span>}
                                         <span className={`status dot dot-lg ${onlineUsers[group._id] ? 'dot-success' : 'dot-gray'} `}></span>
                                     </div>
                                     <div className="chat-info">

@@ -269,6 +269,10 @@
     .form-check-input {
         margin: 0;
     }
+
+    .form-check-input[type=checkbox] {
+        position: unset !important;
+    }
 }
 
 .chat-msg {
@@ -383,7 +387,7 @@
 }
 
 .user-seen-avatar {
-    font-size: 9px !important;
+    font-size: 7px !important;
     height: 12px !important;
     width: 12px !important;
 
@@ -414,7 +418,7 @@
 }
 
 
-.group-image{
+.group-image {
     background-size: contain !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
@@ -438,15 +442,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  
-  .cropper-container {
+}
+
+/* .cropper-container {
     background: white;
     padding: 20px;
     border-radius: 10px;
-  }
-  
-  .crop-controls {
+  } */
+
+.crop-controls {
 
     position: absolute;
     top: 75%;
@@ -454,14 +458,13 @@
     transform: translate(-50%, -50%);
     margin-top: 15px;
     text-align: center;
-  }
-  
-  .crop-controls button {
+}
+
+.crop-controls button {
     margin: 0 10px;
     padding: 8px 16px;
     cursor: pointer;
-  }
-  
+}
 
 
 
@@ -475,14 +478,13 @@
 
 
 
-
-  .user-avatar-wrapper {
+.user-avatar-wrapper {
     position: relative;
     width: fit-content;
     cursor: pointer;
-  }
-  
-  .user-avatar.group-image-change {
+}
+
+.user-avatar.group-image-change {
     background-size: cover;
     background-position: center;
     border-radius: 50%;
@@ -494,9 +496,9 @@
     justify-content: center;
     font-size: 24px;
     color: white;
-  }
-  
-  .avatar-hover-overlay {
+}
+
+.avatar-hover-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -511,17 +513,54 @@
     align-items: center;
     justify-content: center;
     transition: opacity 0.3s ease;
-  }
-  
-  .user-avatar-wrapper:hover .avatar-hover-overlay {
+}
+
+.user-avatar-wrapper:hover .avatar-hover-overlay {
     opacity: 1;
-  }
-  
-  .camera-icon {
+}
+
+.camera-icon {
     font-size: 18px;
-  }
-  
-  .hover-text {
+}
+
+.hover-text {
     font-size: 12px;
-  }
-  
+}
+
+
+
+.delete-btn {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #7B83EB;
+}
+
+.user-profile-image {
+    height: 280px !important;
+    width: 280px !important;
+}
+
+.user-avatar {
+    background-size: contain !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+.user-avatar2 {
+    font-size: 200px !important;
+    letter-spacing: 0 !important;
+}
+
+.rotate-it{
+    animation: rotate-animate 0.6s ease-in-out forwards;
+}
+
+@keyframes rotate-animate {
+    from{
+        transform: rotateY(0deg);
+    }
+    to{
+        transform: rotateY(360deg);
+    }
+}

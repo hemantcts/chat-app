@@ -109,12 +109,6 @@ const ChatBox = ({ userId, groupId }) => {
             const data = await response.json();
 
             if (data.status) {
-                // if (currentPage === 1) {
-                //     setMessageArr(data.messages);
-                // } else {
-                //     // prepend older messages
-                //     setMessageArr(prev => [...data.messages.reverse(), ...prev]);
-                // }
 
                 let newArr = [];
 
@@ -146,8 +140,6 @@ const ChatBox = ({ userId, groupId }) => {
             setIsLoading(false);
         }
     };
-
-
 
     const getUserDetails = async () => {
         try {
@@ -341,7 +333,7 @@ const ChatBox = ({ userId, groupId }) => {
 
             const { messages, byUserId } = data;
 
-            console.log("messages", messages)
+            // console.log("messages", messages)
             // let seenMessages = messages.filter(msg => msg?.senderId === loggedInUser?._id);
             setMySeenMessages(messages);
 
@@ -402,7 +394,7 @@ const ChatBox = ({ userId, groupId }) => {
             return false
         }
 
-        console.log(userId, loggedInUser?._id, 'here')
+        // console.log(userId, loggedInUser?._id, 'here')
 
         let messageArrId = messageArr[index]?._id;
 
@@ -439,6 +431,7 @@ const ChatBox = ({ userId, groupId }) => {
     // }, [messageArr]);
     const [isTyping, setIsTyping] = useState(false);
     const [typingSender, setTypingSender] = useState(false);
+    const [typingSenders, setTypingSenders] = useState([]);
 
     useEffect(() => {
         socket.on('show-typing', ({ senderId, senderDetails, isGroup }) => {
@@ -446,11 +439,29 @@ const ChatBox = ({ userId, groupId }) => {
                 setIsTyping(true);
                 setTypingSender(senderDetails);
             }
+            if (isGroup && senderId !== loggedInUser?._id) {
+                setTypingSenders((prevSenders) => {
+                    const alreadyExists = prevSenders.some(sender => sender.id === senderDetails.id); // or use _id based on your data
+                    if (!alreadyExists) {
+                        const updatedSenders = [...prevSenders, senderDetails];
+                        console.log(updatedSenders, 'typing');
+                        return updatedSenders;
+                    }
+                    return prevSenders;
+                });
+            }
         });
 
         socket.on('hide-typing', ({ senderId, isGroup }) => {
             if (!isGroup && senderId === userId) {
                 setIsTyping(false);
+            }
+            if (isGroup && senderId !== loggedInUser?._id) {
+                setTypingSenders((prevSenders) => {
+                    const updatedSenders = prevSenders.filter(sender => sender.id !== senderId); // or use _id
+                    console.log(updatedSenders, 'typing');
+                    return updatedSenders;
+                });
             }
         });
 
@@ -465,6 +476,7 @@ const ChatBox = ({ userId, groupId }) => {
     useEffect(() => {
         const handleReceiveMessage = (data) => {
             const newMessage = data.message;
+            console.log(newMessage)
             setMessageArr((prevMessages) => [...prevMessages, newMessage]);
             setMessageSent(true);
         };
@@ -614,7 +626,7 @@ const ChatBox = ({ userId, groupId }) => {
     const handleReply = (msgId, msgContent, senderName) => {
         setReply({ msgId, msgContent, senderName });
 
-        console.log(msgId, msgContent, senderName)
+        // console.log(msgId, msgContent, senderName)
 
         if (inputRef.current) {
             inputRef.current.focus();
@@ -763,8 +775,8 @@ const ChatBox = ({ userId, groupId }) => {
                                     {/* <div key={index} className={`chat ${false ? 'is-me' : 'is-you'}`}> */}
                                     {/* {msg?.senderDetails?.id !== loggedInUser._id && <div className="chat-avatar"> */}
                                     {msg?.senderDetails?.id !== loggedInUser._id && <div className={`chat-avatar ${getDisplayTime(index, messageArr) ? '' : 'mb-0'}`}>
-                                        <div className="user-avatar bg-purple">
-                                            <span>{msg?.senderDetails?.name?.slice(0, 2).toUpperCase()}</span>
+                                        <div className="user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com${msg?.senderDetails?.imagePath})` }}>
+                                            {!msg?.senderDetails?.imagePath && <span>{msg?.senderDetails?.name?.slice(0, 2).toUpperCase()}</span>}
                                             {/* <span>he</span> */}
                                         </div>
                                     </div>}
@@ -776,11 +788,13 @@ const ChatBox = ({ userId, groupId }) => {
 
                                         {msg?.senderDetails?.id === loggedInUser._id ? (
                                             msg?.replyTo && <ul className="chat-meta">
+                                                <li>{msg?.replyTo?.time}</li>
                                                 <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
                                             </ul>
                                         ) : (
                                             msg?.replyTo && <ul className="chat-meta">
                                                 <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
+                                                <li>{msg?.replyTo?.time}</li>
                                             </ul>
                                         )
                                         }
@@ -789,16 +803,10 @@ const ChatBox = ({ userId, groupId }) => {
                                                 msg?.replyTo && <div className="chat-bubble my-reply-bubble">
                                                     <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
                                                 </div>
-                                                // msg?.replyTo && <ul className="chat-meta">
-                                                //     <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
-                                                // </ul>
                                             ) : (
                                                 msg?.replyTo && <div className="chat-bubble user-reply-bubble">
                                                     <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
                                                 </div>
-                                                // msg?.replyTo && <ul className="chat-meta">
-                                                //     <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
-                                                // </ul>
                                             )
                                             }
                                             {msg.files && msg.files.length > 0 && <div className="chat-bubble">
@@ -913,8 +921,10 @@ const ChatBox = ({ userId, groupId }) => {
                                                         <button
                                                             onClick={() => showUserSeen(user?.userId)}
                                                             className="user-avatar user-seen-avatar bg-purple border-0"
-                                                            style={{ background: `url(${user?.userId?.imagePath})` }}
-                                                        ></button>
+                                                            style={{ backgroundImage: `url(https://chat.quanteqsolutions.com${user?.userId?.imagePath})` }}
+                                                        >
+                                                            {!user?.userId?.imagePath && <span>{user?.userId?.name?.slice(0, 2).toUpperCase()}</span>}
+                                                        </button>
 
                                                         {isCurrentUser && (
                                                             <div className="users_detail">
@@ -930,6 +940,37 @@ const ChatBox = ({ userId, groupId }) => {
                                 </ul>}
                             </div>
                         ))}
+
+                        {typingSenders.length > 0 && <div>
+                            {typingSenders.map((typingSender, index) => (
+                                <div key={index} className="chat is-you">
+                                    <div className={`chat-avatar mb-0`}>
+                                        <div className="user-avatar bg-purple">
+                                            <span>{typingSender?.name?.slice(0, 2).toUpperCase()}</span>
+                                            {/* <span>qw</span> */}
+                                        </div>
+                                    </div>
+                                    <div className="chat-content">
+                                        <div className="chat-bubbles">
+                                            <ul className="chat-meta">
+                                                <li>{typingSender?.name}</li>
+                                            </ul>
+                                            <div className="chat-bubble">
+                                                {/* <div className="chat-msg"> Thanks for inform. We just solved the issues. Please check now. </div> */}
+                                                <div className="chat-msg">
+                                                    <div class="typing">
+                                                        <div class="dot"></div>
+                                                        <div class="dot"></div>
+                                                        <div class="dot"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+
+                        </div>}
                     </div>
 
                     {!(Object.keys(reply).length === 0) && <div className="reply position-relative">
@@ -1045,8 +1086,8 @@ const ChatBox = ({ userId, groupId }) => {
                             </li>
                             <li className="nk-chat-head-user">
                                 <div className="user-card">
-                                    <div className="user-avatar bg-purple">
-                                        <span>{userDetails?.name?.slice(0, 2).toUpperCase()}</span>
+                                    <div className="user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com${userDetails?.imagePath})` }}>
+                                        {!userDetails?.imagePath && <span>{userDetails?.name?.slice(0, 2).toUpperCase()}</span>}
                                     </div>
                                     <div className="user-info">
                                         <div className="lead-text">{userDetails?.name}</div>
@@ -1103,8 +1144,8 @@ const ChatBox = ({ userId, groupId }) => {
 
                                     {/* <div key={index} className={`chat ${false ? 'is-me' : 'is-you'}`}> */}
                                     {msg?.senderDetails?.id !== loggedInUser._id && <div className={`chat-avatar ${getDisplayTime(index, messageArr) ? '' : 'mb-0'}`}>
-                                        <div className="user-avatar bg-purple">
-                                            <span>{msg?.senderDetails?.name?.slice(0, 2).toUpperCase()}</span>
+                                        <div className="user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com${msg?.senderDetails?.imagePath})` }}>
+                                            {!msg?.senderDetails?.imagePath && <span>{msg?.senderDetails?.name?.slice(0, 2).toUpperCase()}</span>}
                                             {/* <span>he</span> */}
                                         </div>
                                     </div>}
@@ -1114,11 +1155,13 @@ const ChatBox = ({ userId, groupId }) => {
 
                                         {msg?.senderDetails?.id === loggedInUser._id ? (
                                             msg?.replyTo && <ul className="chat-meta">
+                                                <li>{msg?.replyTo?.time}</li>
                                                 <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
                                             </ul>
                                         ) : (
                                             msg?.replyTo && <ul className="chat-meta">
                                                 <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
+                                                <li>{msg?.replyTo?.time}</li>
                                             </ul>
                                         )
                                         }
@@ -1127,16 +1170,10 @@ const ChatBox = ({ userId, groupId }) => {
                                                 msg?.replyTo && <div className="chat-bubble my-reply-bubble">
                                                     <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
                                                 </div>
-                                                // msg?.replyTo && <ul className="chat-meta">
-                                                //     <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
-                                                // </ul>
                                             ) : (
                                                 msg?.replyTo && <div className="chat-bubble user-reply-bubble">
                                                     <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
                                                 </div>
-                                                // msg?.replyTo && <ul className="chat-meta">
-                                                //     <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
-                                                // </ul>
                                             )
                                             }
                                             {msg.files && msg.files.length > 0 && <div className="chat-bubble">
@@ -1201,6 +1238,9 @@ const ChatBox = ({ userId, groupId }) => {
                                             </ul> */}
 
                                             </div>}
+                                            {msg?.senderDetails?.id !== loggedInUser?._id && <ul className="chat-meta">
+                                                <li>{msg?.senderDetails?.name}</li>
+                                            </ul>}
                                             {msg?.content && <div className="chat-bubble p-0">
                                                 <div className="chat-msg"> {msg?.content} </div>
 
@@ -1236,13 +1276,15 @@ const ChatBox = ({ userId, groupId }) => {
                         ))}
                         {isTyping && <div className="chat is-you">
                             <div className={`chat-avatar mb-0`}>
-                                <div className="user-avatar bg-purple">
-                                    <span>{typingSender?.name?.slice(0, 2).toUpperCase()}</span>
-                                    {/* <span>qw</span> */}
+                                <div className="user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com${typingSender?.imagePath})` }}>
+                                    {!typingSender?.imagePath && <span>{typingSender?.name?.slice(0, 2).toUpperCase()}</span>}
                                 </div>
                             </div>
                             <div className="chat-content">
                                 <div className="chat-bubbles">
+                                    <ul className="chat-meta">
+                                        <li>{typingSender?.name}</li>
+                                    </ul>
                                     <div className="chat-bubble">
                                         {/* <div className="chat-msg"> Thanks for inform. We just solved the issues. Please check now. </div> */}
                                         <div className="chat-msg">
@@ -1360,8 +1402,6 @@ const ChatBox = ({ userId, groupId }) => {
                             </li>
                         </ul>
                     </div>
-
-                    {/* {groupDetails && <InfoBar showDetails={showDetails} groupDetails={groupDetails} groupName={groupName} setGroupName={setGroupName} getGroupDetails={getGroupDetails} onlineUsers={onlineUsers} />} */}
                 </div>
             )
 

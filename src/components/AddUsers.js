@@ -16,6 +16,7 @@ const AddUsers = () => {
     groupCreateAccess: false,
     oneOnOneAccess: false,
     appAccess: false,
+    active: false,
   });
 
   const handleChange = (e) => {
@@ -53,6 +54,7 @@ const AddUsers = () => {
           groupCreateAccess: false,
           oneOnOneAccess: false,
           appAccess: false,
+          active: false
         });
         // Optional redirect:
         // navigate('/dashboard/users');
@@ -151,6 +153,14 @@ const AddUsers = () => {
               label="App Access"
               name="appAccess"
               checked={user.appAccess}
+              onChange={handleChange}
+            />
+            <Form.Check
+              id="active"
+              type="checkbox"
+              label="Active"
+              name="active"
+              checked={user.active}
               onChange={handleChange}
             />
           </Form.Group>

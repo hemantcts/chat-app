@@ -78,8 +78,8 @@ const AddMemberModal = ({ show, handleClose, onUserAdded, users, onlineUsers, ad
                                             onChange={() => handleCheckboxChange(user._id)}
                                         />
                                     </div>
-                                    <div className="chat-media user-avatar bg-purple">
-                                        <span>{user?.name?.slice(0, 2).toUpperCase()}</span>
+                                    <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${user?.imagePath})` }}>
+                                        {!user?.imagePath && <span>{user?.name?.slice(0, 2).toUpperCase()}</span>}
                                         <span className={`status dot dot-lg ${onlineUsers[user._id] ? 'dot-success' : 'dot-gray'}`}></span>
                                     </div>
                                     <div className="chat-info">

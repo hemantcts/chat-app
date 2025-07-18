@@ -41,11 +41,13 @@ import socket from './utils/socket';
 
 import { ToastContainer, toast } from 'react-toastify';
 
-import { OnlineUsersContext } from './context-api/OnlineUsersContext';
+import { OnlineUsersContext, ProfileImageChangedContext } from './context-api/OnlineUsersContext';
 
 
 
 import { getFcmToken, onMessageListener } from './firebase';
+import Register from './components/Register';
+import ForgotPassword from './components/ForgotPassword';
 
 // In your main App component or chat component
 
@@ -77,6 +79,7 @@ const App = () => {
   }, []);
 
   const [onlineUsers, setOnlineUsers] = useState({});
+  const [profileImageChanged, setProfileImageChanged] = useState(false);
 
   useEffect(() => {
     const user = localStorage.getItem('userData');
@@ -104,11 +107,15 @@ const App = () => {
 
   return (
     <OnlineUsersContext.Provider value={onlineUsers}>
-      <ToastContainer />
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/dashboard/*" element={<Dashboard />} />
-      </Routes>
+      <ProfileImageChangedContext.Provider value={{ profileImageChanged, setProfileImageChanged }}>
+        <ToastContainer />
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot_password" element={<ForgotPassword />} />
+          <Route path="/dashboard/*" element={<Dashboard />} />
+        </Routes>
+      </ProfileImageChangedContext.Provider>
     </OnlineUsersContext.Provider>
   );
 };
