@@ -155,7 +155,9 @@ const ForwardModal = ({ show, handleClose, onlineUsers, getPrivateRoomId, user, 
             }
         });
         setSelectedMessages([]);
-        // handleClose()
+        setSelectedIds([]);
+        setSelectedUsers([])
+        handleClose();
 
         // Toast.show({
         //     type: 'success',
@@ -176,13 +178,13 @@ const ForwardModal = ({ show, handleClose, onlineUsers, getPrivateRoomId, user, 
                 <div>
 
                     <div className='position-relative'>
-                        <Form.Check
+                        {/* <Form.Check
                             type="checkbox"
                             checked={selectAll}
                             label="Select All"
                             onChange={handleSelectAll}
                             
-                        />
+                        /> */}
                         {/* <div className="form-icon form-icon-left ms-3">
                             <em className="icon ni ni-search"></em>
                         </div>
