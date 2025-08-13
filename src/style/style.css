@@ -288,6 +288,9 @@ message-area
 .chat-area .modal-dialog-scrollable {
     height: 100% !important;
 }
+.modal-header {
+    align-items: center !important;
+}
 
 .chatbox {
     width: auto;
@@ -928,3 +931,7 @@ body {
     to {transform: translateY(-300vh);
     opacity: 0;}
   }
+
+
+
+  

@@ -166,9 +166,9 @@ const Chats = () => {
         socket.on('notification', ({ message }) => {
 
             if (message?.senderDetails?.id !== loggedInUser?._id) {
-                audio.play().catch(error => {
-                    console.error('Failed to play sound:', error);
-                });
+                // audio.play().catch(error => {
+                //     console.error('Failed to play sound:', error);
+                // });
             }
             fetchUsers();
             fetchGroups();
