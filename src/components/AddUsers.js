@@ -16,6 +16,7 @@ const AddUsers = () => {
     groupCreateAccess: false,
     oneOnOneAccess: false,
     appAccess: false,
+    deleteMessageAccess: false,
     active: false,
   });
 
@@ -54,6 +55,7 @@ const AddUsers = () => {
           groupCreateAccess: false,
           oneOnOneAccess: false,
           appAccess: false,
+          deleteMessageAccess: false,
           active: false
         });
         // Optional redirect:
@@ -116,6 +118,9 @@ const AddUsers = () => {
               <option value="sales">Sales</option>
               <option value="marketing">Marketing</option>
               <option value="management">Management</option>
+              <option value="driver">Driver</option>
+              <option value="jockey">Jockey</option>
+              <option value="contractor">Contractor</option>
             </Form.Control>
           </Form.Group>
 
@@ -148,11 +153,11 @@ const AddUsers = () => {
               onChange={handleChange}
             />
             <Form.Check
-              id="appAccess"
+              id="deleteMessageAccess"
               type="checkbox"
-              label="App Access"
-              name="appAccess"
-              checked={user.appAccess}
+              label="Delete Message Access"
+              name="deleteMessageAccess"
+              checked={user.deleteMessageAccess}
               onChange={handleChange}
             />
             <Form.Check

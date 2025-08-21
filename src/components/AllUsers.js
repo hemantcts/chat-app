@@ -56,6 +56,7 @@ const AllUsers = () => {
             groupCreateAccess: user.groupCreateAccess,
             oneOnOneAccess: user.oneOnOneAccess,
             appAccess: user.appAccess,
+            deleteMessageAccess: user.deleteMessageAccess,
             active: user.active
         });
     };
@@ -192,6 +193,7 @@ const AllUsers = () => {
                             <th>Create Group Access</th>
                             <th>One-on-One Chat Access</th>
                             <th>App Access</th>
+                            <th>Delete Message Access</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -203,6 +205,7 @@ const AllUsers = () => {
                                     <td><Skeleton /></td>
                                     <td><Skeleton /></td>
                                     <td><Skeleton width={170} /></td>
+                                    <td><Skeleton /></td>
                                     <td><Skeleton /></td>
                                     <td><Skeleton /></td>
                                     <td><Skeleton /></td>
@@ -271,6 +274,9 @@ const AllUsers = () => {
                                                 <option value="sales">Sales</option>
                                                 <option value="marketing">Marketing</option>
                                                 <option value="management">Management</option>
+                                                <option value="driver">Driver</option>
+                                                <option value="jockey">Jockey</option>
+                                                <option value="contractor">Contractor</option>
                                             </Form.Control>
                                         ) : (
                                             user.department
@@ -311,6 +317,18 @@ const AllUsers = () => {
                                             />
                                         ) : (
                                             user.appAccess ? 'Yes' : 'No'
+                                        )}
+                                    </td>
+                                    <td>
+                                        {editingUserId === user._id ? (
+                                            <Form.Check
+                                                type="checkbox"
+                                                name="deleteMessageAccess"
+                                                checked={formData.deleteMessageAccess}
+                                                onChange={handleInputChange}
+                                            />
+                                        ) : (
+                                            user.deleteMessageAccess ? 'Yes' : 'No'
                                         )}
                                     </td>
                                     <td>

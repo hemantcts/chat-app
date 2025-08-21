@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import socket from '../utils/socket';
 import { useProfileImageChanged } from '../context-api/OnlineUsersContext';
+import { removeFcmToken } from '../firebase';
 
 const Navbar = ({ page, pageHeading }) => {
     const { profileImageChanged } = useProfileImageChanged();
@@ -38,10 +39,9 @@ const Navbar = ({ page, pageHeading }) => {
                     navigate("/");
                 }
                 console.log("Authentication completed");
-                socket.emit('connectUser', { userId: data.userData._id });
+                // socket.emit('connectUser', { userId: data.userData._id });
                 localStorage.setItem('userData', JSON.stringify(data.userData))
                 setUserId(data.userData._id);
-
             }
             else {
                 localStorage.removeItem('token');
@@ -55,6 +55,7 @@ const Navbar = ({ page, pageHeading }) => {
 
     const handleLogout = () => {
         socket.emit('disconnectUser', userId)
+        removeFcmToken(userId);
         localStorage.clear();
         navigate('/');
     }

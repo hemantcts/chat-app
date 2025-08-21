@@ -551,6 +551,7 @@ const ChatBox = ({ userId, groupId }) => {
         if (filesArr.length > 0) {
             const formData = new FormData();
             filesArr.forEach((f) => {
+                console.log('files', f.file)
                 formData.append('files', f.file);
             });
 
@@ -785,19 +786,23 @@ const ChatBox = ({ userId, groupId }) => {
                                             is-you
                                         </div> */}
 
+                                        {msg?.senderDetails?.id !== loggedInUser?._id && <ul className="chat-meta">
+                                            <li style={{fontWeight: '500', fontSize: '14px'}}>{msg?.senderDetails?.name}</li>
+                                        </ul>}
 
                                         {msg?.senderDetails?.id === loggedInUser._id ? (
-                                            msg?.replyTo && <ul className="chat-meta">
+                                            msg?.replyTo && <ul className="chat-meta mt-0 mb-1">
                                                 <li>{msg?.replyTo?.time}</li>
                                                 <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
                                             </ul>
                                         ) : (
-                                            msg?.replyTo && <ul className="chat-meta">
+                                            msg?.replyTo && <ul className="chat-meta mt-0 mb-1">
                                                 <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
                                                 <li>{msg?.replyTo?.time}</li>
                                             </ul>
                                         )
                                         }
+                                        
                                         <div className="chat-bubbles">
                                             {msg?.senderDetails?.id === loggedInUser._id ? (
                                                 msg?.replyTo && <div className="chat-bubble my-reply-bubble">
@@ -871,9 +876,6 @@ const ChatBox = ({ userId, groupId }) => {
                                             </ul> */}
 
                                             </div>}
-                                            {msg?.senderDetails?.id !== loggedInUser?._id && <ul className="chat-meta">
-                                                <li>{msg?.senderDetails?.name}</li>
-                                            </ul>}
                                             {msg?.content && <div className="chat-bubble">
 
                                                 <div className="chat-msg"> {msg?.content} </div>
@@ -1153,13 +1155,17 @@ const ChatBox = ({ userId, groupId }) => {
 
                                     <div className="chat-content pt-0">
 
+                                        {msg?.senderDetails?.id !== loggedInUser?._id && <ul className="chat-meta">
+                                            <li style={{fontWeight: '500', fontSize: '14px'}}>{msg?.senderDetails?.name}</li>
+                                        </ul>}
+
                                         {msg?.senderDetails?.id === loggedInUser._id ? (
-                                            msg?.replyTo && <ul className="chat-meta">
+                                            msg?.replyTo && <ul className="chat-meta mt-0 mb-1">
                                                 <li>{msg?.replyTo?.time}</li>
                                                 <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
                                             </ul>
                                         ) : (
-                                            msg?.replyTo && <ul className="chat-meta">
+                                            msg?.replyTo && <ul className="chat-meta mt-0 mb-1">
                                                 <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
                                                 <li>{msg?.replyTo?.time}</li>
                                             </ul>
@@ -1238,9 +1244,6 @@ const ChatBox = ({ userId, groupId }) => {
                                             </ul> */}
 
                                             </div>}
-                                            {msg?.senderDetails?.id !== loggedInUser?._id && <ul className="chat-meta">
-                                                <li>{msg?.senderDetails?.name}</li>
-                                            </ul>}
                                             {msg?.content && <div className="chat-bubble p-0">
                                                 <div className="chat-msg"> {msg?.content} </div>
 

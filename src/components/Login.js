@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import socket from '../utils/socket';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; 
+import { getFcmToken } from '../firebase';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -31,11 +32,12 @@ const Login = () => {
       });
 
       const data = await response.json();
-
+      
       if (data.status) {
-        socket.emit('connectUser', { userId: data.user.id });
+        socket.emit('connectUser', { userId: data.user._id });
         localStorage.setItem('token', data.token);
         localStorage.setItem('userData', JSON.stringify(data.user));
+        getFcmToken(data.token);
         navigate('/dashboard/chat'); // redirect after login
       }
       else {

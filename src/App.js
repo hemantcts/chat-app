@@ -53,25 +53,9 @@ import ForgotPassword from './components/ForgotPassword';
 
 const App = () => {
   useEffect(() => {
-    const setupFcm = async () => {
-      const token = await getFcmToken();
-
-      if (token) {
-        // Send to your backend
-        fetch('https://chat.quanteqsolutions.com/api/user/save-fcm-token', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: localStorage.getItem('token') // or however you store JWT
-          },
-          body: JSON.stringify({ fcmToken: token }),
-        });
-      }
-    };
-
     Notification.requestPermission().then((permission) => {
       if (permission === 'granted') {
-        setupFcm();
+        localStorage.setItem('permissionEnabled', 'true');
       } else {
         console.warn('Notification permission denied');
       }
@@ -84,11 +68,13 @@ const App = () => {
   useEffect(() => {
     const user = localStorage.getItem('userData');
     if (user) {
+      console.info('app.js2')
       const userData = JSON.parse(user);
-      socket.emit('connectUser', { userId: userData.id });
+      socket.emit('connectUser', { userId: userData?._id });
     }
 
     socket.on('updateOnlineUsers', ({ onlineUsers }) => {
+      console.log('onlineUsers', onlineUsers);
       setOnlineUsers(onlineUsers);
     });
 
