@@ -153,6 +153,14 @@ const AddUsers = () => {
               onChange={handleChange}
             />
             <Form.Check
+              id="appAccess"
+              type="checkbox"
+              label="App Access"
+              name="appAccess"
+              checked={user.appAccess}
+              onChange={handleChange}
+            />
+            <Form.Check
               id="deleteMessageAccess"
               type="checkbox"
               label="Delete Message Access"

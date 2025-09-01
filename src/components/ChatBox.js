@@ -5,6 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import InfoBar from './InfoBar';
 import { useOnlineUsers } from '../context-api/OnlineUsersContext';
 import { useNavigate } from 'react-router-dom';
+import ConfirmModal from './ConfirmModal';
+import ForwardModal from './ForwardModal';
 
 const ChatBox = ({ userId, groupId }) => {
     const navigate = useNavigate()
@@ -34,6 +36,8 @@ const ChatBox = ({ userId, groupId }) => {
     const [reply, setReply] = useState({});
 
     const loggedInUser = JSON.parse(localStorage.getItem('userData'));
+
+    const [showModal, setShowModal] = useState(false);
 
     const getGroupDetails = async () => {
         let roomId = groupId;
@@ -475,16 +479,30 @@ const ChatBox = ({ userId, groupId }) => {
 
     useEffect(() => {
         const handleReceiveMessage = (data) => {
+            console.log('test forward', data)
+            // return
             const newMessage = data.message;
             console.log(newMessage)
             setMessageArr((prevMessages) => [...prevMessages, newMessage]);
             setMessageSent(true);
         };
 
+        const handleReceiveForwardMessage = (data) => {
+            // const currentConnectedRoom = connectedRoomRef.current;
+            console.log('test forward', data)
+
+            if (true) {
+                const newMessages = data.message;
+                setMessageArr((prevMessages) => [...prevMessages, ...newMessages]);
+            }
+        }
+
         socket.on('receive-message', handleReceiveMessage);
+        socket.on('receive-forward-message', handleReceiveForwardMessage);
 
         return () => {
             socket.off('receive-message', handleReceiveMessage);
+            socket.off('receive-forward-message', handleReceiveForwardMessage);
         };
     }, [])
 
@@ -622,6 +640,57 @@ const ChatBox = ({ userId, groupId }) => {
     }
 
 
+    const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+    const [selectedMessages, setSelectedMessages] = useState(null);
+
+
+    const showRemoveModal = (userId) => {
+        setSelectedMessages(userId);
+        setConfirmModalVisible(true);
+    };
+
+    const hideModal = () => {
+        setConfirmModalVisible(false);
+        setSelectedMessages(null);
+    };
+
+    const forwardMessage = (msg) => {
+        let messages = []
+        messages.push(msg)
+        setSelectedMessages(messages);
+        setShowModal(true);
+    }
+
+    const deleteMessages = async (id) => {
+
+        let messageIds = []
+
+        messageIds.push(selectedMessages);
+
+        try {
+            const response = await fetch(`https://chat.quanteqsolutions.com/api/messages/delete`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": localStorage.getItem('token')
+                },
+                body: JSON.stringify({ messageIds })
+            });
+            const data = await response.json();
+            console.log("deleted messages", data);
+            if (data.status) {
+                const updatedMessages = messageArr.filter(
+                    (msg) => !messageIds.includes(msg._id)
+                );
+                setMessageArr(updatedMessages);
+                setSelectedMessages(null);
+                hideModal();
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
 
 
     const handleReply = (msgId, msgContent, senderName) => {
@@ -787,7 +856,7 @@ const ChatBox = ({ userId, groupId }) => {
                                         </div> */}
 
                                         {msg?.senderDetails?.id !== loggedInUser?._id && <ul className="chat-meta">
-                                            <li style={{fontWeight: '500', fontSize: '14px'}}>{msg?.senderDetails?.name}</li>
+                                            <li >{msg?.senderDetails?.name}</li>
                                         </ul>}
 
                                         {msg?.senderDetails?.id === loggedInUser._id ? (
@@ -878,9 +947,18 @@ const ChatBox = ({ userId, groupId }) => {
                                             </div>}
                                             {msg?.content && <div className="chat-bubble">
 
-                                                <div className="chat-msg"> {msg?.content} </div>
+
+                                                <div className="chat-msg">
+                                                    {msg?.isForwarded && <ul className="chat-meta mb-1" style={{justifyContent: 'flex-start'}}>
+                                                        <li style={{ padding: '0 0.7rem', borderRadius: '25px', fontSize: '10px', backgroundColor: msg?.senderDetails?.id === loggedInUser._id ? '#fff' : '#3883F9', color: msg?.senderDetails?.id === loggedInUser._id ? '#3883F9' : '#fff' }}>Forwarded</li>
+                                                    </ul>}
+                                                    {msg?.content} </div>
                                                 <ul className="chat-msg-more">
                                                     <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name)}><em className="icon ni ni-reply-fill"></em></button></li>
+
+                                                    <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => forwardMessage(msg)}><em className="icon ni ni-share-fill"></em></button></li>
+
+                                                    <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => showRemoveModal(msg?._id)}><em className="icon ni ni-trash-fill"></em></button></li>
                                                     {/* <li>
                                                     <div className="dropdown">
                                                         <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
@@ -1156,7 +1234,7 @@ const ChatBox = ({ userId, groupId }) => {
                                     <div className="chat-content pt-0">
 
                                         {msg?.senderDetails?.id !== loggedInUser?._id && <ul className="chat-meta">
-                                            <li style={{fontWeight: '500', fontSize: '14px'}}>{msg?.senderDetails?.name}</li>
+                                            <li >{msg?.senderDetails?.name}</li>
                                         </ul>}
 
                                         {msg?.senderDetails?.id === loggedInUser._id ? (
@@ -1245,11 +1323,19 @@ const ChatBox = ({ userId, groupId }) => {
 
                                             </div>}
                                             {msg?.content && <div className="chat-bubble p-0">
-                                                <div className="chat-msg"> {msg?.content} </div>
+                                                <div className="chat-msg">
+                                                    {msg?.isForwarded && <ul className="chat-meta mb-1" style={{justifyContent: 'flex-start'}}>
+                                                        <li style={{ padding: '0 0.7rem', borderRadius: '25px', fontSize: '10px', backgroundColor: msg?.senderDetails?.id === loggedInUser._id ? '#fff' : '#3883F9', color: msg?.senderDetails?.id === loggedInUser._id ? '#3883F9' : '#fff' }}>Forwarded</li>
+                                                    </ul>}
+                                                    {msg?.content} </div>
 
 
                                                 <ul className="chat-msg-more">
                                                     <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name)}><em className="icon ni ni-reply-fill"></em></button></li>
+
+                                                    <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => forwardMessage(msg)}><em className="icon ni ni-share-fill"></em></button></li>
+
+                                                    <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => showRemoveModal(msg?._id)}><em className="icon ni ni-trash-fill"></em></button></li>
                                                     {/* <li>
                                                     <div className="dropdown">
                                                         <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
@@ -1409,6 +1495,24 @@ const ChatBox = ({ userId, groupId }) => {
             )
 
             }
+
+            <ForwardModal
+                show={showModal}
+                handleClose={() => setShowModal(false)}
+                onlineUsers={onlineUsers}
+                user={loggedInUser}
+                getPrivateRoomId={getPrivateRoomId}
+                selectedMessages={selectedMessages}
+                setSelectedMessages={setSelectedMessages}
+            />
+
+            <ConfirmModal
+                show={confirmModalVisible}
+                handleClose={hideModal}
+                onConfirm={deleteMessages}
+                title="Confirm Delete"
+                message="Are you sure you want to delete this message?"
+            />
         </>
     )
 }
