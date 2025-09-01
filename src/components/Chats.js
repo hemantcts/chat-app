@@ -6,6 +6,8 @@ import { useOnlineUsers } from '../context-api/OnlineUsersContext';
 import socket from '../utils/socket';
 import notificationSound from '../assets/sounds/notification_sound.wav'
 
+import parse, { domToReact } from "html-react-parser";
+
 const Chats = () => {
     const onlineUsers = useOnlineUsers();
     const location = useLocation();
@@ -222,6 +224,21 @@ const Chats = () => {
         navigate(`/dashboard/chat?chats`)
     }
 
+    const truncateHtml = (html, limit) => {
+        // Create a temporary element to strip HTML tags & get plain text
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = html;
+        const text = tempElement.textContent || tempElement.innerText || "";
+
+        // Truncate the plain text
+        let truncatedText = text;
+        if (text.length > limit) {
+            truncatedText = text.substring(0, limit) + "...";
+        }
+
+        return truncatedText;
+    };
+
     return (
         <div className="nk-chat-aside">
             <div className="nk-chat-aside-head">
@@ -418,7 +435,7 @@ const Chats = () => {
                                                     <span className="time">{group?.latestTimestamp}</span>
                                                 </div>
                                                 {<div className="chat-context">
-                                                    {group?.latestSenderId && <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${group?.latestSenderName} :`} {group?.latestMessage}</div>}
+                                                    {group?.latestSenderId && <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${group?.latestSenderName} :`} {parse(truncateHtml(group?.latestMessage || "", 20))}</div>}
                                                     {group?.unseenCount > 0 && <div className="status unread">{group?.unseenCount}</div>}
                                                     {/* <div className="status delivered">
                                                         <em className="icon ni ni-check-circle-fill"></em>
@@ -464,7 +481,7 @@ const Chats = () => {
                                                     <span className="time">{user?.latestTimestamp}</span>
                                                 </div>
                                                 <div className="chat-context">
-                                                    <div className="text">{user?.latestSenderId === loggedInUser?._id ? 'you :' : ''} {user?.latestMessage}</div>
+                                                    <div className="text">{user?.latestSenderId === loggedInUser?._id ? 'you :' : ''} {parse(truncateHtml(user?.latestMessage || "", 20))}</div>
                                                     {user?.unreadCount > 0 && <div className="status unread">{user?.unreadCount}</div>}
                                                     {/* <div className="status delivered">
                                                         <em className="icon ni ni-check-circle-fill"></em>

@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import ConfirmModal from './ConfirmModal';
 import ForwardModal from './ForwardModal';
 
+import parse, { domToReact } from "html-react-parser";
+
 const ChatBox = ({ userId, groupId }) => {
     const navigate = useNavigate()
     const chatPanelRef = useRef(null);
@@ -769,6 +771,81 @@ const ChatBox = ({ userId, groupId }) => {
         };
     }, []);
 
+    const options = {
+        replace: (domNode) => {
+            if (domNode.name === "a" && domNode.attribs?.href) {
+                const href = domNode.attribs.href;
+
+                return (
+                    <a
+                        href={href}
+                        style={{
+                            color: false ? "#fff" : "#1e90ff",
+                            textDecoration: "none",
+                            cursor: "pointer",
+                            fontWeight: 'bold'
+                        }}
+                        onClick={(e) => {
+                            e.preventDefault();
+
+                            if (href.startsWith("mention://")) {
+                                const userId = href.replace("mention://", "").replace("/", "");
+                                console.log("Mention clicked:", userId);
+
+                                if (userId !== loggedInUser._id) {
+                                    navigate(`/dashboard/chat?user=${userId}`);
+                                }
+                            } else {
+                                window.open(href, "_blank");
+                            }
+                        }}
+                    >
+                        {domToReact(domNode.children, options)}
+                    </a>
+                );
+            }
+
+            if (domNode.name === "b" || domNode.name === "strong") {
+                return (
+                    <span style={{ fontWeight: "bold" }}>
+                        {domToReact(domNode.children, options)}
+                    </span>
+                );
+            }
+
+            if (domNode.name === "i") {
+                return (
+                    <span style={{ fontStyle: "italic" }}>
+                        {domToReact(domNode.children, options)}
+                    </span>
+                );
+            }
+
+            if (domNode.name === "u") {
+                return (
+                    <span style={{ textDecoration: "underline" }}>
+                        {domToReact(domNode.children, options)}
+                    </span>
+                );
+            }
+        },
+    };
+
+    const truncateHtml = (html, limit) => {
+        // Create a temporary element to strip HTML tags & get plain text
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = html;
+        const text = tempElement.textContent || tempElement.innerText || "";
+
+        // Truncate the plain text
+        let truncatedText = text;
+        if (text.length > limit) {
+            truncatedText = text.substring(0, limit) + "...";
+        }
+
+        return truncatedText;
+    };
+
 
     return (
         <>
@@ -871,15 +948,15 @@ const ChatBox = ({ userId, groupId }) => {
                                             </ul>
                                         )
                                         }
-                                        
+
                                         <div className="chat-bubbles">
                                             {msg?.senderDetails?.id === loggedInUser._id ? (
                                                 msg?.replyTo && <div className="chat-bubble my-reply-bubble">
-                                                    <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
+                                                    <div className="chat-msg reply-chat-msg"> {parse(truncateHtml(msg?.replyTo?.msgContent || "", 20))} </div>
                                                 </div>
                                             ) : (
                                                 msg?.replyTo && <div className="chat-bubble user-reply-bubble">
-                                                    <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
+                                                    <div className="chat-msg reply-chat-msg"> {parse(truncateHtml(msg?.replyTo?.msgContent || "", 20))} </div>
                                                 </div>
                                             )
                                             }
@@ -949,10 +1026,11 @@ const ChatBox = ({ userId, groupId }) => {
 
 
                                                 <div className="chat-msg">
-                                                    {msg?.isForwarded && <ul className="chat-meta mb-1" style={{justifyContent: 'flex-start'}}>
+                                                    {msg?.isForwarded && <ul className="chat-meta mb-1" style={{ justifyContent: 'flex-start' }}>
                                                         <li style={{ padding: '0 0.7rem', borderRadius: '25px', fontSize: '10px', backgroundColor: msg?.senderDetails?.id === loggedInUser._id ? '#fff' : '#3883F9', color: msg?.senderDetails?.id === loggedInUser._id ? '#3883F9' : '#fff' }}>Forwarded</li>
                                                     </ul>}
-                                                    {msg?.content} </div>
+                                                    {parse(msg?.content || "", options)}
+                                                </div>
                                                 <ul className="chat-msg-more">
                                                     <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name)}><em className="icon ni ni-reply-fill"></em></button></li>
 
@@ -1056,7 +1134,7 @@ const ChatBox = ({ userId, groupId }) => {
                     {!(Object.keys(reply).length === 0) && <div className="reply position-relative">
                         <div className='reply-sender'>Replying to <span style={{ fontWeight: '500' }}>{reply?.senderName !== loggedInUser?.name ? reply?.senderName : 'yourself'}</span></div>
                         <div className="reply-message">
-                            {reply?.msgContent}
+                            {parse(truncateHtml(reply?.msgContent || "", 20))}
                         </div>
 
                         <button className='btn btn-icon btn-sm btn-trigger position-absolute' style={{ top: '0.7rem', right: '1.25rem' }} onClick={() => setReply({})}>
@@ -1252,11 +1330,13 @@ const ChatBox = ({ userId, groupId }) => {
                                         <div className="chat-bubbles">
                                             {msg?.senderDetails?.id === loggedInUser._id ? (
                                                 msg?.replyTo && <div className="chat-bubble my-reply-bubble">
-                                                    <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
+                                                    <div className="chat-msg reply-chat-msg">
+                                                        {parse(truncateHtml(msg?.replyTo?.msgContent || "", 20))}
+                                                    </div>
                                                 </div>
                                             ) : (
                                                 msg?.replyTo && <div className="chat-bubble user-reply-bubble">
-                                                    <div className="chat-msg reply-chat-msg"> {msg?.replyTo?.msgContent} </div>
+                                                    <div className="chat-msg reply-chat-msg"> {parse(truncateHtml(msg?.replyTo?.msgContent || "", 20))} </div>
                                                 </div>
                                             )
                                             }
@@ -1324,10 +1404,11 @@ const ChatBox = ({ userId, groupId }) => {
                                             </div>}
                                             {msg?.content && <div className="chat-bubble p-0">
                                                 <div className="chat-msg">
-                                                    {msg?.isForwarded && <ul className="chat-meta mb-1" style={{justifyContent: 'flex-start'}}>
+                                                    {msg?.isForwarded && <ul className="chat-meta mb-1" style={{ justifyContent: 'flex-start' }}>
                                                         <li style={{ padding: '0 0.7rem', borderRadius: '25px', fontSize: '10px', backgroundColor: msg?.senderDetails?.id === loggedInUser._id ? '#fff' : '#3883F9', color: msg?.senderDetails?.id === loggedInUser._id ? '#3883F9' : '#fff' }}>Forwarded</li>
                                                     </ul>}
-                                                    {msg?.content} </div>
+                                                    {parse(msg?.content || "", options)}
+                                                </div>
 
 
                                                 <ul className="chat-msg-more">
@@ -1392,7 +1473,7 @@ const ChatBox = ({ userId, groupId }) => {
                     {!(Object.keys(reply).length === 0) && <div className="reply position-relative">
                         <div className='reply-sender'>Replying to <span style={{ fontWeight: '500' }}>{reply?.senderName !== loggedInUser?.name ? reply?.senderName : 'yourself'}</span></div>
                         <div className="reply-message">
-                            {reply?.msgContent}
+                            {parse(truncateHtml(reply?.msgContent || "", 20))}
                         </div>
 
                         <button className='btn btn-icon btn-sm btn-trigger position-absolute' style={{ top: '0.7rem', right: '1.25rem' }} onClick={() => setReply({})}>
