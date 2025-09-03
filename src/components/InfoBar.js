@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import AddMemberModal from './AddMemberModal';
 import ImageCropperModal from './ImageCropperModal';
+import ConfirmModal from './ConfirmModal';
 
 const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGroupName, getGroupDetails, onlineUsers }) => {
     const [isEditing, setIsEditing] = useState(false);
@@ -142,9 +143,23 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
         }
     }
 
+    const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+    const [selectedMessages, setSelectedMessages] = useState(null);
+
+
+    const showRemoveModal = (member) => {
+        setSelectedMessages(member);
+        setConfirmModalVisible(true);
+    };
+
+    const hideModal = () => {
+        setConfirmModalVisible(false);
+        setSelectedMessages(null);
+    };
+
     const removeMembers = async (member) => {
         let arr = [];
-        arr.push(member);
+        arr.push(selectedMessages);
         try {
             const res = await fetch('https://chat.quanteqsolutions.com/api/groups/remove-members', {
                 method: 'PUT',
@@ -157,7 +172,8 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
             const data = await res.json();
 
             if (data.status) {
-                toast.success(data.message || 'member removed!');
+                // toast.success(data.message || 'member removed successfully');
+                toast.success('member removed successfully');
                 getGroupDetails();
             }
             else {
@@ -168,6 +184,8 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
             console.error(err);
             // setLoading(false);
         }
+
+        hideModal();
     }
 
     const handleRouteClick = () => {
@@ -312,7 +330,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                                             <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
                                             <div className="dropdown-menu dropdown-menu-right">
                                                 <ul className="link-list-opt no-bdr">
-                                                    {loggedInUser?.role === 1 && <li><a href="#" onClick={() => removeMembers(group._id)}>Remove Member</a></li>}
+                                                    {loggedInUser?.role === 1 && <li><a href="#" onClick={() => showRemoveModal(group._id)}>Remove Member</a></li>}
                                                     <li><Link to={`/dashboard/chat?user=${group._id}`} onClick={handleRouteClick}>Start Chat</Link></li>
                                                 </ul>
                                             </div>
@@ -388,7 +406,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                             <li key={index} className={`chat-item`}>
                                 <div className="chat-link chat-open current" >
                                     <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${group?.imagePath})` }}>
-                                            {!group?.imagePath && <span>{group?.name?.slice(0, 2).toUpperCase()}</span>}
+                                        {!group?.imagePath && <span>{group?.name?.slice(0, 2).toUpperCase()}</span>}
                                         <span className={`status dot dot-lg ${onlineUsers[group._id] ? 'dot-success' : 'dot-gray'} `}></span>
                                     </div>
                                     <div className="chat-info">
@@ -409,7 +427,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                                         <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
                                         <div className="dropdown-menu dropdown-menu-right">
                                             <ul className="link-list-opt no-bdr">
-                                                {(loggedInUser?.role === 1 || loggedInUser?.groupCreateAccess) && <li><a href="#" onClick={() => removeMembers(group._id)}>Remove Member</a></li>}
+                                                {(loggedInUser?.role === 1 || loggedInUser?.groupCreateAccess) && <li><a href="#" onClick={() => showRemoveModal(group._id)}>Remove Member</a></li>}
                                                 {(loggedInUser?.role === 1 || loggedInUser?.oneOnOneAccess) && <li><Link to={`/dashboard/chat?user=${group._id}`} onClick={handleRouteClick}>Start Chat</Link></li>}
                                             </ul>
                                         </div>
@@ -496,6 +514,14 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                 onlineUsers={onlineUsers}
                 addMembers={addMembers}
                 loggedInUser={loggedInUser}
+            />
+
+             <ConfirmModal
+                show={confirmModalVisible}
+                handleClose={hideModal}
+                onConfirm={removeMembers}
+                title="Confirm Remove Member"
+                message="Are you sure you want to remove this member?"
             />
 
         </div>

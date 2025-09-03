@@ -18,9 +18,12 @@ const ConfirmModal = ({ show, handleClose, onConfirm, title, message }) => {
                 <Button variant="secondary" onClick={handleClose}>
                     Cancel
                 </Button>
-                <Button variant="danger" onClick={onConfirm}>
+                {title !== 'Confirm Remove Member' && <Button variant="danger" onClick={onConfirm}>
                     Delete
-                </Button>
+                </Button>}
+                {title === 'Confirm Remove Member' && <Button variant="danger" onClick={onConfirm}>
+                    Remove
+                </Button>}
             </Modal.Footer>
         </Modal>
     );

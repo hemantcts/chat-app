@@ -1,9 +1,17 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 // import '../assets/images'
 
 const Sidebar = () => {
     const loggedInUser = JSON.parse(localStorage.getItem('userData'));
+
+    const { pathname } = useLocation();
+
+    const page = (() => {
+        if (pathname === '/dashboard/users') return 'users';
+        return 'Dashboard';
+    })();
+
 
     return (
 
@@ -47,14 +55,14 @@ const Sidebar = () => {
                                     </a>
                                 </li> */}
                                 {/* <li className="nk-menu-hr"></li> */}
-                                <li className="nk-menu-item">
+                                <li className={`nk-menu-item ${page==='users' ? 'active' : ''}`}>
                                     {/* <a href="html/apps/mailbox.html" className="nk-menu-link" title="Mailbox">
                                         <span className="nk-menu-icon"><em className="icon ni ni-inbox"></em></span>
                                     </a> */}
 
-                                    {loggedInUser?.role === 1 && <Link to="/dashboard/users" className="nk-menu-link" title="Users">
+                                    {loggedInUser?.role === 1 && <Link to="/dashboard/users" className="nk-menu-link active" title="Users">
                                         <span className="nk-menu-icon">
-                                            <em className="icon ni ni-inbox"></em>
+                                            <em className="icon ni ni-user"></em>
                                         </span>
                                     </Link>}
                                 </li>
@@ -68,7 +76,7 @@ const Sidebar = () => {
                                         <span className="nk-menu-icon"><em className="icon ni ni-folder"></em></span>
                                     </a>
                                 </li> */}
-                                <li className="nk-menu-item">
+                                <li className={`nk-menu-item ${page!=='users' ? 'active' : ''}`}>
                                     {/* <a href="html/apps/chats.html" className="nk-menu-link" title="Chats">
                                         <span className="nk-menu-icon"><em className="icon ni ni-chat-circle"></em></span>
                                     </a> */}

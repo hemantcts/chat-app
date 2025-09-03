@@ -122,7 +122,7 @@ const UserProfile = () => {
             <div className="nk-content-inner">
                 <div className="nk-content-body">
                     <div className="nk-chat">
-                        <div className='nk-chat-aside'>
+                        {/* <div className='nk-chat-aside'>
                             <div className="nk-chat-aside-head">
                                 {userData?.imagePath ? (
                                     <div className={`chat-media user-avatar bg-purple group-image user-profile-image ${isLoading ? 'rotate-it' : ''}`} style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${userData?.imagePath})` }}></div>
@@ -163,7 +163,7 @@ const UserProfile = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                         <div className="nk-chat-body profile-shown p-4">
                             <div className="row">
 

@@ -7,6 +7,7 @@ import socket from '../utils/socket';
 import notificationSound from '../assets/sounds/notification_sound.wav'
 
 import parse, { domToReact } from "html-react-parser";
+import ConfirmModal from './ConfirmModal';
 
 const Chats = () => {
     const onlineUsers = useOnlineUsers();
@@ -187,6 +188,22 @@ const Chats = () => {
         getUser();
     }, [selectedUserId, selectedGroupId]);
 
+
+
+    const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+    const [selectedMessages, setSelectedMessages] = useState(null);
+
+
+    const showRemoveModal = (groupId) => {
+        setSelectedMessages(groupId);
+        setConfirmModalVisible(true);
+    };
+
+    const hideModal = () => {
+        setConfirmModalVisible(false);
+        setSelectedMessages(null);
+    };
+
     const handleDelete = async (groupId) => {
         if (!loggedInUser?.groupCreateAccess && loggedInUser?.role !== 1) {
             toast.error("You don't have access")
@@ -194,7 +211,7 @@ const Chats = () => {
         }
 
         try {
-            const res = await fetch(`https://chat.quanteqsolutions.com/api/groups/delete/${groupId}`, {
+            const res = await fetch(`https://chat.quanteqsolutions.com/api/groups/delete/${selectedMessages}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': localStorage.getItem('token')
@@ -215,6 +232,8 @@ const Chats = () => {
             console.error(err);
             // setLoading(false);
         }
+
+        hideModal();
     }
 
     const handleChangeGroup = () => {
@@ -413,7 +432,7 @@ const Chats = () => {
                     {groupEnable ? (
                         <ul className="chat-list">
                             {groups.length === 0 ? (
-                                <div className='d-flex justify-content-center mt-4'>Not added in group yet</div>
+                                <div className='d-flex justify-content-center mt-4'>Not added in any group yet</div>
                             ) : (
                                 groups.map((group, index) => (
                                     <li key={index} className={`chat-item ${selectedGroupId === group._id ? 'active' : ''} ${group?.unseenCount > 0 ? 'is-unread' : ''}`}>
@@ -448,7 +467,7 @@ const Chats = () => {
                                                 <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
                                                 <div className="dropdown-menu dropdown-menu-right">
                                                     <ul className="link-list-opt no-bdr">
-                                                        <li><button className='btn' onClick={() => handleDelete(group?._id)}>Delete Group</button></li>
+                                                        <li><button className='btn' onClick={() => showRemoveModal(group?._id)}>Delete Group</button></li>
                                                         {/* <li><a href="#">Hide Conversion</a></li>
                                                         <li><a href="#">Delete Conversion</a></li>
                                                         <li className="divider"></li>
@@ -513,6 +532,14 @@ const Chats = () => {
                     }
                 </div>
             </div>
+
+            <ConfirmModal
+                show={confirmModalVisible}
+                handleClose={hideModal}
+                onConfirm={handleDelete}
+                title="Confirm Group Delete"
+                message="Are you sure you want to delete this Group?"
+            />
         </div>
     )
 }
