@@ -167,14 +167,17 @@ const Chats = () => {
     useEffect(() => {
         const audio = new Audio(notificationSound);
         socket.on('notification', ({ message }) => {
-
-            if (message?.senderDetails?.id !== loggedInUser?._id) {
-                // audio.play().catch(error => {
-                //     console.error('Failed to play sound:', error);
-                // });
-            }
             fetchUsers();
             fetchGroups();
+
+            console.log('mef' ,message)
+            console.log('test', message?.receiverId, loggedInUser?._id)
+            if (message?.receiverId === loggedInUser?._id) {
+                console.log('test', message?.receiverId, loggedInUser?._id)
+                audio.play().catch(error => {
+                    console.error('Failed to play sound:', error);
+                });
+            }
         })
     }, [])
 
@@ -244,12 +247,23 @@ const Chats = () => {
     }
 
     const truncateHtml = (html, limit) => {
-        // Create a temporary element to strip HTML tags & get plain text
+        // Convert line breaks and </div> into spaces
+        let clean = html
+            .replace(/\n/g, " ")
+            .replace(/<\/div>/gi, " ");
+
+        // Remove markdown-like symbols (*, _, //)
+        clean = clean
+            .replace(/\*+/g, "")   // remove *
+            .replace(/_+/g, "")    // remove _
+            .replace(/\/{2}/g, ""); // remove //
+
+        // Strip HTML tags to plain text
         const tempElement = document.createElement("div");
-        tempElement.innerHTML = html;
+        tempElement.innerHTML = clean;
         const text = tempElement.textContent || tempElement.innerText || "";
 
-        // Truncate the plain text
+        // Truncate
         let truncatedText = text;
         if (text.length > limit) {
             truncatedText = text.substring(0, limit) + "...";

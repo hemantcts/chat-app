@@ -15,7 +15,6 @@ import Editor from "draft-js-plugins-editor";
 import createMentionPlugin from "@draft-js-plugins/mention";
 import "@draft-js-plugins/mention/lib/plugin.css";
 import "@draft-js-plugins/static-toolbar/lib/plugin.css";
-import { stateToHTML } from 'draft-js-export-html';
 
 
 import createToolbarPlugin from "@draft-js-plugins/static-toolbar";
@@ -89,14 +88,12 @@ const ChatBox = ({ userId, groupId }) => {
 
             const data = await response.json();
 
-            console.log('group', data)
-
             if (data.status) {
                 setGroupDetails(data.group);
                 setGroupName(data.group.name);
                 getGroupMessages(roomId);
                 setMentions(data?.group?.members);
-                setSuggestions(data?.group?.members.filter(member => member._id !== loggedInUser._id));
+                // setSuggestions(data?.group?.members.filter(member => member.userId._id !== loggedInUser._id));
             }
             else {
                 // toast.error(data.message || 'error!');
@@ -596,24 +593,6 @@ const ChatBox = ({ userId, groupId }) => {
         }
     };
 
-    const options2 = {
-        entityStyleFn: (entity) => {
-            const entityType = entity.get('type').toLowerCase();
-            if (entityType === 'mention') {
-                const data = entity.getData();
-                return {
-                    element: 'a',
-                    attributes: {
-                        href: `mention://${data.mention?._id}`,   // 👈 custom href logic
-                        class: 'mentioned',
-                        contenteditable: "false",
-                        "data-mention-id": data.mention?._id,
-                    },
-                };
-            }
-        },
-    };
-
 
     const sendMessage = async () => {
         if (!message.trim() && filesArr.length === 0) {
@@ -691,7 +670,6 @@ const ChatBox = ({ userId, groupId }) => {
 
         // Update state
         // setMessageArr((prevMessages) => [...prevMessages, newMessage]);
-        setEditorState(EditorState.createEmpty());
         setMessage('');
         setFilesArr([]);
         setReply({});
@@ -842,120 +820,67 @@ const ChatBox = ({ userId, groupId }) => {
         // .replace(/<\/div>/gi, '<br/>');
     };
 
-    const getOptions = (msg) => ({
-        replace: (domNode) => {
-            if (domNode.name === "a" && domNode.attribs?.href) {
-                const href = domNode.attribs.href;
-
-                return (
-                    <a
-                        href={href}
-                        style={{
-                            color: groupId ? msg?.senderDetails?.id !== loggedInUser._id ? "#1e90ff" : "unset" : "unset",
-                            textDecoration: "none",
-                            cursor: groupId ? "pointer" : "default",
-                            fontWeight: groupId && "bold",
-                        }}
-                        onClick={(e) => {
-                            e.preventDefault();
-
-                            if (href.startsWith("mention://") && groupId) {
-                                const userId = href.replace("mention://", "").replace("/", "");
-                                console.log("Mention clicked:", userId);
-
-                                if (userId !== loggedInUser._id) {
-                                    navigate(`/dashboard/chat?user=${userId}`);
-                                }
-                            } else {
-                                if (!href.startsWith("mention://")) {
-                                    window.open(href, "_blank");
-                                }
-                            }
-                        }}
-                    >
-                        {domToReact(domNode.children, getOptions(msg))}
-                    </a>
-                );
-            }
-
-            if (domNode.name === "b" || domNode.name === "strong") {
-                return <span style={{ fontWeight: "bold" }}>{domToReact(domNode.children, getOptions(msg))}</span>;
-            }
-
-            if (domNode.name === "i") {
-                return <span style={{ fontStyle: "italic" }}>{domToReact(domNode.children, getOptions(msg))}</span>;
-            }
-
-            if (domNode.name === "u") {
-                return <span style={{ textDecoration: "underline" }}>{domToReact(domNode.children, getOptions(msg))}</span>;
-            }
-        },
-    });
-
-
     const options = {
-        replace: (domNode) => {
-            if (domNode.name === "a" && domNode.attribs?.href) {
-                const href = domNode.attribs.href;
-
-                const userId = href.replace("mention://", "").replace("/", "");
-
-                return (
-                    <a
-                        href={href}
-                        style={{
-                            color: "unset",
-                            textDecoration: "none",
-                            cursor: groupId ? "pointer" : "default",
-                            fontWeight: groupId && 'bold'
-                        }}
-                        onClick={(e) => {
-                            e.preventDefault();
-
-                            if (href.startsWith("mention://") && groupId) {
-                                const userId = href.replace("mention://", "").replace("/", "");
-                                console.log("Mention clicked:", userId);
-
-                                if (userId !== loggedInUser._id) {
-                                    navigate(`/dashboard/chat?user=${userId}`);
+            replace: (domNode) => {
+                if (domNode.name === "a" && domNode.attribs?.href) {
+                    const href = domNode.attribs.href;
+    
+                    return (
+                        <a
+                            href={href}
+                            style={{
+                                color: groupId ? "#1e90ff" : "unset",
+                                textDecoration: "none",
+                                cursor: groupId ? "pointer" : "default",
+                                fontWeight: groupId && 'bold'
+                            }}
+                            onClick={(e) => {
+                                e.preventDefault();
+    
+                                if (href.startsWith("mention://") && groupId) {
+                                    const userId = href.replace("mention://", "").replace("/", "");
+                                    console.log("Mention clicked:", userId);
+    
+                                    if (userId !== loggedInUser._id) {
+                                        navigate(`/dashboard/chat?user=${userId}`);
+                                    }
+                                } else {
+                                    if(!href.startsWith("mention://")){
+                                        window.open(href, "_blank");
+                                    }
                                 }
-                            } else {
-                                if (!href.startsWith("mention://")) {
-                                    window.open(href, "_blank");
-                                }
-                            }
-                        }}
-                    >
-                        {domToReact(domNode.children, options)}
-                    </a>
-                );
-            }
-
-            if (domNode.name === "b" || domNode.name === "strong") {
-                return (
-                    <span style={{ fontWeight: "bold" }}>
-                        {domToReact(domNode.children, options)}
-                    </span>
-                );
-            }
-
-            if (domNode.name === "i") {
-                return (
-                    <span style={{ fontStyle: "italic" }}>
-                        {domToReact(domNode.children, options)}
-                    </span>
-                );
-            }
-
-            if (domNode.name === "u") {
-                return (
-                    <span style={{ textDecoration: "underline" }}>
-                        {domToReact(domNode.children, options)}
-                    </span>
-                );
-            }
-        },
-    };
+                            }}
+                        >
+                            {domToReact(domNode.children, options)}
+                        </a>
+                    );
+                }
+    
+                if (domNode.name === "b" || domNode.name === "strong") {
+                    return (
+                        <span style={{ fontWeight: "bold" }}>
+                            {domToReact(domNode.children, options)}
+                        </span>
+                    );
+                }
+    
+                if (domNode.name === "i") {
+                    return (
+                        <span style={{ fontStyle: "italic" }}>
+                            {domToReact(domNode.children, options)}
+                        </span>
+                    );
+                }
+    
+                if (domNode.name === "u") {
+                    return (
+                        <span style={{ textDecoration: "underline" }}>
+                            {domToReact(domNode.children, options)}
+                        </span>
+                    );
+                }
+            },
+        };
 
     const truncateHtml = (html, limit) => {
         // Convert line breaks and </div> into spaces
@@ -1167,7 +1092,7 @@ const ChatBox = ({ userId, groupId }) => {
                                                     {msg?.isForwarded && <ul className="chat-meta mb-1" style={{ justifyContent: 'flex-start' }}>
                                                         <li style={{ padding: '0 0.7rem', borderRadius: '25px', fontSize: '10px', backgroundColor: msg?.senderDetails?.id === loggedInUser._id ? '#fff' : '#3883F9', color: msg?.senderDetails?.id === loggedInUser._id ? '#3883F9' : '#fff' }}>Forwarded</li>
                                                     </ul>}
-                                                    {parse(markdownToHtml(msg?.content) || "", getOptions(msg))}
+                                                    {parse(markdownToHtml(msg?.content) || "", options)}
                                                 </div>
                                                 <ul className="chat-msg-more">
                                                     <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name)}><em className="icon ni ni-reply-fill"></em></button></li>
@@ -1256,10 +1181,10 @@ const ChatBox = ({ userId, groupId }) => {
                                             <div className="chat-bubble">
                                                 {/* <div className="chat-msg"> Thanks for inform. We just solved the issues. Please check now. </div> */}
                                                 <div className="chat-msg">
-                                                    <div className="typing">
-                                                        <div className="dot"></div>
-                                                        <div className="dot"></div>
-                                                        <div className="dot"></div>
+                                                    <div class="typing">
+                                                        <div class="dot"></div>
+                                                        <div class="dot"></div>
+                                                        <div class="dot"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1278,7 +1203,7 @@ const ChatBox = ({ userId, groupId }) => {
                         </div>
 
                         <button className='btn btn-icon btn-sm btn-trigger position-absolute' style={{ top: '0.7rem', right: '1.25rem' }} onClick={() => setReply({})}>
-                            <svg className="svg-icon" style={{ width: '1em', height: '1em', verticalAlign: 'middle', fill: 'currentColor', overflow: 'hidden', }} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                            <svg class="svg-icon" style={{ width: '1em', height: '1em', verticalAlign: 'middle', fill: 'currentColor', overflow: 'hidden', }} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M810.65984 170.65984q18.3296 0 30.49472 12.16512t12.16512 30.49472q0 18.00192-12.32896 30.33088l-268.67712 268.32896 268.67712 268.32896q12.32896 12.32896 12.32896 30.33088 0 18.3296-12.16512 30.49472t-30.49472 12.16512q-18.00192 0-30.33088-12.32896l-268.32896-268.67712-268.32896 268.67712q-12.32896 12.32896-30.33088 12.32896-18.3296 0-30.49472-12.16512t-12.16512-30.49472q0-18.00192 12.32896-30.33088l268.67712-268.32896-268.67712-268.32896q-12.32896-12.32896-12.32896-30.33088 0-18.3296 12.16512-30.49472t30.49472-12.16512q18.00192 0 30.33088 12.32896l268.32896 268.67712 268.32896-268.67712q12.32896-12.32896 30.33088-12.32896z" />
                             </svg>
                         </button>
@@ -1302,7 +1227,7 @@ const ChatBox = ({ userId, groupId }) => {
 
 
                                     <button className='btn btn-icon btn-sm btn-trigger border-0 position-absolute' style={{ top: '0', right: '0', backgroundColor: '#6576ff', color: '#fff', padding: '2px 1px' }} onClick={() => handleRemoveFile(f.file.name)} >
-                                        <svg className="svg-icon" style={{ width: '1em', height: '1em', verticalAlign: 'middle', fill: 'currentColor', overflow: 'hidden', }} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                        <svg class="svg-icon" style={{ width: '1em', height: '1em', verticalAlign: 'middle', fill: 'currentColor', overflow: 'hidden', }} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M810.65984 170.65984q18.3296 0 30.49472 12.16512t12.16512 30.49472q0 18.00192-12.32896 30.33088l-268.67712 268.32896 268.67712 268.32896q12.32896 12.32896 12.32896 30.33088 0 18.3296-12.16512 30.49472t-30.49472 12.16512q-18.00192 0-30.33088-12.32896l-268.32896-268.67712-268.32896 268.67712q-12.32896 12.32896-30.33088 12.32896-18.3296 0-30.49472-12.16512t-12.16512-30.49472q0-18.00192 12.32896-30.33088l268.67712-268.32896-268.67712-268.32896q-12.32896-12.32896-12.32896-30.33088 0-18.3296 12.16512-30.49472t30.49472-12.16512q18.00192 0 30.33088 12.32896l268.32896 268.67712 268.32896-268.67712q12.32896-12.32896 30.33088-12.32896z" />
                                         </svg>
                                     </button>
@@ -1362,16 +1287,7 @@ const ChatBox = ({ userId, groupId }) => {
                                     </Toolbar> */}
                                     <Editor
                                         editorState={editorState}
-                                        onChange={(newState) => {
-                                            setEditorState(newState);
-
-                                            // Convert editor content to HTML on every change
-                                            const contentState = newState.getCurrentContent();
-                                            let html = stateToHTML(contentState, options2); // 👈 options explained below
-                                            html = html.replaceAll("<p>", "<div>").replaceAll("</p>", "</div>");
-
-                                            setMessage(html); // ✅ always update HTML message
-                                        }}
+                                        onChange={setEditorState}
                                         plugins={plugins}
                                     />
                                     <MentionSuggestions
@@ -1394,7 +1310,7 @@ const ChatBox = ({ userId, groupId }) => {
                                 <a href="#" className="btn btn-sm btn-icon btn-trigger text-primary"><em className="icon ni ni-happyf-fill"></em></a>
                             </li> */}
                             <li>
-                                <button className="btn btn-round btn-primary btn-icon" onClick={sendMessage}><em className="icon ni ni-send-alt"></em></button>
+                                <button disabled={!message && filesArr.length === 0} className="btn btn-round btn-primary btn-icon" onClick={sendMessage}><em className="icon ni ni-send-alt"></em></button>
                             </li>
                         </ul>
                     </div>
@@ -1624,10 +1540,10 @@ const ChatBox = ({ userId, groupId }) => {
                                     <div className="chat-bubble">
                                         {/* <div className="chat-msg"> Thanks for inform. We just solved the issues. Please check now. </div> */}
                                         <div className="chat-msg">
-                                            <div className="typing">
-                                                <div className="dot"></div>
-                                                <div className="dot"></div>
-                                                <div className="dot"></div>
+                                            <div class="typing">
+                                                <div class="dot"></div>
+                                                <div class="dot"></div>
+                                                <div class="dot"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -1643,7 +1559,7 @@ const ChatBox = ({ userId, groupId }) => {
                         </div>
 
                         <button className='btn btn-icon btn-sm btn-trigger position-absolute' style={{ top: '0.7rem', right: '1.25rem' }} onClick={() => setReply({})}>
-                            <svg className="svg-icon" style={{ width: '1em', height: '1em', verticalAlign: 'middle', fill: 'currentColor', overflow: 'hidden', }} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                            <svg class="svg-icon" style={{ width: '1em', height: '1em', verticalAlign: 'middle', fill: 'currentColor', overflow: 'hidden', }} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M810.65984 170.65984q18.3296 0 30.49472 12.16512t12.16512 30.49472q0 18.00192-12.32896 30.33088l-268.67712 268.32896 268.67712 268.32896q12.32896 12.32896 12.32896 30.33088 0 18.3296-12.16512 30.49472t-30.49472 12.16512q-18.00192 0-30.33088-12.32896l-268.32896-268.67712-268.32896 268.67712q-12.32896 12.32896-30.33088 12.32896-18.3296 0-30.49472-12.16512t-12.16512-30.49472q0-18.00192 12.32896-30.33088l268.67712-268.32896-268.67712-268.32896q-12.32896-12.32896-12.32896-30.33088 0-18.3296 12.16512-30.49472t30.49472-12.16512q18.00192 0 30.33088 12.32896l268.32896 268.67712 268.32896-268.67712q12.32896-12.32896 30.33088-12.32896z" />
                             </svg>
                         </button>
@@ -1667,7 +1583,7 @@ const ChatBox = ({ userId, groupId }) => {
 
 
                                     <button className='btn btn-icon btn-sm btn-trigger border-0 position-absolute' style={{ top: '0', right: '0', backgroundColor: '#6576ff', color: '#fff', padding: '2px 1px' }} onClick={() => handleRemoveFile(f.file.name)} >
-                                        <svg className="svg-icon" style={{ width: '1em', height: '1em', verticalAlign: 'middle', fill: 'currentColor', overflow: 'hidden', }} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                        <svg class="svg-icon" style={{ width: '1em', height: '1em', verticalAlign: 'middle', fill: 'currentColor', overflow: 'hidden', }} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M810.65984 170.65984q18.3296 0 30.49472 12.16512t12.16512 30.49472q0 18.00192-12.32896 30.33088l-268.67712 268.32896 268.67712 268.32896q12.32896 12.32896 12.32896 30.33088 0 18.3296-12.16512 30.49472t-30.49472 12.16512q-18.00192 0-30.33088-12.32896l-268.32896-268.67712-268.32896 268.67712q-12.32896 12.32896-30.33088 12.32896-18.3296 0-30.49472-12.16512t-12.16512-30.49472q0-18.00192 12.32896-30.33088l268.67712-268.32896-268.67712-268.32896q-12.32896-12.32896-12.32896-30.33088 0-18.3296 12.16512-30.49472t30.49472-12.16512q18.00192 0 30.33088 12.32896l268.32896 268.67712 268.32896-268.67712q12.32896-12.32896 30.33088-12.32896z" />
                                         </svg>
                                     </button>

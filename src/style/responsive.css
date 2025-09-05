@@ -43,7 +43,7 @@
     }
 
     ul li.active {
-        background-color: #7B83EB;
+        background-color: #3883F9;
         color: #fff;
     }
 }
@@ -76,7 +76,7 @@
 
 .user-info input:focus-visible {
     outline: 0 !important;
-    border-color: #7B83EB !important;
+    border-color: #3883F9 !important;
 }
 
 .members-list {
@@ -89,7 +89,7 @@
     padding: 0.5rem;
     text-align: start;
     /* max-height: 50vh; */
-    border: 2px solid #7B83EB;
+    border: 2px solid #3883F9;
     overflow: auto;
     z-index: 2;
     margin-top: 0.5rem;
@@ -180,8 +180,8 @@
 
 .reply {
     padding: 0.7rem 1.25rem;
-    border-bottom: 1px solid #7B83EB;
-    border-top: 1px solid #7B83EB;
+    border-bottom: 1px solid #3883F9;
+    border-top: 1px solid #3883F9;
 }
 
 .my-reply-bubble {
@@ -203,7 +203,7 @@
     margin-bottom: 0.25rem;
 
     .reply-chat-msg {
-        background-color: #7B83EB !important;
+        background-color: #3883F9 !important;
         color: #fff !important;
     }
 }
@@ -221,7 +221,7 @@
 }
 
 .chat-upload-option .upload-files {
-    color: #7B83EB;
+    color: #3883F9;
     font-size: 1.25rem;
     height: 36px;
     width: 36px;
@@ -233,7 +233,7 @@
 
 
 .is-unread .chat-context .status {
-    background-color: #7B83EB;
+    background-color: #3883F9;
     color: #fff !important;
     border-radius: 50%;
     height: 19px;
@@ -243,7 +243,7 @@
 }
 
 .message-seen {
-    color: #7B83EB !important;
+    color: #3883F9 !important;
 }
 
 .add-members:hover {
@@ -289,7 +289,7 @@
 
 .add-member-btn:focus,
 .add-member-btn:hover {
-    color: #7b83eb !important;
+    color: #3883F9 !important;
     box-shadow: unset !important;
 }
 
@@ -299,8 +299,8 @@
 }
 
 .add-member-checkbox .form-check-input:checked[type=checkbox] {
-    background-color: #7b83eb;
-    border-color: #7b83eb;
+    background-color: #3883F9;
+    border-color: #3883F9;
 }
 
 .position-relative .form-check {
@@ -313,8 +313,8 @@
 }
 
 .position-relative .form-check .form-check-input:checked[type=checkbox] {
-    background-color: #7b83eb;
-    border-color: #7b83eb;
+    background-color: #3883F9;
+    border-color: #3883F9;
 }
 
 .modal-body .chat-item:hover {
@@ -341,7 +341,7 @@
 
 .typing .dot {
     animation: mercuryTypingAnimation 1.8s infinite ease-in-out;
-    background-color: #7b83eb;
+    background-color: #3883F9;
     border-radius: 50%;
     height: 7px;
     margin-right: 4px;
@@ -370,7 +370,7 @@
     0% {
         transform: translateY(0px);
         background-color: #6CAD96;
-        background-color: #7b83eb;
+        background-color: #3883F9;
     }
 
     28% {
@@ -407,7 +407,7 @@
 
 
 .users_detail {
-    background-color: #7b83eb;
+    background-color: #3883F9;
     color: #fff;
     padding: 0 0.5rem;
     border-radius: 10px;
@@ -533,7 +533,7 @@
     padding: 0;
     border: 0;
     background: transparent;
-    color: #7B83EB;
+    color: #3883F9;
 }
 
 .user-profile-image {

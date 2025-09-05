@@ -14,13 +14,13 @@ const Dashboard = () => {
     const isViewProfile = pathname === '/dashboard/profile';
 
     const page = (() => {
-        if (pathname === '/dashboard/chat') return 'Chat Application';
+        if (pathname === '/dashboard/chat') return '';
         if (pathname === '/dashboard/create_group') return 'Group';
         return 'Dashboard';
     })();
 
     const pageHeading = (() => {
-        if (pathname === '/dashboard/chat') return 'Chat Application';
+        if (pathname === '/dashboard/chat') return 'Chatify - For Movers';
         if (pathname === '/dashboard/create_group') return 'Create Groups Here';
         return 'Dashboard';
     })();
