@@ -10,7 +10,7 @@ import ForwardModal from './ForwardModal';
 
 import parse, { domToReact } from "html-react-parser";
 
-import { EditorState } from "draft-js";
+import { EditorState, ContentState } from "draft-js";
 import Editor from "draft-js-plugins-editor";
 import createMentionPlugin from "@draft-js-plugins/mention";
 import "@draft-js-plugins/mention/lib/plugin.css";
@@ -41,6 +41,8 @@ const ChatBox = ({ userId, groupId }) => {
     const [editorState, setEditorState] = useState(() =>
         EditorState.createEmpty()
     );
+    const editorRef = useRef(null);
+    
     const [open, setOpen] = useState(false);
     const [mentions, setMentions] = useState([]);
     const [suggestions, setSuggestions] = useState([]);
@@ -988,7 +990,7 @@ const ChatBox = ({ userId, groupId }) => {
     return (
         <>
             {groupId ? (
-                <div className={`nk-chat-body ${showDetails ? 'profile-shown' : ''}`}>
+                <div style={{ paddingRight: showDetails && '325px' }} className={`nk-chat-body ${showDetails ? 'profile-shown' : ''}`}>
                     <div className="nk-chat-head">
                         <ul className="nk-chat-head-info">
                             <li className="nk-chat-body-close">
@@ -1361,6 +1363,7 @@ const ChatBox = ({ userId, groupId }) => {
                                         )}
                                     </Toolbar> */}
                                     <Editor
+                                        ref={editorRef}
                                         editorState={editorState}
                                         onChange={(newState) => {
                                             setEditorState(newState);
@@ -1373,6 +1376,30 @@ const ChatBox = ({ userId, groupId }) => {
                                             setMessage(html); // ✅ always update HTML message
                                         }}
                                         plugins={plugins}
+                                        handleReturn={(e) => {
+                                            // Prevent new line, send message instead
+                                            if (!e.shiftKey) {
+                                                e.preventDefault();
+                                                sendMessage(); // 👈 call your send function here
+
+                                                // 👇 reset editor state to empty after sending
+                                                const newEditorState = EditorState.push(
+                                                    editorState,
+                                                    ContentState.createFromText("") // empty editor
+                                                );
+                                                setEditorState(newEditorState);
+
+                                                // 👇 force focus back to editor
+                                                setTimeout(() => {
+                                                    if (editorRef.current) {
+                                                        editorRef.current.focus();
+                                                    }
+                                                }, 0);
+
+                                                return "handled";
+                                            }
+                                            return "not-handled"; // allow shift+enter for new line
+                                        }}
                                     />
                                     <MentionSuggestions
                                         open={open}
@@ -1402,7 +1429,7 @@ const ChatBox = ({ userId, groupId }) => {
                     {groupDetails && <InfoBar showDetails={showDetails} setShowDetails={setShowDetails} groupDetails={groupDetails} groupName={groupName} setGroupName={setGroupName} getGroupDetails={getGroupDetails} onlineUsers={onlineUsers} />}
                 </div>
             ) : (
-                <div className={`nk-chat-body ${showDetails ? 'profile-shown' : ''}`}>
+                <div style={{ paddingRight: showDetails && '325px' }} className={`nk-chat-body ${showDetails ? 'profile-shown' : ''}`}>
                     <div className="nk-chat-head">
                         <ul className="nk-chat-head-info">
                             <li className="nk-chat-body-close">
