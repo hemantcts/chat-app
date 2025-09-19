@@ -42,7 +42,7 @@ const ChatBox = ({ userId, groupId }) => {
         EditorState.createEmpty()
     );
     const editorRef = useRef(null);
-    
+
     const [open, setOpen] = useState(false);
     const [mentions, setMentions] = useState([]);
     const [suggestions, setSuggestions] = useState([]);
@@ -668,7 +668,8 @@ const ChatBox = ({ userId, groupId }) => {
                 },
                 receiverId: userDetails._id,
                 files: uploadedFiles,
-                content: message
+                content: message,
+                type: 'text'
             };
         }
         else {
@@ -680,7 +681,8 @@ const ChatBox = ({ userId, groupId }) => {
                 },
                 groupId: room,
                 files: uploadedFiles,
-                content: message
+                content: message,
+                type: 'text'
             }
         }
 
@@ -1100,6 +1102,11 @@ const ChatBox = ({ userId, groupId }) => {
                                                 </div>
                                             )
                                             }
+                                            {msg.location && msg.location.lat && msg.location.lng && <div className="chat-bubble">
+                                                <a style={{ backgroundColor: '#3883F9', padding: '0.5rem', borderRadius: 8 }} href={`https://www.google.com/maps/search/?api=1&query=${msg.location.lat},${msg.location.lng}`} target='_blank'>
+                                                    <img style={{ width: 250, height: 200, borderRadius: 8, maxWidth: "100%", objectFit: 'cover' }} src={`https://maps.googleapis.com/maps/api/staticmap?center=${msg.location.lat},${msg.location.lng}&zoom=15&size=600x300&markers=color:red%7C${msg.location.lat},${msg.location.lng}&key=AIzaSyAYC-Z1NZFERcHvnx3hNZxXx1s_3bDTyRY`} alt="" />
+                                                </a>
+                                            </div>}
                                             {msg.files && msg.files.length > 0 && <div className="chat-bubble">
                                                 {/* Files preview */}
                                                 {msg.files && msg.files.length > 0 && (
@@ -1531,8 +1538,14 @@ const ChatBox = ({ userId, groupId }) => {
                                                 msg?.replyTo && <div className="chat-bubble user-reply-bubble">
                                                     <div className="chat-msg reply-chat-msg"> {parse(truncateHtml(msg?.replyTo?.msgContent || "", 20))} </div>
                                                 </div>
-                                            )
-                                            }
+                                            )}
+
+                                            {msg.location && msg.location.lat && msg.location.lng && <div className="chat-bubble">
+                                                <a style={{ backgroundColor: '#3883F9', padding: '0.5rem', borderRadius: 8 }} href={`https://www.google.com/maps/search/?api=1&query=${msg.location.lat},${msg.location.lng}`} target='_blank'>
+                                                    <img style={{ width: 250, height: 200, borderRadius: 8, maxWidth: "100%", objectFit: 'cover' }} src={`https://maps.googleapis.com/maps/api/staticmap?center=${msg.location.lat},${msg.location.lng}&zoom=15&size=600x300&markers=color:red%7C${msg.location.lat},${msg.location.lng}&key=AIzaSyAYC-Z1NZFERcHvnx3hNZxXx1s_3bDTyRY`} alt="" />
+                                                </a>
+                                            </div>}
+
                                             {msg.files && msg.files.length > 0 && <div className="chat-bubble">
                                                 {/* Files preview */}
                                                 {msg.files && msg.files.length > 0 && (

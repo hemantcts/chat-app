@@ -170,13 +170,24 @@ const Chats = () => {
             fetchUsers();
             fetchGroups();
 
-            console.log('mef' ,message)
+            console.log('mef', message)
             console.log('test', message?.receiverId, loggedInUser?._id)
             if (message?.receiverId === loggedInUser?._id) {
                 console.log('test', message?.receiverId, loggedInUser?._id)
                 audio.play().catch(error => {
                     console.error('Failed to play sound:', error);
                 });
+            }
+            else {
+                const isMember = message?.groupDetails?.members?.some(
+                    memberId => memberId === loggedInUser?._id
+                );
+
+                if (isMember && message?.senderDetails?.id !== loggedInUser?._id) {
+                    audio.play().catch(error => {
+                        console.error('Failed to play sound:', error);
+                    });
+                }
             }
         })
     }, [])

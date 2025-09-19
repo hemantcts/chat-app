@@ -112,15 +112,17 @@ const AddUsers = () => {
               name="department"
               value={user.department}
               onChange={handleChange}
+              style={{color: user.department && '#000'}}
               required
             >
               <option value="">Select Department</option>
-              <option value="sales">Sales</option>
-              <option value="marketing">Marketing</option>
-              <option value="management">Management</option>
-              <option value="driver">Driver</option>
-              <option value="jockey">Jockey</option>
-              <option value="contractor">Contractor</option>
+              <option value="Operations Team">Operations Team</option>
+              <option value="Accounts Team">Accounts Team</option>
+              <option value="Quality Team">Quality Team</option>
+              <option value="Contractor Management">Contractor Management</option>
+              <option value="Contractor">Contractor</option>
+              <option value="Driver">Driver</option>
+              <option value="Jockey">Jockey</option>
             </Form.Control>
           </Form.Group>
 
