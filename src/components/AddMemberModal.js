@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 
 const AddMemberModal = ({ show, handleClose, onUserAdded, users, onlineUsers, addMembers, loggedInUser }) => {
     const [selectedMembers, setSelectedMembers] = useState([]);
+    const [hiddenMembers, setHiddenMembers] = useState([]); // 👈 track hidden users
     const [selectAll, setSelectAll] = useState(false);
 
     // Handle individual checkbox
@@ -12,6 +13,15 @@ const AddMemberModal = ({ show, handleClose, onUserAdded, users, onlineUsers, ad
             prevSelected.includes(userId)
                 ? prevSelected.filter((id) => id !== userId)
                 : [...prevSelected, userId]
+        );
+    };
+
+    // Handle hidden checkbox
+    const handleHiddenChange = (userId) => {
+        setHiddenMembers((prevHidden) =>
+            prevHidden.includes(userId)
+                ? prevHidden.filter((id) => id !== userId)
+                : [...prevHidden, userId]
         );
     };
 
@@ -36,7 +46,7 @@ const AddMemberModal = ({ show, handleClose, onUserAdded, users, onlineUsers, ad
     }, [selectedMembers, users]);
 
     const handleSubmit = () => {
-        addMembers(selectedMembers)
+        addMembers(selectedMembers, hiddenMembers);
         handleClose()
     }
 
@@ -68,7 +78,7 @@ const AddMemberModal = ({ show, handleClose, onUserAdded, users, onlineUsers, ad
 
                     <ul className='chat-list'>
                         {users.map((user) => (
-                            <li key={user._id} className="chat-item">
+                            <li key={user._id} className="chat-item d-flex align-items-center">
                                 <div className="chat-link chat-open current">
                                     <div className="checkbox">
                                         <Form.Check
@@ -84,13 +94,21 @@ const AddMemberModal = ({ show, handleClose, onUserAdded, users, onlineUsers, ad
                                     </div>
                                     <div className="chat-info">
                                         <div className="chat-from">
-                                            <div className="name">{user?.name}</div>
+                                            <div className="name" style={{color: hiddenMembers.includes(user._id) && '#ccc'}}>{user?.name}</div>
+                                            {/* {hiddenMembers.includes(user._id) && <div className="hidden">hidden</div>} */}
                                         </div>
                                         <div className="chat-context">
                                             {/* <div className="text">{user?.email}</div> */}
                                         </div>
                                     </div>
                                 </div>
+
+                                {loggedInUser.role === 1 && <Form.Check
+                                    type="checkbox"
+                                    label="hide"
+                                    checked={hiddenMembers.includes(user._id)}
+                                    onChange={() => handleHiddenChange(user._id)}
+                                />}
                             </li>
                         ))}
                     </ul>

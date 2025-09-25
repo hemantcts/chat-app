@@ -97,9 +97,13 @@ const Register = () => {
               required
             >
               <option value="">Select Department</option>
-              <option value="sales">Sales</option>
-              <option value="marketing">Marketing</option>
-              <option value="management">Management</option>
+              <option value="Operations Team">Operations Team</option>
+              <option value="Accounts Team">Accounts Team</option>
+              <option value="Quality Team">Quality Team</option>
+              <option value="Contractor Management">Contractor Management</option>
+              <option value="Contractor">Contractor</option>
+              <option value="Driver">Driver</option>
+              <option value="Jockey">Jockey</option>
             </select>
           </div>
           <button type="submit" className="btn btn-primary w-100 justify-content-center">Register</button>

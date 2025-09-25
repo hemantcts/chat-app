@@ -16,8 +16,35 @@ const AllUsers = () => {
     const [selectedUserIds, setSelectedUserIds] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
 
+    const [companies, setCompanies] = useState([])
+    const [selectedCompany, setSelectedCompany] = useState("");
+
 
     const loggedInUser = JSON.parse(localStorage.getItem('userData'))
+
+    const fetchCompanies = async () => {
+        try {
+            const res = await fetch('https://chat.quanteqsolutions.com/api/admin/companies', {
+                headers: {
+                    'Authorization': localStorage.getItem('token'),
+                },
+            });
+            const data = await res.json();
+
+            console.log('comany', data.companies)
+
+            if (data.status) {
+                setCompanies(data.companies || []);
+                setLoading(false);
+            } else {
+                toast.error(data.message || 'Error!');
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error('Error fetching users');
+            setLoading(false);
+        }
+    };
 
     const fetchUsers = async () => {
         try {
@@ -44,6 +71,7 @@ const AllUsers = () => {
 
     useEffect(() => {
         fetchUsers();
+        fetchCompanies();
     }, []);
 
     const handleEditClick = (user) => {
@@ -53,6 +81,8 @@ const AllUsers = () => {
             email: user.email,
             password: '', // leave empty
             department: user.department,
+            // companyName: user.company.companyName,
+            companyCode: user?.company?.companyCode,
             groupCreateAccess: user.groupCreateAccess,
             oneOnOneAccess: user.oneOnOneAccess,
             appAccess: user.appAccess,
@@ -78,6 +108,7 @@ const AllUsers = () => {
                 toast.success(data.message || 'User updated successfully');
                 setEditingUserId(null);
                 fetchUsers();
+                fetchCompanies();
             } else {
                 toast.error(data.message || 'Error updating user');
             }
@@ -102,21 +133,48 @@ const AllUsers = () => {
         );
     };
 
+    // const handleSelectAllChange = () => {
+    //     if (selectAll) {
+    //         setSelectedUserIds([]);
+    //     } else {
+    //         const allUserIds = users.map(user => user._id);
+    //         setSelectedUserIds(allUserIds);
+    //     }
+    //     setSelectAll(!selectAll);
+    // };
+
     const handleSelectAllChange = () => {
+        // Use filteredUsers instead of all users
+        const filteredUsers = selectedCompany
+            ? users.filter(user => user?.company?.companyCode === selectedCompany)
+            : users;
+
         if (selectAll) {
             setSelectedUserIds([]);
         } else {
-            const allUserIds = users.map(user => user._id);
+            const allUserIds = filteredUsers.map(user => user._id);
             setSelectedUserIds(allUserIds);
         }
         setSelectAll(!selectAll);
     };
 
+    // useEffect(() => {
+    //     const allUserIds = users.map(user => user._id);
+    //     const allSelected = allUserIds.length > 0 && allUserIds.every(id => selectedUserIds.includes(id));
+    //     setSelectAll(allSelected);
+    // }, [selectedUserIds, users]);
+
     useEffect(() => {
-        const allUserIds = users.map(user => user._id);
+        // Only consider currently displayed users (after company filter)
+        const filteredUsers = selectedCompany
+            ? users.filter(user => user?.company?.companyCode === selectedCompany)
+            : users;
+
+        const allUserIds = filteredUsers.map(user => user._id);
         const allSelected = allUserIds.length > 0 && allUserIds.every(id => selectedUserIds.includes(id));
         setSelectAll(allSelected);
-    }, [selectedUserIds, users]);
+    }, [selectedUserIds, users, selectedCompany]);
+
 
 
 
@@ -144,6 +202,7 @@ const AllUsers = () => {
                 setSelectedUserIds([]);
                 setSelectAll(false);
                 fetchUsers();
+                fetchCompanies();
             } else {
                 toast.error(data.message || 'Failed to delete users');
             }
@@ -153,6 +212,9 @@ const AllUsers = () => {
         }
     };
 
+    const filteredUsers = selectedCompany
+        ? users.filter(user => user?.company?.companyCode === selectedCompany)
+        : users;
 
 
     return (
@@ -162,12 +224,40 @@ const AllUsers = () => {
                 <div>
                     <ul className="d-flex">
                         <li className='me-2'>
+                            <Link to='/dashboard/chat?add_company' className='btn btn-warning'>Add Company</Link>
+                        </li>
+                        <li className='me-2'>
                             <Link to='/dashboard/chat?add_user' className='btn btn-primary'>Add Users</Link>
                         </li>
                         <li>
                             <button className='btn btn-danger' onClick={deleteUsers} disabled={selectedUserIds.length === 0}>
                                 Delete Users
                             </button>
+                        </li>
+
+                        <li>
+                            {/* <div className='ms-3' style={{ border: '1px solid #000' }}> */}
+                            {/* <Form.Select
+                                    // className="ms-3"
+                                    style={{ width: '200px' }}
+                                    value={selectedCompany}
+                                    onChange={(e) => setSelectedCompany(e.target.value)}
+                                > */}
+                            <Form.Control
+                                className='ms-3'
+                                style={{ width: '200px' }}
+                                as="select"
+                                value={selectedCompany}
+                                onChange={(e) => setSelectedCompany(e.target.value)}
+                            >
+                                <option value="">All Companies</option>
+                                {companies.map((company) => (
+                                    <option key={company._id} value={company?.companyCode}>
+                                        {company?.companyName} ({company?.companyCode})
+                                    </option>
+                                ))}
+                            </Form.Control>
+                            {/* </div> */}
                         </li>
                     </ul>
                 </div>
@@ -190,6 +280,7 @@ const AllUsers = () => {
                             <th>Email</th>
                             <th>Password</th>
                             <th>Department</th>
+                            <th>Company</th>
                             <th>Create Group Access</th>
                             <th>One-on-One Chat Access</th>
                             <th>App Access</th>
@@ -213,10 +304,11 @@ const AllUsers = () => {
                                     <td><Skeleton /></td>
                                     <td><Skeleton /></td>
                                     <td><Skeleton /></td>
+                                    <td><Skeleton /></td>
                                 </tr>
                             ))
                         ) : (
-                            users.map((user) => (
+                            filteredUsers.map((user) => (
                                 <tr key={user._id}>
                                     <td>
                                         <Form.Check
@@ -283,6 +375,30 @@ const AllUsers = () => {
                                             user.department
                                         )}
                                     </td>
+                                    {user?.company ?
+                                        (
+                                            <td>
+                                                {(editingUserId === user._id) ? (
+                                                    <Form.Control
+                                                        as="select"
+                                                        name="companyCode"
+                                                        value={formData?.companyCode}
+                                                        onChange={handleInputChange}
+                                                        required
+                                                    >
+                                                        {companies.map((company) => (
+                                                            <option key={company?._id} value={company?.companyCode}>
+                                                                {company?.companyName} ({company?.companyCode})
+                                                            </option>
+                                                        ))}
+                                                    </Form.Control>
+                                                ) : (
+                                                    `${user?.company?.companyName} (${user?.company?.companyCode})`
+                                                )}
+                                            </td>
+                                        ) : (
+                                            <td> - </td>
+                                        )}
                                     <td>
                                         {editingUserId === user._id ? (
                                             <Form.Check

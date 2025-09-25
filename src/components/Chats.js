@@ -330,8 +330,9 @@ const Chats = () => {
                             <div className="dropdown-menu dropdown-menu-start">
                                 <ul className="link-list-opt no-bdr">
                                     {(userData?.groupCreateAccess || userData?.role == 1) && <li><Link to="/dashboard/chat?create_group"><span>Create Group</span></Link></li>}
-                                    {(userData?.role == 1) && <li><Link to="/dashboard/chat?add_user"><span>Add User</span></Link></li>}
                                     {(userData?.oneOnOneAccess || userData?.role == 1) && <li><Link to="/dashboard/chat?new_chat"><span>New Chat</span></Link></li>}
+                                    {(userData?.role == 1) && <li><Link to="/dashboard/chat?add_user"><span>Add User</span></Link></li>}
+                                    {(userData?.role == 1) && <li><Link to="/dashboard/chat?add_company"><span>Add Company</span></Link></li>}
                                 </ul>
                             </div>
                         </div>

@@ -9,6 +9,7 @@ import EmptyChatRoom from './EmptyChatRoom'
 import AddUsers from './AddUsers'
 import NewChat from './NewChat'
 import AllUsers from './AllUsers'
+import AddCompany from './AddCompany'
 
 const ChatRoom = () => {
 
@@ -19,11 +20,12 @@ const ChatRoom = () => {
     const isAddUser = queryParams.has('add_user');
     const isNewChat = queryParams.has('new_chat');
     const isAllUsers = queryParams.has('users');
+    const isAddCompany = queryParams.has('add_company');
 
     const selectedUserId = queryParams.get('user');
     const selectedGroupId = queryParams.get('group');
 
-    const isChatEmpty = !selectedUserId && !selectedGroupId && !isCreateGroup && !isAddUser && !isNewChat && !isAllUsers;
+    const isChatEmpty = !selectedUserId && !selectedGroupId && !isCreateGroup && !isAddUser && !isNewChat && !isAllUsers && !isAddCompany;
 
 
     return (
@@ -46,6 +48,7 @@ const ChatRoom = () => {
                         {isAddUser && <AddUsers />}
                         {isNewChat && <NewChat />}
                         {isAllUsers && <AllUsers />}
+                        {isAddCompany && <AddCompany /> }
 
                     </div>
                 </div>

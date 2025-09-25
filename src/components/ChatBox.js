@@ -832,6 +832,27 @@ const ChatBox = ({ userId, groupId }) => {
         };
     }, []);
 
+    useEffect(() => {
+        // if (mentions?.length) {
+        //     setSuggestions(
+        //         mentions.filter(
+        //             (m) =>
+        //                 !groupDetails?.membersInfo?.some(
+        //                     (info) => info.userId === m._id && info.isHidden
+        //                 )
+        //         )
+        //     );
+        // }
+
+        // 👇 clear editor input
+        // const emptyState = EditorState.push(
+        //     EditorState.createEmpty(),
+        //     ContentState.createFromText("")
+        // );
+        setEditorState(EditorState.createEmpty());
+        setMessage('');
+    }, [userId, groupId]);
+
     const markdownToHtml = (text) => {
         return text
             // Convert bold (**text** or __text__)
@@ -992,7 +1013,7 @@ const ChatBox = ({ userId, groupId }) => {
     return (
         <>
             {groupId ? (
-                <div style={{ paddingRight: showDetails && '325px' }} className={`nk-chat-body ${showDetails ? 'profile-shown' : ''}`}>
+                <div className={`nk-chat-body ${showDetails ? 'profile-shown' : ''}`}>
                     <div className="nk-chat-head">
                         <ul className="nk-chat-head-info">
                             <li className="nk-chat-body-close">
@@ -1321,116 +1342,132 @@ const ChatBox = ({ userId, groupId }) => {
                         </div>
                     )}
 
-                    <div className="nk-chat-editor">
-                        <div className="nk-chat-editor-upload  ml-n1">
-                            {/* <button onClick={() => setShowUploadOptions(!showUploadOptions)} className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" data-bs-target="chat-upload"><em className="icon ni ni-plus-circle-fill"></em></button> */}
-
-                            <button className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" >
-                                <label className="upload-files m-0 d-flex" style={{ cursor: 'pointer' }}>
-                                    <em className="icon ni ni-plus-circle-fill"></em>
-                                    <input
-                                        type="file"
-                                        multiple
-                                        style={{ display: 'none' }}
-                                        onChange={(e) => { handleFileUpload(e.target.files) }}
-                                    />
-                                </label>
-
-                            </button>
-
-                            {showUploadOptions && <div className="chat-upload-option" data-content="chat-upload">
-                                <ul>
-                                    <li>
-                                        <label className="upload-files" style={{ cursor: 'pointer' }}>
-                                            <em className="icon ni ni-img-fill"></em>
-                                            <input
-                                                type="file"
-                                                multiple
-                                                style={{ display: 'none' }}
-                                                onChange={(e) => { handleFileUpload(e.target.files) }}
-                                            />
-                                        </label>
-                                    </li>
-                                    {/* <li><a href="#"><em className="icon ni ni-camera-fill"></em></a></li>
-                                    <li><a href="#"><em className="icon ni ni-mic"></em></a></li>
-                                    <li><a href="#"><em className="icon ni ni-grid-sq"></em></a></li> */}
-                                </ul>
-                            </div>}
-                        </div>
-                        <div className="nk-chat-editor-form">
-                            <div className="form-control-wrap">
-                                <div className='py-1'>
-                                    {/* <Toolbar>
-                                        {(externalProps) => (
-                                            <>
-                                                <BoldButton {...externalProps} />
-                                                <ItalicButton {...externalProps} />
-                                                <UnderlineButton {...externalProps} />
-                                            </>
-                                        )}
-                                    </Toolbar> */}
-                                    <Editor
-                                        ref={editorRef}
-                                        editorState={editorState}
-                                        onChange={(newState) => {
-                                            setEditorState(newState);
-
-                                            // Convert editor content to HTML on every change
-                                            const contentState = newState.getCurrentContent();
-                                            let html = stateToHTML(contentState, options2); // 👈 options explained below
-                                            html = html.replaceAll("<p>", "<div>").replaceAll("</p>", "</div>");
-
-                                            setMessage(html); // ✅ always update HTML message
-                                        }}
-                                        plugins={plugins}
-                                        handleReturn={(e) => {
-                                            // Prevent new line, send message instead
-                                            if (!e.shiftKey) {
-                                                e.preventDefault();
-                                                sendMessage(); // 👈 call your send function here
-
-                                                // 👇 reset editor state to empty after sending
-                                                const newEditorState = EditorState.push(
-                                                    editorState,
-                                                    ContentState.createFromText("") // empty editor
-                                                );
-                                                setEditorState(newEditorState);
-
-                                                // 👇 force focus back to editor
-                                                setTimeout(() => {
-                                                    if (editorRef.current) {
-                                                        editorRef.current.focus();
-                                                    }
-                                                }, 0);
-
-                                                return "handled";
-                                            }
-                                            return "not-handled"; // allow shift+enter for new line
-                                        }}
-                                    />
-                                    <MentionSuggestions
-                                        open={open}
-                                        onOpenChange={setOpen}
-                                        suggestions={suggestions}
-                                        onSearchChange={({ value }) => {
-                                            setSuggestions(
-                                                mentions.filter((m) =>
-                                                    m.name.toLowerCase().includes(value.toLowerCase())
-                                                )
-                                            );
-                                        }}
-                                    />
+                    <div>
+                        {(groupDetails?.membersInfo?.some(m => m.userId === loggedInUser?._id && m.isHidden)) ?
+                            (
+                                <div style={{ display: 'flex', justifyContent: 'center', color: '#ccc' }}>
+                                    <div className="text py-3" style={{ fontSize: 16 }}>You can't message in this group as a hidden member</div>
                                 </div>
-                            </div>
-                        </div>
-                        <ul className="nk-chat-editor-tools g-2">
-                            {/* <li>
-                                <a href="#" className="btn btn-sm btn-icon btn-trigger text-primary"><em className="icon ni ni-happyf-fill"></em></a>
-                            </li> */}
-                            <li>
-                                <button className="btn btn-round btn-primary btn-icon" onClick={sendMessage}><em className="icon ni ni-send-alt"></em></button>
-                            </li>
-                        </ul>
+                            ) : (
+                                <div className="nk-chat-editor">
+                                    <div className="nk-chat-editor-upload ml-n1">
+                                        {/* <button onClick={() => setShowUploadOptions(!showUploadOptions)} className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" data-bs-target="chat-upload"><em className="icon ni ni-plus-circle-fill"></em></button> */}
+
+                                        <button className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" >
+                                            <label className="upload-files m-0 d-flex" style={{ cursor: 'pointer' }}>
+                                                <em className="icon ni ni-plus-circle-fill"></em>
+                                                <input
+                                                    type="file"
+                                                    multiple
+                                                    style={{ display: 'none' }}
+                                                    onChange={(e) => { handleFileUpload(e.target.files) }}
+                                                />
+                                            </label>
+
+                                        </button>
+
+                                        {showUploadOptions && <div className="chat-upload-option" data-content="chat-upload">
+                                            <ul>
+                                                <li>
+                                                    <label className="upload-files" style={{ cursor: 'pointer' }}>
+                                                        <em className="icon ni ni-img-fill"></em>
+                                                        <input
+                                                            type="file"
+                                                            multiple
+                                                            style={{ display: 'none' }}
+                                                            onChange={(e) => { handleFileUpload(e.target.files) }}
+                                                        />
+                                                    </label>
+                                                </li>
+                                                {/* <li><a href="#"><em className="icon ni ni-camera-fill"></em></a></li>
+                                        <li><a href="#"><em className="icon ni ni-mic"></em></a></li>
+                                        <li><a href="#"><em className="icon ni ni-grid-sq"></em></a></li> */}
+                                            </ul>
+                                        </div>}
+                                    </div>
+                                    <div className="nk-chat-editor-form">
+                                        <div className="form-control-wrap">
+                                            <div className='py-1'>
+                                                {/* <Toolbar>
+                                            {(externalProps) => (
+                                                <>
+                                                    <BoldButton {...externalProps} />
+                                                    <ItalicButton {...externalProps} />
+                                                    <UnderlineButton {...externalProps} />
+                                                </>
+                                            )}
+                                        </Toolbar> */}
+                                                <Editor
+                                                    ref={editorRef}
+                                                    editorState={editorState}
+                                                    onChange={(newState) => {
+                                                        setEditorState(newState);
+
+                                                        // Convert editor content to HTML on every change
+                                                        const contentState = newState.getCurrentContent();
+                                                        let html = stateToHTML(contentState, options2); // 👈 options explained below
+                                                        html = html.replaceAll("<p>", "<div>").replaceAll("</p>", "</div>");
+
+                                                        setMessage(html); // ✅ always update HTML message
+                                                    }}
+                                                    plugins={plugins}
+                                                    handleReturn={(e) => {
+                                                        // Prevent new line, send message instead
+                                                        if (!e.shiftKey) {
+                                                            e.preventDefault();
+                                                            sendMessage(); // 👈 call your send function here
+
+                                                            // 👇 reset editor state to empty after sending
+                                                            const newEditorState = EditorState.push(
+                                                                editorState,
+                                                                ContentState.createFromText("") // empty editor
+                                                            );
+                                                            setEditorState(newEditorState);
+
+                                                            // 👇 force focus back to editor
+                                                            setTimeout(() => {
+                                                                if (editorRef.current) {
+                                                                    editorRef.current.focus();
+                                                                }
+                                                            }, 0);
+
+                                                            return "handled";
+                                                        }
+                                                        return "not-handled"; // allow shift+enter for new line
+                                                    }}
+                                                />
+                                                <MentionSuggestions
+                                                    open={open}
+                                                    onOpenChange={setOpen}
+                                                    suggestions={suggestions}
+                                                    onSearchChange={({ value }) => {
+                                                        setSuggestions(
+                                                            mentions
+                                                                .filter(
+                                                                    (m) =>
+                                                                        !groupDetails?.membersInfo?.some(
+                                                                            (info) => info.userId === m._id && info.isHidden
+                                                                        )
+                                                                ) // 🚫 exclude hidden members
+                                                                .filter((m) =>
+                                                                    m.name.toLowerCase().includes(value.toLowerCase())
+                                                                )
+                                                        );
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ul className="nk-chat-editor-tools g-2">
+                                        {/* <li>
+                                    <a href="#" className="btn btn-sm btn-icon btn-trigger text-primary"><em className="icon ni ni-happyf-fill"></em></a>
+                                </li> */}
+                                        <li>
+                                            <button className="btn btn-round btn-primary btn-icon" onClick={sendMessage}><em className="icon ni ni-send-alt"></em></button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
                     </div>
 
                     {groupDetails && <InfoBar showDetails={showDetails} setShowDetails={setShowDetails} groupDetails={groupDetails} groupName={groupName} setGroupName={setGroupName} getGroupDetails={getGroupDetails} onlineUsers={onlineUsers} />}

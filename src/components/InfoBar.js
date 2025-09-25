@@ -103,7 +103,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
         fetchUsers();
     }, [groupDetails]);
 
-    const addMembers = async (selectedMembers) => {
+    const addMembers = async (selectedMembers, hiddenMembers) => {
         let members = [];
 
         if (selectedMembers) {
@@ -120,7 +120,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                     'Content-Type': 'application/json',
                     'Authorization': localStorage.getItem('token')
                 },
-                body: JSON.stringify({ groupId: groupDetails._id, members })
+                body: JSON.stringify({ groupId: groupDetails._id, members, hiddenMembers })
             });
             const data = await res.json();
 
@@ -236,7 +236,12 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
             <div className="user-card user-card-s2 my-4">
                 <div
                     className="user-avatar-wrapper"
-                    onClick={() => document.getElementById('group-image-upload').click()}
+                    onClick={() => {
+                        if(groupDetails?.membersInfo?.some(m => m.userId === loggedInUser?._id && m.isHidden)){
+                            return;
+                        }
+                        document.getElementById('group-image-upload').click()
+                    }}
                 >
                     <div
                         className="user-avatar md bg-purple group-image group-image-change"
@@ -249,19 +254,19 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                         {!groupDetails?.groupImage && (
                             <span>{groupDetails?.name?.slice(0, 2).toUpperCase()}</span>
                         )}
-                        <div className="avatar-hover-overlay">
+                        {!(groupDetails?.membersInfo?.some(m => m.userId === loggedInUser?._id && m.isHidden)) && <div className="avatar-hover-overlay">
                             <span className="camera-icon">📷</span>
                             <span className="hover-text">edit</span>
-                        </div>
+                        </div>}
                     </div>
 
-                    <input
+                    {!(groupDetails?.membersInfo?.some(m => m.userId === loggedInUser?._id && m.isHidden)) && <input
                         type="file"
                         id="group-image-upload"
                         accept="image/*"
                         onChange={handleImageChange}
                         style={{ display: 'none' }}
-                    />
+                    />}
                 </div>
 
 
@@ -287,7 +292,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                     ) : (
                         <>
                             <h5 className='me-1' style={{ display: 'inline-block' }}>{groupName}</h5>
-                            {(loggedInUser.role === 1 || loggedInUser.groupCreateAccess) && <em
+                            {!(groupDetails?.membersInfo?.some(m => m.userId === loggedInUser?._id && m.isHidden)) && <em
                                 onClick={handleEditClick}
                                 className="icon ni ni-edit-alt-fill"
                                 style={{ cursor: 'pointer' }}
@@ -341,7 +346,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                         </ul>
 
                         {(loggedInUser?.role === 1) && <Button onClick={() => setShowModal(true)} className="sub-text justify-content-start mt-1 123">
-                            Add New Members
+                            Add New Members2
                         </Button>}
 
                         <ul className='chat-list'>
@@ -397,44 +402,60 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                     <span className="sub-text d-flex justify-content-between">
                         Members : {groupDetails?.members?.length}
                         {/* <span className='add-members'  >Add Members</span>  */}
-                        {(loggedInUser?.role === 1 || loggedInUser?.groupCreateAccess) && <Button onClick={() => setShowModal(true)} className="sub-text justify-content-start m-0 p-0 border-0 add-member-btn" style={{ backgroundColor: 'transparent' }}>
+                        {!(groupDetails?.membersInfo?.some(m => m.userId === loggedInUser?._id && m.isHidden)) && <Button onClick={() => setShowModal(true)} className="sub-text justify-content-start m-0 p-0 border-0 add-member-btn" style={{ backgroundColor: 'transparent' }}>
                             Add New Members
                         </Button>}
                     </span>
                     <ul className={`chat-list`} >
-                        {groupDetails?.members?.map((group, index) => (
-                            <li key={index} className={`chat-item`}>
-                                <div className="chat-link chat-open current" >
-                                    <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${group?.imagePath})` }}>
-                                        {!group?.imagePath && <span>{group?.name?.slice(0, 2).toUpperCase()}</span>}
-                                        <span className={`status dot dot-lg ${onlineUsers[group._id] ? 'dot-success' : 'dot-gray'} `}></span>
-                                    </div>
-                                    <div className="chat-info">
-                                        <div className="chat-from">
-                                            <div className="name">{group?.name}</div>
-                                            {/* <span className="time">Now</span> */}
+                        {groupDetails?.members?.filter(m => {
+                            // exclude self always
+                            if (m._id === '683d32d6952bd329b2fa1c9a') return false;
+
+                            // get memberInfo for this user
+                            const info = groupDetails?.membersInfo?.find(mi => mi.userId === m._id);
+
+                            // if current user is admin, ignore hidden filter
+                            if (loggedInUser?.role === 1) {
+                                return true;
+                            }
+
+                            // for non-admins, filter out hidden members
+                            return !info?.isHidden;
+                        })
+                            ?.map((group, index) => (
+                                <li key={index} className={`chat-item`}>
+                                    <div className="chat-link chat-open current" >
+                                        <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${group?.imagePath})` }}>
+                                            {!group?.imagePath && <span>{group?.name?.slice(0, 2).toUpperCase()}</span>}
+                                            <span className={`status dot dot-lg ${onlineUsers[group._id] ? 'dot-success' : 'dot-gray'} `}></span>
                                         </div>
-                                        <div className="chat-context">
-                                            {/* <div className="text">{group?.email}</div> */}
-                                            {/* <div className="status delivered">
+                                        <div className="chat-info">
+                                            <div className="chat-from" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+                                                <div className="name" style={{ color: groupDetails?.membersInfo?.find(mi => mi.userId === group._id)?.isHidden && '#ccc' }}>{group?.name}</div>
+                                                {(groupDetails?.membersInfo?.find(mi => mi.userId === group._id)?.isHidden) && <div className="hidden_tag" style={{ color: '#ccc', fontSize: 12 }}>hidden user</div>}
+                                                {/* <span className="time">Now</span> */}
+                                            </div>
+                                            <div className="chat-context">
+                                                {/* <div className="text">{group?.email}</div> */}
+                                                {/* <div className="status delivered">
                                                 <em className="icon ni ni-check-circle-fill"></em>
                                             </div> */}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                {(loggedInUser?._id !== group?._id) && (loggedInUser?.oneOnOneAccess || loggedInUser?.groupCreateAccess || loggedInUser?.role === 1) && <div className="chat-actions">
-                                    <div className="dropdown">
-                                        <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
-                                        <div className="dropdown-menu dropdown-menu-right">
-                                            <ul className="link-list-opt no-bdr">
-                                                {(loggedInUser?.role === 1 || loggedInUser?.groupCreateAccess) && <li><a href="#" onClick={() => showRemoveModal(group._id)}>Remove Member</a></li>}
-                                                {(loggedInUser?.role === 1 || loggedInUser?.oneOnOneAccess) && <li><Link to={`/dashboard/chat?user=${group._id}`} onClick={handleRouteClick}>Start Chat</Link></li>}
-                                            </ul>
+                                    {!(groupDetails?.membersInfo?.some(m => m.userId === loggedInUser?._id && m.isHidden)) && <div className="chat-actions">
+                                        <div className="dropdown">
+                                            <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                            <div className="dropdown-menu dropdown-menu-right">
+                                                <ul className="link-list-opt no-bdr">
+                                                    {(loggedInUser?.role === 1 || loggedInUser?.groupCreateAccess) && <li><a href="#" onClick={() => showRemoveModal(group._id)}>Remove Member</a></li>}
+                                                    {(loggedInUser?.role === 1 || loggedInUser?.oneOnOneAccess) && <li><Link to={`/dashboard/chat?user=${group._id}`} onClick={handleRouteClick}>Start Chat</Link></li>}
+                                                </ul>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>}
-                            </li>
-                        ))}
+                                    </div>}
+                                </li>
+                            ))}
                     </ul>
                 </div>
 
@@ -516,7 +537,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                 loggedInUser={loggedInUser}
             />
 
-             <ConfirmModal
+            <ConfirmModal
                 show={confirmModalVisible}
                 handleClose={hideModal}
                 onConfirm={removeMembers}
