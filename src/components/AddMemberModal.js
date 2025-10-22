@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 
-const AddMemberModal = ({ show, handleClose, onUserAdded, users, onlineUsers, addMembers, loggedInUser }) => {
+const AddMemberModal = ({ show, handleClose, onUserAdded, users, onlineUsers, addMembers, loggedInUser, companyId }) => {
     const [selectedMembers, setSelectedMembers] = useState([]);
     const [hiddenMembers, setHiddenMembers] = useState([]); // 👈 track hidden users
     const [selectAll, setSelectAll] = useState(false);
@@ -77,7 +77,7 @@ const AddMemberModal = ({ show, handleClose, onUserAdded, users, onlineUsers, ad
                     </div>
 
                     <ul className='chat-list'>
-                        {users.map((user) => (
+                        {users.filter((user) => !user.company || user.company === companyId).map((user) => (
                             <li key={user._id} className="chat-item d-flex align-items-center">
                                 <div className="chat-link chat-open current">
                                     <div className="checkbox">
@@ -98,7 +98,7 @@ const AddMemberModal = ({ show, handleClose, onUserAdded, users, onlineUsers, ad
                                             {/* {hiddenMembers.includes(user._id) && <div className="hidden">hidden</div>} */}
                                         </div>
                                         <div className="chat-context">
-                                            {/* <div className="text">{user?.email}</div> */}
+                                            <div className="text">{user?.department}</div>
                                         </div>
                                     </div>
                                 </div>

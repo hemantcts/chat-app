@@ -3,14 +3,45 @@ import { Form, Button, Card } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const AddUsers = () => {
   const navigate = useNavigate();
+
+  const [companies, setCompanies] = useState([])
+
+  const fetchCompanies = async () => {
+    try {
+      const res = await fetch('https://chat.quanteqsolutions.com/api/admin/companies', {
+        headers: {
+          'Authorization': localStorage.getItem('token'),
+        },
+      });
+      const data = await res.json();
+
+      console.log('comany', data.companies)
+
+      if (data.status) {
+        setCompanies(data.companies || []);
+      } else {
+        toast.error(data.message || 'Error!');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Error fetching users');
+    }
+  };
+
+  useEffect(() => {
+    fetchCompanies()
+  }, [])
+
 
   const [user, setUser] = useState({
     name: '',
     email: '',
     username: '',
+    companyCode: '',
     department: '',
     password: '',
     groupCreateAccess: false,
@@ -50,6 +81,7 @@ const AddUsers = () => {
           name: '',
           email: '',
           username: '',
+          companyCode: '',
           department: '',
           password: '',
           groupCreateAccess: false,
@@ -106,13 +138,15 @@ const AddUsers = () => {
             />
           </Form.Group> */}
 
+
+
           <Form.Group className="mb-3">
             <Form.Control
               as="select"
               name="department"
               value={user.department}
               onChange={handleChange}
-              style={{color: user.department && '#000'}}
+              style={{ color: user.department && '#000' }}
               required
             >
               <option value="">Select Department</option>
@@ -125,6 +159,27 @@ const AddUsers = () => {
               <option value="Jockey">Jockey</option>
             </Form.Control>
           </Form.Group>
+
+
+          {["Contractor Management", "Contractor", "Driver", "Jockey"].includes(user.department) && (
+            <Form.Group className="mb-3">
+              <Form.Control
+                as="select"
+                name="companyCode"
+                value={user.companyCode}
+                onChange={handleChange}
+                style={{ color: user.companyCode && '#000' }}
+                required
+              >
+                <option value="">Select company</option>
+                {companies.map((company) => (
+                  <option key={company._id} value={company?.companyCode}>
+                    {company?.companyName} ({company?.companyCode})
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+          )}
 
           <Form.Group className="mb-3">
             <Form.Control

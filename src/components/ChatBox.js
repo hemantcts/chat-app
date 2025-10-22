@@ -43,6 +43,9 @@ const ChatBox = ({ userId, groupId }) => {
     );
     const editorRef = useRef(null);
 
+
+
+    const [showToolBar, setShowToolBar] = useState(false);
     const [open, setOpen] = useState(false);
     const [mentions, setMentions] = useState([]);
     const [suggestions, setSuggestions] = useState([]);
@@ -618,7 +621,9 @@ const ChatBox = ({ userId, groupId }) => {
 
 
     const sendMessage = async () => {
-        if (!message.trim() && filesArr.length === 0) {
+
+        if (!message.trim() && filesArr.length === 0 || message === '<div><br></div>') {
+            alert('no')
             return;
         }
         setMsgSeen(false);
@@ -849,7 +854,7 @@ const ChatBox = ({ userId, groupId }) => {
         //     EditorState.createEmpty(),
         //     ContentState.createFromText("")
         // );
-        setEditorState(EditorState.createEmpty());
+        // setEditorState(EditorState.createEmpty());
         setMessage('');
     }, [userId, groupId]);
 
@@ -1096,7 +1101,7 @@ const ChatBox = ({ userId, groupId }) => {
                                         </div> */}
 
                                         {msg?.senderDetails?.id !== loggedInUser?._id && <ul className="chat-meta">
-                                            <li >{msg?.senderDetails?.name}</li>
+                                            <li >{`${msg?.senderDetails?.name} ${loggedInUser?.role === 1 ? `| ${msg?.senderDetails?.department}` : ''} `}</li>
                                         </ul>}
 
                                         {msg?.senderDetails?.id === loggedInUser._id ? (
@@ -1237,35 +1242,23 @@ const ChatBox = ({ userId, groupId }) => {
                                 </div>
 
 
-                                {true && <ul className="chat-meta chat-seen-meta mt-0 justify-content-end">
+                                {/* {true && <ul className="chat-meta chat-seen-meta mt-0 justify-content-end">
                                     {mySeenMessages.map((seenMsg) => (
                                         seenMsg?._id === msg?._id && (
                                             seenMsg?.groupSeen?.filter(seen => seen.userId._id !== loggedInUser._id).map((user, i) => {
                                                 const isCurrentUser = showingUser?._id === user?.userId?._id;
                                                 return (user?.userId && getDisplaySeenUsers(mySeenMessages, messageArr, index, user?.userId)) && (
                                                     <li key={i} ref={isCurrentUser ? tooltipRef : null}>
-                                                        {/* <button
-                                                            onClick={() => showUserSeen(user?.userId)}
-                                                            className="user-avatar user-seen-avatar bg-purple border-0"
-                                                            style={{ backgroundImage: `url(https://chat.quanteqsolutions.com${user?.userId?.imagePath})` }}
-                                                        >
-                                                            {!user?.userId?.imagePath && <span>{user?.userId?.name?.slice(0, 2).toUpperCase()}</span>}
-                                                        </button> */}
 
                                                         <span>{i === 0 ? 'seen by' : ''} {user?.userId?.name}{i !== seenMsg?.groupSeen?.filter(seen => seen.userId._id !== loggedInUser?._id).length - 1 && seenMsg?.groupSeen?.filter(seen => seen.userId._id !== loggedInUser?._id).length > 1 ? ',' : ''} </span>
 
-                                                        {/* {isCurrentUser && (
-                                                            <div className="users_detail">
-                                                                {showingUser?.name}
-                                                            </div>
-                                                        )} */}
                                                     </li>
                                                 );
                                             })
                                         )
                                     ))}
 
-                                </ul>}
+                                </ul>} */}
                             </div>
                         ))}
 
@@ -1351,9 +1344,9 @@ const ChatBox = ({ userId, groupId }) => {
                             ) : (
                                 <div className="nk-chat-editor">
                                     <div className="nk-chat-editor-upload ml-n1">
-                                        {/* <button onClick={() => setShowUploadOptions(!showUploadOptions)} className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" data-bs-target="chat-upload"><em className="icon ni ni-plus-circle-fill"></em></button> */}
+                                        <button onClick={() => setShowUploadOptions(!showUploadOptions)} className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt border-0" data-bs-target="chat-upload"><em className="icon ni ni-plus-circle-fill"></em></button>
 
-                                        <button className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" >
+                                        {/* <button className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" >
                                             <label className="upload-files m-0 d-flex" style={{ cursor: 'pointer' }}>
                                                 <em className="icon ni ni-plus-circle-fill"></em>
                                                 <input
@@ -1364,7 +1357,7 @@ const ChatBox = ({ userId, groupId }) => {
                                                 />
                                             </label>
 
-                                        </button>
+                                        </button> */}
 
                                         {showUploadOptions && <div className="chat-upload-option" data-content="chat-upload">
                                             <ul>
@@ -1375,31 +1368,45 @@ const ChatBox = ({ userId, groupId }) => {
                                                             type="file"
                                                             multiple
                                                             style={{ display: 'none' }}
-                                                            onChange={(e) => { handleFileUpload(e.target.files) }}
+                                                            onChange={(e) => {
+                                                                setShowToolBar(false);
+                                                                setShowUploadOptions(false)
+                                                                handleFileUpload(e.target.files)
+                                                            }}
                                                         />
                                                     </label>
                                                 </li>
-                                                {/* <li><a href="#"><em className="icon ni ni-camera-fill"></em></a></li>
-                                        <li><a href="#"><em className="icon ni ni-mic"></em></a></li>
-                                        <li><a href="#"><em className="icon ni ni-grid-sq"></em></a></li> */}
+                                                <li>
+                                                    <label className={`upload-files ${showToolBar ? 'active' : ''}`}
+                                                        onClick={() => {
+                                                            setShowUploadOptions(false);
+                                                            setShowToolBar(!showToolBar)
+                                                        }}>
+                                                        <em className="icon ni ni-grid-sq"></em>
+                                                    </label>
+                                                </li>
+                                                {/* <li><a href="#"><em className="icon ni ni-mic"></em></a></li>
+                                                <li><a href="#"><em className="icon ni ni-grid-sq"></em></a></li> */}
                                             </ul>
                                         </div>}
                                     </div>
                                     <div className="nk-chat-editor-form">
                                         <div className="form-control-wrap">
                                             <div className='py-1'>
-                                                {/* <Toolbar>
-                                            {(externalProps) => (
-                                                <>
-                                                    <BoldButton {...externalProps} />
-                                                    <ItalicButton {...externalProps} />
-                                                    <UnderlineButton {...externalProps} />
-                                                </>
-                                            )}
-                                        </Toolbar> */}
+                                                {showToolBar && <Toolbar>
+                                                    {(externalProps) => (
+                                                        <div className="custom-toolbar">
+                                                            <BoldButton {...externalProps} />
+                                                            <ItalicButton {...externalProps} />
+                                                            <UnderlineButton {...externalProps} />
+                                                        </div>
+                                                    )}
+                                                </Toolbar>}
+                                                {/* <div className={`${showToolBar ? 'toolbar_visible' : ''}`}> */}
                                                 <Editor
                                                     ref={editorRef}
                                                     editorState={editorState}
+                                                    // placeholder='message'
                                                     onChange={(newState) => {
                                                         setEditorState(newState);
 
@@ -1447,7 +1454,8 @@ const ChatBox = ({ userId, groupId }) => {
                                                                     (m) =>
                                                                         !groupDetails?.membersInfo?.some(
                                                                             (info) => info.userId === m._id && info.isHidden
-                                                                        )
+                                                                        ) &&
+                                                                        m._id !== loggedInUser._id
                                                                 ) // 🚫 exclude hidden members
                                                                 .filter((m) =>
                                                                     m.name.toLowerCase().includes(value.toLowerCase())
@@ -1455,6 +1463,7 @@ const ChatBox = ({ userId, groupId }) => {
                                                         );
                                                     }}
                                                 />
+                                                {/* </div> */}
                                             </div>
                                         </div>
                                     </div>
@@ -1758,9 +1767,9 @@ const ChatBox = ({ userId, groupId }) => {
 
                     <div className="nk-chat-editor position-relative">
                         <div className="nk-chat-editor-upload  ml-n1">
-                            {/* <button onClick={() => setShowUploadOptions(!showUploadOptions)} className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" data-bs-target="chat-upload"><em className="icon ni ni-plus-circle-fill"></em></button> */}
+                            <button onClick={() => setShowUploadOptions(!showUploadOptions)} className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" data-bs-target="chat-upload"><em className="icon ni ni-plus-circle-fill"></em></button>
 
-                            <button className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" >
+                            {/* <button className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" >
                                 <label className="upload-files m-0 d-flex" style={{ cursor: 'pointer' }}>
                                     <em className="icon ni ni-plus-circle-fill"></em>
                                     <input
@@ -1771,7 +1780,7 @@ const ChatBox = ({ userId, groupId }) => {
                                     />
                                 </label>
 
-                            </button>
+                            </button> */}
 
                             {showUploadOptions && <div className="chat-upload-option" data-content="chat-upload">
                                 <ul>
@@ -1782,19 +1791,31 @@ const ChatBox = ({ userId, groupId }) => {
                                                 type="file"
                                                 multiple
                                                 style={{ display: 'none' }}
-                                                onChange={(e) => { handleFileUpload(e.target.files) }}
+                                                onChange={(e) => {
+                                                    setShowToolBar(false);
+                                                    setShowUploadOptions(false)
+                                                    handleFileUpload(e.target.files)
+                                                }}
                                             />
                                         </label>
                                     </li>
-                                    {/* <li><a href="#"><em className="icon ni ni-camera-fill"></em></a></li>
-                                    <li><a href="#"><em className="icon ni ni-mic"></em></a></li>
+                                    <li>
+                                        <label className={`upload-files ${showToolBar ? 'active' : ''}`}
+                                            onClick={() => {
+                                                setShowUploadOptions(false);
+                                                setShowToolBar(!showToolBar)
+                                            }}>
+                                            <em className="icon ni ni-grid-sq"></em>
+                                        </label>
+                                    </li>
+                                    {/* <li><a href="#"><em className="icon ni ni-mic"></em></a></li>
                                     <li><a href="#"><em className="icon ni ni-grid-sq"></em></a></li> */}
                                 </ul>
                             </div>}
                         </div>
                         <div className="nk-chat-editor-form">
                             <div className="form-control-wrap">
-                                <input
+                                {/* <input
                                     type="text"
                                     className="form-control form-control-simple no-resize py-1"
                                     id="default-textarea"
@@ -1803,7 +1824,59 @@ const ChatBox = ({ userId, groupId }) => {
                                     onKeyDown={handleKeyDown}
                                     ref={inputRef}
                                     placeholder="Type your message..."
-                                />
+                                /> */}
+                                <div className="py-1">
+                                    {showToolBar && <Toolbar>
+                                        {(externalProps) => (
+                                            <div className="custom-toolbar">
+                                                <BoldButton {...externalProps} />
+                                                <ItalicButton {...externalProps} />
+                                                <UnderlineButton {...externalProps} />
+                                            </div>
+                                        )}
+                                    </Toolbar>}
+                                    {/* <div className={`${showToolBar ? 'toolbar_visible' : ''}`}> */}
+                                    <Editor
+                                        ref={editorRef}
+                                        editorState={editorState}
+                                        // placeholder='message'
+                                        onChange={(newState) => {
+                                            setEditorState(newState);
+
+                                            // Convert editor content to HTML on every change
+                                            const contentState = newState.getCurrentContent();
+                                            let html = stateToHTML(contentState, options2); // 👈 options explained below
+                                            html = html.replaceAll("<p>", "<div>").replaceAll("</p>", "</div>");
+
+                                            setMessage(html); // ✅ always update HTML message
+                                        }}
+                                        plugins={plugins}
+                                        handleReturn={(e) => {
+                                            // Prevent new line, send message instead
+                                            if (!e.shiftKey) {
+                                                e.preventDefault();
+                                                sendMessage(); // 👈 call your send function here
+
+                                                // 👇 reset editor state to empty after sending
+                                                const newEditorState = EditorState.push(
+                                                    editorState,
+                                                    ContentState.createFromText("") // empty editor
+                                                );
+                                                setEditorState(newEditorState);
+
+                                                // 👇 force focus back to editor
+                                                setTimeout(() => {
+                                                    if (editorRef.current) {
+                                                        editorRef.current.focus();
+                                                    }
+                                                }, 0);
+
+                                                return "handled";
+                                            }
+                                            return "not-handled"; // allow shift+enter for new line
+                                        }}
+                                    />
+                                </div>
                             </div>
                         </div>
                         <ul className="nk-chat-editor-tools g-2">

@@ -9,7 +9,8 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
-    department: ''
+    department: '',
+    companyCode: ''
   });
 
   useEffect(() => {
@@ -105,6 +106,17 @@ const Register = () => {
               <option value="Driver">Driver</option>
               <option value="Jockey">Jockey</option>
             </select>
+          </div>
+          <div className="mb-3">
+            <label>Company Code</label>
+            <input
+              type="text"
+              className="form-control"
+              name="companyCode"
+              value={user.companyCode}
+              onChange={handleChange}
+              required
+            />
           </div>
           <button type="submit" className="btn btn-primary w-100 justify-content-center">Register</button>
         </form>

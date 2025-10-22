@@ -480,7 +480,7 @@ const Chats = () => {
                                                     <span className="time">{group?.latestTimestamp}</span>
                                                 </div>
                                                 {<div className="chat-context">
-                                                    {group?.latestSenderId && <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${group?.latestSenderName} :`} {parse(truncateHtml(group?.latestMessage || "", 20))}</div>}
+                                                    {group?.latestSenderId && <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${group?.latestSenderName} ${loggedInUser?.role===1 ? `| ${group?.latestSenderDepartment}` : ''} :`} {parse(truncateHtml(group?.latestMessage || "", 20))}</div>}
                                                     {group?.unseenCount > 0 && <div className="status unread">{group?.unseenCount}</div>}
                                                     {/* <div className="status delivered">
                                                         <em className="icon ni ni-check-circle-fill"></em>

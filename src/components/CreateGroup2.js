@@ -9,10 +9,40 @@ const CreateGroup2 = () => {
     const [groupName, setGroupName] = useState('');
     const [users, setUsers] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
+    const [selectedCompany, setSelectedCompany] = useState('');
     const [hiddenUsers, setHiddenUsers] = useState([]); // 👈 track hidden
     const [loading, setLoading] = useState(true);
 
     const loggedInUser = JSON.parse(localStorage.getItem('userData'))
+
+
+    const [companies, setCompanies] = useState([])
+
+    const fetchCompanies = async () => {
+        try {
+            const res = await fetch('https://chat.quanteqsolutions.com/api/admin/companies', {
+                headers: {
+                    'Authorization': localStorage.getItem('token'),
+                },
+            });
+            const data = await res.json();
+
+            console.log('comany', data.companies)
+
+            if (data.status) {
+                setCompanies(data.companies || []);
+            } else {
+                toast.error(data.message || 'Error!');
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error('Error fetching users');
+        }
+    };
+
+    useEffect(() => {
+        fetchCompanies()
+    }, [])
 
     useEffect(() => {
         // Fetch list of users
@@ -58,6 +88,11 @@ const CreateGroup2 = () => {
             return;
         }
 
+        if (!selectedCompany) {
+            toast.info('Select a company');
+            return;
+        }
+
         try {
             const response = await fetch('https://chat.quanteqsolutions.com/api/groups/create', {
                 method: 'POST',
@@ -68,7 +103,8 @@ const CreateGroup2 = () => {
                 body: JSON.stringify({
                     name: groupName,
                     members: selectedUsers.map(u => u._id), // send ids
-                    hiddenMembers: hiddenUsers              // send hidden ids
+                    hiddenMembers: hiddenUsers,              // send hidden ids
+                    company: selectedCompany
                 })
             });
 
@@ -83,6 +119,8 @@ const CreateGroup2 = () => {
             toast.error('Error creating group');
         }
     };
+
+    const hiddenDepartments = ["Operations Team", "Quality Team", "Accounts Team", "management"];
 
     return (
         <div className="nk-chat-body profile-shown pe-0">
@@ -99,27 +137,60 @@ const CreateGroup2 = () => {
                     </Form.Group>
 
                     <Form.Group className="mb-3">
-                        {loading ? (
-                            <Spinner animation="border" />
-                        ) : (
-                            <Multiselect
-                                options={users}
-                                selectedValues={selectedUsers}
-                                onSelect={(selectedList) => setSelectedUsers(selectedList)}
-                                onRemove={(selectedList) => {
-                                    setSelectedUsers(selectedList);
-                                    // also remove from hidden if unselected
-                                    setHiddenUsers(prev => prev.filter(id => selectedList.find(u => u._id === id)));
-                                }}
-                                displayValue="name"
-                                placeholder='Enter name'
-                            />
-                        )}
+                        <Form.Control
+                            as="select"
+                            value={selectedCompany}
+                            onChange={(e) => setSelectedCompany(e.target.value)}
+                            required
+                        >
+                            <option value="">Select company</option>
+                            {companies.map((company) => (
+                                <option key={company._id} value={company?._id}>
+                                    {company?.companyName} ({company?.companyCode})
+                                </option>
+                            ))}
+                        </Form.Control>
                     </Form.Group>
+
+                    {selectedCompany && (
+                        <Form.Group className="mb-3">
+                            {loading ? (
+                                <Spinner animation="border" />
+                            ) : (
+                                <Multiselect
+                                    options={users
+                                        .filter((u) => {
+                                            if (hiddenDepartments.includes(u?.department)) {
+                                                return true; // ✅ always include hidden dept users
+                                            }
+                                            return u?.company === selectedCompany; // ✅ filter others by company
+                                        })
+                                        .map((u) => ({
+                                            ...u,
+                                            displayName: `${u?.name} (${u?.department || "No Dept"})`, // 👈 add department
+                                        }))}
+                                    selectedValues={selectedUsers.map((u) => ({
+                                        ...u,
+                                        displayName: `${u?.name} (${u?.department || "No Dept"})`,
+                                    }))}
+                                    onSelect={(selectedList) => setSelectedUsers(selectedList)}
+                                    onRemove={(selectedList) => {
+                                        setSelectedUsers(selectedList);
+                                        // also remove from hidden if unselected
+                                        setHiddenUsers((prev) =>
+                                            prev.filter((id) => selectedList.find((u) => u._id === id))
+                                        );
+                                    }}
+                                    displayValue="displayName" // 👈 use displayName instead of name
+                                    placeholder="Enter name"
+                                />
+                            )}
+                        </Form.Group>
+                    )}
 
                     {/* Hidden user toggles */}
                     {selectedUsers.length > 0 && (
-                        <div className="mb-3 px-2" style={{maxHeight: '60vh', overflowX: 'auto'}}>
+                        <div className="mb-3 px-2" style={{ maxHeight: '60vh', overflowX: 'auto' }}>
                             <h6>Mark Hidden Users:</h6>
                             {selectedUsers.map(user => (
                                 <Form.Check

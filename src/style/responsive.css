@@ -15,6 +15,7 @@
 .add-user-form {
 
     input.form-control,
+    select.form-control,
     .search-wrapper {
         border: 0;
         border-radius: 0;
@@ -229,6 +230,16 @@
     align-items: center;
     justify-content: center;
     margin: 0 !important;
+    opacity: 0.6;
+
+    &:hover{
+        opacity: 1;
+    }
+
+}
+
+.chat-upload-option .upload-files.active {
+    opacity: 1;
 }
 
 
@@ -365,6 +376,19 @@
 .typing .dot:last-child {
     margin-right: 0;
 }
+
+.t16lpgj {
+    /* background-color: red !important; */
+    position: absolute !important;
+    bottom: 100%;
+    margin-bottom: 1.25rem;
+}
+
+
+/* .toolbar_visible {
+    border: 1px solid #ddd;
+    padding: 1rem;
+} */
 
 @keyframes mercuryTypingAnimation {
     0% {
@@ -552,15 +576,16 @@
     letter-spacing: 0 !important;
 }
 
-.rotate-it{
+.rotate-it {
     animation: rotate-animate 0.6s ease-in-out forwards;
 }
 
 @keyframes rotate-animate {
-    from{
+    from {
         transform: rotateY(0deg);
     }
-    to{
+
+    to {
         transform: rotateY(360deg);
     }
 }

@@ -303,9 +303,17 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                     {/* <h5 style={{ display: 'inline-block' }}>{groupName}</h5> <em onClick={handleChangeName} className="icon ni ni-edit-alt-fill" style={{ cursor: 'pointer' }}></em> */}
                     <span className="sub-text">
                         <span style={{ fontWeight: '700' }}>
+                            {groupDetails?.company?.companyName} ({groupDetails?.company?.companyCode})
+                        </span>
+                    </span>
+                    
+                    <span className="sub-text">
+                        <span style={{ fontWeight: '700' }}>
                             Total Members : {groupDetails?.members?.length}
                         </span>
                     </span>
+
+                    
 
                     {showMembers && <div className="members-list">
                         <span className="sub-text justify-content-start">Group Members : {groupDetails?.members?.length} </span>
@@ -400,7 +408,23 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                 <div className="members-list position-static border-0">
 
                     <span className="sub-text d-flex justify-content-between">
-                        Members : {groupDetails?.members?.length}
+                        Members : {groupDetails?.members?.filter(m => {
+                            // exclude self always
+                            if (loggedInUser?.role === 1) {
+                                return true;
+                            }
+
+                            if (m.department === 'management') return false;
+                            // if (m._id === '683d32d6952bd329b2fa1c9a') return false;
+
+                            // get memberInfo for this user
+                            const info = groupDetails?.membersInfo?.find(mi => mi.userId === m._id);
+
+                            // if current user is admin, ignore hidden filter
+
+                            // for non-admins, filter out hidden members
+                            return !info?.isHidden;
+                        })?.length}
                         {/* <span className='add-members'  >Add Members</span>  */}
                         {!(groupDetails?.membersInfo?.some(m => m.userId === loggedInUser?._id && m.isHidden)) && <Button onClick={() => setShowModal(true)} className="sub-text justify-content-start m-0 p-0 border-0 add-member-btn" style={{ backgroundColor: 'transparent' }}>
                             Add New Members
@@ -409,15 +433,18 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                     <ul className={`chat-list`} >
                         {groupDetails?.members?.filter(m => {
                             // exclude self always
-                            if (m._id === '683d32d6952bd329b2fa1c9a') return false;
+                            if (loggedInUser?.role === 1) {
+                                return true;
+                            }
+
+                            if (m.department === 'management') return false;
+                            // if (m._id === '683d32d6952bd329b2fa1c9a') return false;
 
                             // get memberInfo for this user
                             const info = groupDetails?.membersInfo?.find(mi => mi.userId === m._id);
 
                             // if current user is admin, ignore hidden filter
-                            if (loggedInUser?.role === 1) {
-                                return true;
-                            }
+                            
 
                             // for non-admins, filter out hidden members
                             return !info?.isHidden;
@@ -431,7 +458,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                                         </div>
                                         <div className="chat-info">
                                             <div className="chat-from" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-                                                <div className="name" style={{ color: groupDetails?.membersInfo?.find(mi => mi.userId === group._id)?.isHidden && '#ccc' }}>{group?.name}</div>
+                                                <div className="name" style={{ color: groupDetails?.membersInfo?.find(mi => mi.userId === group._id)?.isHidden && '#ccc' }}>{group?.name} ({group?.department})</div>
                                                 {(groupDetails?.membersInfo?.find(mi => mi.userId === group._id)?.isHidden) && <div className="hidden_tag" style={{ color: '#ccc', fontSize: 12 }}>hidden user</div>}
                                                 {/* <span className="time">Now</span> */}
                                             </div>
@@ -443,7 +470,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                                             </div>
                                         </div>
                                     </div>
-                                    {!(groupDetails?.membersInfo?.some(m => m.userId === loggedInUser?._id && m.isHidden)) && <div className="chat-actions">
+                                    {(!(groupDetails?.membersInfo?.some(m => m.userId === loggedInUser?._id && m.isHidden)) && (group?._id !== loggedInUser?._id)) && <div className="chat-actions">
                                         <div className="dropdown">
                                             <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
                                             <div className="dropdown-menu dropdown-menu-right">
@@ -535,6 +562,7 @@ const InfoBar = ({ showDetails, setShowDetails, groupDetails, groupName, setGrou
                 onlineUsers={onlineUsers}
                 addMembers={addMembers}
                 loggedInUser={loggedInUser}
+                companyId={groupDetails?.company?._id}
             />
 
             <ConfirmModal
