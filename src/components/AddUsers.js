@@ -44,6 +44,7 @@ const AddUsers = () => {
     companyCode: '',
     department: '',
     password: '',
+    accessLevel: '',
     groupCreateAccess: false,
     oneOnOneAccess: false,
     appAccess: false,
@@ -84,6 +85,7 @@ const AddUsers = () => {
           companyCode: '',
           department: '',
           password: '',
+          accessLevel: '',
           groupCreateAccess: false,
           oneOnOneAccess: false,
           appAccess: false,
@@ -153,15 +155,16 @@ const AddUsers = () => {
               <option value="Operations Team">Operations Team</option>
               <option value="Accounts Team">Accounts Team</option>
               <option value="Quality Team">Quality Team</option>
+              <option value="Customer Service Team">Customer Service Team</option>
               <option value="Contractor Management">Contractor Management</option>
               <option value="Contractor">Contractor</option>
-              <option value="Driver">Driver</option>
-              <option value="Jockey">Jockey</option>
+              <option value="driver">Driver</option>
+              <option value="jockey">Jockey</option>
             </Form.Control>
           </Form.Group>
 
 
-          {["Contractor Management", "Contractor", "Driver", "Jockey"].includes(user.department) && (
+          {["Contractor Management", "Contractor", "driver", "jockey"].includes(user.department) && (
             <Form.Group className="mb-3">
               <Form.Control
                 as="select"
@@ -181,6 +184,25 @@ const AddUsers = () => {
             </Form.Group>
           )}
 
+          {["Operations Team", "Accounts Team", "Quality Team", "Customer Service Team"].includes(user.department) && (
+            <Form.Group className="mb-3">
+              <Form.Control
+                as="select"
+                name="accessLevel"
+                value={user.accessLevel}
+                onChange={handleChange}
+                style={{ color: user.accessLevel && '#000' }}
+                required
+              >
+                <option value="">Select Access Level</option>
+                <option value="1">L1</option>
+                <option value="2">L2</option>
+                <option value="3">L3</option>
+                <option value="4">L4</option>
+              </Form.Control>
+            </Form.Group>
+          )}
+
           <Form.Group className="mb-3">
             <Form.Control
               type="password"
@@ -193,7 +215,7 @@ const AddUsers = () => {
           </Form.Group>
 
           <Form.Group className="mb-2">
-            <Form.Check
+            {/* <Form.Check
               id="groupCreateAccess"
               type="checkbox"
               label="Group Create Access"
@@ -224,7 +246,7 @@ const AddUsers = () => {
               name="deleteMessageAccess"
               checked={user.deleteMessageAccess}
               onChange={handleChange}
-            />
+            /> */}
             <Form.Check
               id="active"
               type="checkbox"

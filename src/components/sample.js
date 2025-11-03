@@ -1676,7 +1676,92 @@ const ChatBox = ({ userId, groupId }) => {
                 title="Confirm Delete"
                 message="Are you sure you want to delete this message?"
             />
+            
+
+
+
+
+
+
+
+
+
+
+
+
+            <td>
+                                    {/* {editingUserId === user._id ? (
+                                            <Form.Check
+                                                type="checkbox"
+                                                name="groupCreateAccess"
+                                                className='m-0'
+                                                checked={formData.groupCreateAccess}
+                                                onChange={handleInputChange}
+                                            />
+                                        ) : (
+                                            user.groupCreateAccess ? 'Yes' : 'No'
+                                        )} */}
+                                    {(user?.role === 1 || user?.accessLevel === 3 || user?.accessLevel === 4 || user?.department === 'Contractor Management' || user?.department === 'Contractor') ? <svg width="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M4.89163 13.2687L9.16582 17.5427L18.7085 8" stroke="#1ee0ac" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg> : <svg width="27px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M16 8L8 16M8.00001 8L16 16" stroke="#e85347" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>}
+                                </td>
+                                <td>
+                                    {/* {editingUserId === user._id ? (
+                                            <Form.Check
+                                                type="checkbox"
+                                                name="oneOnOneAccess"
+                                                checked={formData.oneOnOneAccess}
+                                                onChange={handleInputChange}
+                                            />
+                                        ) : ( */}
+                                    {(user?.role === 1 || user?.accessLevel === 4 || user?.department === 'Contractor Management') ? <svg width="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M4.89163 13.2687L9.16582 17.5427L18.7085 8" stroke="#1ee0ac" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg> : <svg width="27px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M16 8L8 16M8.00001 8L16 16" stroke="#e85347" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>}
+                                    {/* )} */}
+                                </td>
+                                <td>
+                                    {/* {editingUserId === user._id ? (
+                                            <Form.Check
+                                                type="checkbox"
+                                                name="appAccess"
+                                                checked={formData.appAccess}
+                                                onChange={handleInputChange}
+                                            />
+                                        ) : (
+                                            user.appAccess ? 'Yes' : 'No'
+                                        )} */}
+                                    {(user?.role === 1 || user?.accessLevel === 3 || user?.accessLevel === 4 || user?.department === 'Contractor Management' || user?.department === 'Contractor' || user?.department === 'driver' || user?.department === 'jockey') ? <svg width="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M4.89163 13.2687L9.16582 17.5427L18.7085 8" stroke="#1ee0ac" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg> : <svg width="27px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M16 8L8 16M8.00001 8L16 16" stroke="#e85347" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>}
+                                </td>
+                                <td>
+                                    {/* {editingUserId === user._id ? (
+                                            <Form.Check
+                                                type="checkbox"
+                                                name="deleteMessageAccess"
+                                                checked={formData.deleteMessageAccess}
+                                                onChange={handleInputChange}
+                                            />
+                                        ) : (
+                                            user.deleteMessageAccess ? 'Yes' : 'No'
+                                        )} */}
+
+                                    {(user?.role === 1 || user?.accessLevel === 3 || user?.accessLevel === 4 || user?.accessLevel === 2) ? <svg width="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M4.89163 13.2687L9.16582 17.5427L18.7085 8" stroke="#1ee0ac" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg> : <svg width="27px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M16 8L8 16M8.00001 8L16 16" stroke="#e85347" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>}
+                                </td>
         </>
+
+
+
     )
 }
 

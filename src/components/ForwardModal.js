@@ -211,14 +211,7 @@ const ForwardModal = ({ show, handleClose, onlineUsers, getPrivateRoomId, user, 
                                         {!user?.imagePath && <span>{user?.name?.slice(0, 2).toUpperCase()}</span>}
                                         <span className={`status dot dot-lg ${onlineUsers[user._id] ? 'dot-success' : 'dot-gray'}`}></span>
                                     </div>
-                                    <div className="chat-info">
-                                        <div className="chat-from">
-                                            <div className="name">{user?.name}</div>
-                                        </div>
-                                        <div className="chat-context">
-                                            {/* <div className="text">{user?.email}</div> */}
-                                        </div>
-                                    </div>
+                                     
                                 </div>
                             </li>
                         ))}

@@ -6,6 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { Link } from 'react-router-dom';
+import UsersTab from './UsersTab';
+import CompanyTab from './CompanyTab';
 
 const AllUsers = () => {
     const [users, setUsers] = useState([]);
@@ -87,6 +89,7 @@ const AllUsers = () => {
             oneOnOneAccess: user.oneOnOneAccess,
             appAccess: user.appAccess,
             deleteMessageAccess: user.deleteMessageAccess,
+            accessLevel: user.accessLevel,
             active: user.active
         });
     };
@@ -179,6 +182,10 @@ const AllUsers = () => {
 
 
     const deleteUsers = async () => {
+        if(loggedInUser?.accessLevel < 4){
+            toast.warning("You don't have access to delete users");
+            return
+        }
         if (selectedUserIds.length === 0) {
             toast.warning('No users selected');
             return;
@@ -216,26 +223,39 @@ const AllUsers = () => {
         ? users.filter(user => user?.company?.companyCode === selectedCompany)
         : users;
 
+        const [panel, setPanel] = useState('users')
+
 
     return (
         <div className="nk-chat-body profile-shown px-3 admin-users-list">
             <div className="nk-chat-head border-0 justify-content-between px-0">
-                <h4 className='mb-0'>All Users (Admin Panel)</h4>
+                {/* <h4 className='mb-0'>All Users (Admin Panel)</h4> */}
+                <div className="d-flex align-items-center">
+                    <Form.Control
+                        as="select"
+                        value={panel}
+                        onChange={(e) => setPanel(e.target.value)}
+                        style={{ fontWeight: 'bold', fontSize: '18px' }}
+                    >
+                        <option value="users">All Users (Admin Panel)</option>
+                        <option value="companies">All Companies (Admin Panel)</option>
+                    </Form.Control>
+                </div>
                 <div>
                     <ul className="d-flex">
                         <li className='me-2'>
                             <Link to='/dashboard/chat?add_company' className='btn btn-warning'>Add Company</Link>
                         </li>
-                        <li className='me-2'>
+                        {panel === 'users' && <li className='me-2'>
                             <Link to='/dashboard/chat?add_user' className='btn btn-primary'>Add Users</Link>
-                        </li>
-                        <li>
+                        </li>}
+                        {panel === 'users' && <li>
                             <button className='btn btn-danger' onClick={deleteUsers} disabled={selectedUserIds.length === 0}>
                                 Delete Users
                             </button>
-                        </li>
+                        </li>}
 
-                        <li>
+                        {panel === 'users' && <li>
                             {/* <div className='ms-3' style={{ border: '1px solid #000' }}> */}
                             {/* <Form.Select
                                     // className="ms-3"
@@ -258,235 +278,44 @@ const AllUsers = () => {
                                 ))}
                             </Form.Control>
                             {/* </div> */}
-                        </li>
+                        </li>}
                     </ul>
                 </div>
             </div>
 
-            {false ? (
-                <Spinner animation="border" />
+            {panel !== 'users' ? (
+                <CompanyTab
+                    selectAll={selectAll}
+                    handleSelectAllChange={handleSelectAllChange}
+                    loading={loading}
+                    filteredUsers={filteredUsers}
+                    selectedUserIds={selectedUserIds}
+                    handleCheckboxChange={handleCheckboxChange}
+                    formData={formData}
+                    editingUserId={editingUserId}
+                    handleInputChange={handleInputChange}
+                    companies={companies}
+                    handleSaveClick={handleSaveClick}
+                    handleEditClick={handleEditClick}
+                    setEditingUserId={setEditingUserId}
+                />
             ) : (
-                <Table striped bordered hover>
-                    <thead>
-                        <tr>
-                            <th>
-                                <Form.Check
-                                    type="checkbox"
-                                    checked={selectAll}
-                                    onChange={handleSelectAllChange}
-                                />
-                            </th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Password</th>
-                            <th>Department</th>
-                            <th>Company</th>
-                            <th>Create Group Access</th>
-                            <th>One-on-One Chat Access</th>
-                            <th>App Access</th>
-                            <th>Delete Message Access</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            Array.from({ length: 5 }).map((_, index) => (
-                                <tr key={index}>
-                                    <td><Skeleton /></td>
-                                    <td><Skeleton /></td>
-                                    <td><Skeleton width={170} /></td>
-                                    <td><Skeleton /></td>
-                                    <td><Skeleton /></td>
-                                    <td><Skeleton /></td>
-                                    <td><Skeleton /></td>
-                                    <td><Skeleton /></td>
-                                    <td><Skeleton /></td>
-                                    <td><Skeleton /></td>
-                                    <td><Skeleton /></td>
-                                    <td><Skeleton /></td>
-                                </tr>
-                            ))
-                        ) : (
-                            filteredUsers.map((user) => (
-                                <tr key={user._id}>
-                                    <td>
-                                        <Form.Check
-                                            type="checkbox"
-                                            checked={selectedUserIds.includes(user._id)}
-                                            onChange={() => handleCheckboxChange(user._id)}
-                                        />
-                                    </td>
-                                    <td>
-                                        {editingUserId === user._id ? (
-                                            <Form.Control
-                                                type="text"
-                                                name="name"
-                                                value={formData.name}
-                                                onChange={handleInputChange}
-                                            />
-                                        ) : (
-                                            user.name
-                                        )}
-                                    </td>
-                                    <td>
-                                        {editingUserId === user._id ? (
-                                            <Form.Control
-                                                type="email"
-                                                name="email"
-                                                value={formData.email}
-                                                onChange={handleInputChange}
-                                            />
-                                        ) : (
-                                            user.email
-                                        )}
-                                    </td>
-                                    <td>
-                                        {editingUserId === user._id ? (
-                                            <Form.Control
-                                                type="password"
-                                                name="password"
-                                                value={formData.password}
-                                                onChange={handleInputChange}
-                                                placeholder="Leave empty to keep current password"
-                                            />
-                                        ) : (
-                                            '******'
-                                        )}
-                                    </td>
-                                    <td>
-                                        {editingUserId === user._id ? (
-                                            <Form.Control
-                                                as="select"
-                                                name="department"
-                                                value={formData.department}
-                                                onChange={handleInputChange}
-                                                required
-                                            >
-                                                <option value="Operations Team">Operations Team</option>
-                                                <option value="Accounts Team">Accounts Team</option>
-                                                <option value="Quality Team">Quality Team</option>
-                                                <option value="Contractor Management">Contractor Management</option>
-                                                <option value="Contractor">Contractor</option>
-                                                <option value="Driver">Driver</option>
-                                                <option value="Jockey">Jockey</option>
-                                            </Form.Control>
-                                        ) : (
-                                            user.department
-                                        )}
-                                    </td>
-                                    {user?.company ?
-                                        (
-                                            <td>
-                                                {(editingUserId === user._id) ? (
-                                                    <Form.Control
-                                                        as="select"
-                                                        name="companyCode"
-                                                        value={formData?.companyCode}
-                                                        onChange={handleInputChange}
-                                                        required
-                                                    >
-                                                        {companies.map((company) => (
-                                                            <option key={company?._id} value={company?.companyCode}>
-                                                                {company?.companyName} ({company?.companyCode})
-                                                            </option>
-                                                        ))}
-                                                    </Form.Control>
-                                                ) : (
-                                                    `${user?.company?.companyName} (${user?.company?.companyCode})`
-                                                )}
-                                            </td>
-                                        ) : (
-                                            <td> - </td>
-                                        )}
-                                    <td>
-                                        {editingUserId === user._id ? (
-                                            <Form.Check
-                                                type="checkbox"
-                                                name="groupCreateAccess"
-                                                className='m-0'
-                                                checked={formData.groupCreateAccess}
-                                                onChange={handleInputChange}
-                                            />
-                                        ) : (
-                                            user.groupCreateAccess ? 'Yes' : 'No'
-                                        )}
-                                    </td>
-                                    <td>
-                                        {editingUserId === user._id ? (
-                                            <Form.Check
-                                                type="checkbox"
-                                                name="oneOnOneAccess"
-                                                checked={formData.oneOnOneAccess}
-                                                onChange={handleInputChange}
-                                            />
-                                        ) : (
-                                            user.oneOnOneAccess ? 'Yes' : 'No'
-                                        )}
-                                    </td>
-                                    <td>
-                                        {editingUserId === user._id ? (
-                                            <Form.Check
-                                                type="checkbox"
-                                                name="appAccess"
-                                                checked={formData.appAccess}
-                                                onChange={handleInputChange}
-                                            />
-                                        ) : (
-                                            user.appAccess ? 'Yes' : 'No'
-                                        )}
-                                    </td>
-                                    <td>
-                                        {editingUserId === user._id ? (
-                                            <Form.Check
-                                                type="checkbox"
-                                                name="deleteMessageAccess"
-                                                checked={formData.deleteMessageAccess}
-                                                onChange={handleInputChange}
-                                            />
-                                        ) : (
-                                            user.deleteMessageAccess ? 'Yes' : 'No'
-                                        )}
-                                    </td>
-                                    <td>
-                                        {editingUserId === user._id ? (
-                                            <Form.Check
-                                                type="checkbox"
-                                                name="active"
-                                                checked={formData.active}
-                                                onChange={handleInputChange}
-                                            />
+                <UsersTab
+                    selectAll={selectAll}
+                    handleSelectAllChange={handleSelectAllChange}
+                    loading={loading}
+                    filteredUsers={filteredUsers}
+                    selectedUserIds={selectedUserIds}
+                    handleCheckboxChange={handleCheckboxChange}
+                    formData={formData}
+                    editingUserId={editingUserId}
+                    handleInputChange={handleInputChange}
+                    companies={companies}
+                    handleSaveClick={handleSaveClick}
+                    handleEditClick={handleEditClick}
+                    setEditingUserId={setEditingUserId}
+                />
 
-                                        ) : (
-                                            user.active ? 'Active' : 'Inactive'
-                                        )}
-                                    </td>
-                                    <td style={{ display: 'flex', border: '0' }}>
-                                        {editingUserId === user._id ? (
-                                            <>
-                                                <Button variant="success" size="sm" onClick={() => handleSaveClick(user._id)} style={{ padding: '0', marginRight: '0.5rem' }}>
-                                                    <svg width="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M4.89163 13.2687L9.16582 17.5427L18.7085 8" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                    </svg>
-                                                </Button>{' '}
-                                                <Button variant="danger" size="sm" onClick={() => setEditingUserId(null)} style={{ padding: '0' }}>
-                                                    <svg width="27px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M16 8L8 16M8.00001 8L16 16" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                    </svg>
-                                                </Button>
-                                            </>
-                                        ) : (
-                                            <Button variant="primary" size="sm" onClick={() => handleEditClick(user)}>
-                                                Edit
-                                            </Button>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-
-                </Table>
             )}
         </div>
     );

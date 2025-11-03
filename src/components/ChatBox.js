@@ -25,6 +25,9 @@ import {
     UnderlineButton
 } from "@draft-js-plugins/buttons";
 
+import { SlideshowLightbox } from 'lightbox.js-react';
+// import 'lightbox.js-react/dist/index.css';
+
 // const mentions = [
 //     { name: "Hemant", id: "1" },
 //     { name: "Raj", id: "2" },
@@ -520,16 +523,32 @@ const ChatBox = ({ userId, groupId }) => {
         };
     }, [userId]);
 
+    useEffect(() => {
+        console.log('current group', groupId)
+    }, [groupId])
 
 
     useEffect(() => {
         const handleReceiveMessage = (data) => {
-            console.log('test forward', data)
+            console.log('test simple', data)
             // return
             const newMessage = data.message;
-            console.log(newMessage)
-            setMessageArr((prevMessages) => [...prevMessages, newMessage]);
-            setMessageSent(true);
+            if (groupId) {
+                console.log('its group', groupId)
+                if (newMessage?.groupId === groupId) {
+                    console.log(newMessage)
+                    setMessageArr((prevMessages) => [...prevMessages, newMessage]);
+                    setMessageSent(true);
+                }
+            }
+            else {
+                console.log('its user', userId)
+                if (newMessage?.senderDetails?.id === userId || newMessage?.receiverId === userId) {
+                    console.log(newMessage)
+                    setMessageArr((prevMessages) => [...prevMessages, newMessage]);
+                    setMessageSent(true);
+                }
+            }
         };
 
         const handleReceiveForwardMessage = (data) => {
@@ -622,10 +641,10 @@ const ChatBox = ({ userId, groupId }) => {
 
     const sendMessage = async () => {
 
-        if (!message.trim() && filesArr.length === 0 || message === '<div><br></div>') {
-            alert('no')
+        if ((!message.trim() && filesArr.length === 0) || (message === '<div><br></div>' && filesArr.length === 0)) {
             return;
         }
+
         setMsgSeen(false);
 
         let uploadedFiles = [];
@@ -775,8 +794,8 @@ const ChatBox = ({ userId, groupId }) => {
         const tempFilesArr = [];
 
         Array.from(files).forEach((file) => {
-            if (file.size > 5 * 1024 * 1024) {
-                toast.error(`${file.name} exceeds 5 MB limit!`);
+            if (file.size > 20 * 1024 * 1024) {
+                toast.error(`${file.name} exceeds 20 MB limit!`);
                 return;
             }
 
@@ -987,6 +1006,43 @@ const ChatBox = ({ userId, groupId }) => {
         },
     };
 
+    // Function to copy message content
+    const copyMessage = (message) => {
+        if (!message?.content) return;
+
+        const htmlContent = message.content;
+
+        const plainText = htmlContent
+            .replace(/<div>/gi, '\n')
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/<strong>(.*?)<\/strong>/gi, '*$1*')
+            .replace(/<b>(.*?)<\/b>/gi, '*$1*')
+            .replace(/<em>(.*?)<\/em>/gi, '_$1_')
+            .replace(/<u>(.*?)<\/u>/gi, '//$1//')
+            .replace(/<i>(.*?)<\/i>/gi, '_$1_')
+            .replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .trim();
+
+        // Copy to clipboard
+        navigator.clipboard
+            .writeText(plainText)
+            .then(() => {
+                console.log("Message copied:", plainText);
+                toast.success(`Message copied successfully`);
+            })
+            .catch((err) => {
+                console.error("Failed to copy message:", err);
+            });
+    };
+
+
+
+
     const truncateHtml = (html, limit) => {
         // Convert line breaks and </div> into spaces
         let clean = html
@@ -1086,160 +1142,205 @@ const ChatBox = ({ userId, groupId }) => {
 
                                 {getDisplayDate(index, messageArr) && <div className="msg-date text-center">{getDisplayDate(index, messageArr)}</div>}
 
-                                <div className={`chat ${msg?.senderDetails?.id === loggedInUser._id ? 'is-me' : 'is-you'}`}>
-                                    {/* <div key={index} className={`chat ${false ? 'is-me' : 'is-you'}`}> */}
-                                    {/* {msg?.senderDetails?.id !== loggedInUser._id && <div className="chat-avatar"> */}
-                                    {msg?.senderDetails?.id !== loggedInUser._id && <div className={`chat-avatar ${getDisplayTime(index, messageArr) ? '' : 'mb-0'}`}>
-                                        <div className="user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com${msg?.senderDetails?.imagePath})` }}>
-                                            {!msg?.senderDetails?.imagePath && <span>{msg?.senderDetails?.name?.slice(0, 2).toUpperCase()}</span>}
-                                            {/* <span>he</span> */}
-                                        </div>
-                                    </div>}
-                                    <div className="chat-content">
-                                        {/* <div className="sender">
-                                            is-you
-                                        </div> */}
+                                {msg?.type === "action" ? (
+                                    <div className="msg-date text-center">{msg?.content}</div>
+                                ) : (
+                                    <div className={`chat ${msg?.senderDetails?.id === loggedInUser._id ? 'is-me' : 'is-you'}`}>
 
-                                        {msg?.senderDetails?.id !== loggedInUser?._id && <ul className="chat-meta">
-                                            <li >{`${msg?.senderDetails?.name} ${loggedInUser?.role === 1 ? `| ${msg?.senderDetails?.department}` : ''} `}</li>
-                                        </ul>}
+                                        {msg?.senderDetails?.id !== loggedInUser._id && <div className={`chat-avatar ${getDisplayTime(index, messageArr) ? '' : 'mb-0'}`}>
+                                            <div className="user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com${msg?.senderDetails?.imagePath})` }}>
+                                                {!msg?.senderDetails?.imagePath && <span>{msg?.senderDetails?.name?.slice(0, 2).toUpperCase()}</span>}
+                                                {/* <span>he</span> */}
+                                            </div>
+                                        </div>}
+                                        <div className="chat-content">
+                                            {/* <div className="sender">
+                                                is-you
+                                            </div> */}
 
-                                        {msg?.senderDetails?.id === loggedInUser._id ? (
-                                            msg?.replyTo && <ul className="chat-meta mt-0 mb-1">
-                                                <li>{msg?.replyTo?.time}</li>
-                                                <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
-                                            </ul>
-                                        ) : (
-                                            msg?.replyTo && <ul className="chat-meta mt-0 mb-1">
-                                                <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
-                                                <li>{msg?.replyTo?.time}</li>
-                                            </ul>
-                                        )
-                                        }
+                                            {msg?.senderDetails?.id !== loggedInUser?._id && <ul className="chat-meta">
+                                                <li >{`${msg?.senderDetails?.name} ${loggedInUser?.role === 1 ? `| ${msg?.senderDetails?.department}` : ''} `}</li>
+                                            </ul>}
 
-                                        <div className="chat-bubbles">
                                             {msg?.senderDetails?.id === loggedInUser._id ? (
-                                                msg?.replyTo && <div className="chat-bubble my-reply-bubble">
-                                                    <div className="chat-msg reply-chat-msg"> {parse(truncateHtml(msg?.replyTo?.msgContent || "", 20))} </div>
-                                                </div>
+                                                msg?.replyTo && <ul className="chat-meta mt-0 mb-1">
+                                                    <li>{msg?.replyTo?.time}</li>
+                                                    <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
+                                                </ul>
                                             ) : (
-                                                msg?.replyTo && <div className="chat-bubble user-reply-bubble">
-                                                    <div className="chat-msg reply-chat-msg"> {parse(truncateHtml(msg?.replyTo?.msgContent || "", 20))} </div>
-                                                </div>
+                                                msg?.replyTo && <ul className="chat-meta mt-0 mb-1">
+                                                    <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? 'themselves' : 'you'}`}</li>
+                                                    <li>{msg?.replyTo?.time}</li>
+                                                </ul>
                                             )
                                             }
-                                            {msg.location && msg.location.lat && msg.location.lng && <div className="chat-bubble">
-                                                <a style={{ backgroundColor: '#3883F9', padding: '0.5rem', borderRadius: 8 }} href={`https://www.google.com/maps/search/?api=1&query=${msg.location.lat},${msg.location.lng}`} target='_blank'>
-                                                    <img style={{ width: 250, height: 200, borderRadius: 8, maxWidth: "100%", objectFit: 'cover' }} src={`https://maps.googleapis.com/maps/api/staticmap?center=${msg.location.lat},${msg.location.lng}&zoom=15&size=600x300&markers=color:red%7C${msg.location.lat},${msg.location.lng}&key=AIzaSyAYC-Z1NZFERcHvnx3hNZxXx1s_3bDTyRY`} alt="" />
-                                                </a>
-                                            </div>}
-                                            {msg.files && msg.files.length > 0 && <div className="chat-bubble">
-                                                {/* Files preview */}
-                                                {msg.files && msg.files.length > 0 && (
-                                                    <div className={`message-files ${msg?.senderDetails?.id === loggedInUser._id ? 'text-end' : 'text-start'}`}>
-                                                        {msg.files.map((f, index) => {
-                                                            if (f.fileType === 'image') {
-                                                                return (
-                                                                    <div className='inner-file'>
+
+                                            <div className="chat-bubbles">
+                                                {msg?.senderDetails?.id === loggedInUser._id ? (
+                                                    msg?.replyTo && <div className="chat-bubble my-reply-bubble">
+                                                        <div className="chat-msg reply-chat-msg"> {parse(truncateHtml(msg?.replyTo?.msgContent || "", 20))} </div>
+                                                    </div>
+                                                ) : (
+                                                    msg?.replyTo && <div className="chat-bubble user-reply-bubble">
+                                                        <div className="chat-msg reply-chat-msg"> {parse(truncateHtml(msg?.replyTo?.msgContent || "", 20))} </div>
+                                                    </div>
+                                                )
+                                                }
+                                                {msg.location && msg.location.lat && msg.location.lng && <div className="chat-bubble">
+                                                    <a style={{ backgroundColor: '#3883F9', padding: '0.5rem', borderRadius: 8 }} href={`https://www.google.com/maps/search/?api=1&query=${msg.location.lat},${msg.location.lng}`} target='_blank'>
+                                                        <img style={{ width: 250, height: 200, borderRadius: 8, maxWidth: "100%", objectFit: 'cover' }} src={`https://maps.googleapis.com/maps/api/staticmap?center=${msg.location.lat},${msg.location.lng}&zoom=15&size=600x300&markers=color:red%7C${msg.location.lat},${msg.location.lng}&key=AIzaSyAYC-Z1NZFERcHvnx3hNZxXx1s_3bDTyRY`} alt="" />
+                                                    </a>
+                                                </div>}
+                                                {msg.files && msg.files.length > 0 && <div className="chat-bubble">
+                                                    {/* Files preview */}
+                                                    {msg.files && msg.files.length > 0 && (
+                                                        <div
+                                                            className={`message-files ${msg?.senderDetails?.id === loggedInUser._id ? "text-end" : "text-start"
+                                                                }`}
+                                                        >
+                                                            {/* ✅ Wrap ALL images in one Lightbox */}
+                                                            <SlideshowLightbox
+                                                                className="flex flex-wrap gap-2 light-box"
+                                                                showThumbnails={true}
+                                                            >
+                                                                {msg.files
+                                                                    .filter((f) => f.fileType === "image")
+                                                                    .map((f, index) => (
                                                                         <img
                                                                             key={index}
                                                                             src={`https://chat.quanteqsolutions.com${f.url}`}
                                                                             alt={f.fileName}
-                                                                            style={{ margin: '5px', maxWidth: '200px', maxHeight: '200px' }}
+                                                                            className="rounded shadow"
+                                                                            data-lightboxjs="auto"
+                                                                            style={{
+                                                                                margin: "5px",
+                                                                                maxWidth: "200px",
+                                                                                maxHeight: "200px",
+                                                                                cursor: "pointer",
+                                                                            }}
                                                                         />
-                                                                    </div>
-                                                                );
-                                                            } else if (f.fileType === 'video') {
-                                                                return (
-                                                                    <div className="inner-file">
+                                                                    ))}
+                                                            </SlideshowLightbox>
+
+                                                            {/* ✅ Show videos separately (not in Lightbox) */}
+                                                            {msg.files
+                                                                .filter((f) => f.fileType === "video")
+                                                                .map((f, index) => (
+                                                                    <div className="inner-file" key={index}>
                                                                         <video
-                                                                            key={index}
                                                                             src={`https://chat.quanteqsolutions.com${f.url}`}
                                                                             controls
-                                                                            style={{ margin: '5px', maxWidth: '300px', maxHeight: '300px' }}
+                                                                            style={{
+                                                                                margin: "5px",
+                                                                                maxWidth: "300px",
+                                                                                maxHeight: "300px",
+                                                                                borderRadius: "6px",
+                                                                            }}
                                                                         ></video>
                                                                     </div>
-                                                                );
-                                                            } else {
-                                                                return (
-                                                                    <div className='inner-file' style={{ border: '1px solid rgb(204, 204, 204)', margin: '5px', padding: '5px' }} key={index}>
+                                                                ))}
+
+                                                            {/* ✅ Show document or other files normally */}
+                                                            {msg.files
+                                                                .filter(
+                                                                    (f) => f.fileType !== "image" && f.fileType !== "video"
+                                                                )
+                                                                .map((f, index) => (
+                                                                    <div
+                                                                        className="inner-file"
+                                                                        key={index}
+                                                                        style={{
+                                                                            border: "1px solid rgb(204, 204, 204)",
+                                                                            margin: "5px",
+                                                                            padding: "5px",
+                                                                            borderRadius: "6px",
+                                                                        }}
+                                                                    >
                                                                         <a
                                                                             href={`https://chat.quanteqsolutions.com${f.url}`}
                                                                             target="_blank"
                                                                             rel="noopener noreferrer"
-                                                                            style={{ display: 'block' }}
+                                                                            style={{
+                                                                                display: "block",
+                                                                                color: "#007bff",
+                                                                            }}
                                                                         >
                                                                             📄 {f.fileName}
                                                                         </a>
                                                                     </div>
-                                                                );
-                                                            }
-                                                        })}
-                                                    </div>
-                                                )}
-
-                                                {/* <ul className="chat-msg-more">
-                                                <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name)}><em className="icon ni ni-reply-fill"></em></button></li>
-                                                <li>
-                                                    <div className="dropdown">
-                                                        <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
-                                                        <div className="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                                                            <ul className="link-list-opt no-bdr">
-                                                                <li className="d-sm-none"><a href="#"><em className="icon ni ni-reply-fill"></em> Reply</a></li>
-                                                                <li><a href="#"><em className="icon ni ni-pen-alt-fill"></em> Edit</a></li>
-                                                                <li><a href="#"><em className="icon ni ni-trash-fill"></em> Remove</a></li>
-                                                            </ul>
+                                                                ))}
                                                         </div>
-                                                    </div>
-                                                </li>
-                                            </ul> */}
+                                                    )}
 
-                                            </div>}
-                                            {msg?.content && <div className="chat-bubble">
-
-
-                                                <div className="chat-msg">
-                                                    {msg?.isForwarded && <ul className="chat-meta mb-1" style={{ justifyContent: 'flex-start' }}>
-                                                        <li style={{ padding: '0 0.7rem', borderRadius: '25px', fontSize: '10px', backgroundColor: msg?.senderDetails?.id === loggedInUser._id ? '#fff' : '#3883F9', color: msg?.senderDetails?.id === loggedInUser._id ? '#3883F9' : '#fff' }}>Forwarded</li>
-                                                    </ul>}
-                                                    {parse(markdownToHtml(msg?.content) || "", getOptions(msg))}
-                                                </div>
-                                                <ul className="chat-msg-more">
+                                                    {/* <ul className="chat-msg-more">
                                                     <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name)}><em className="icon ni ni-reply-fill"></em></button></li>
-
-                                                    <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => forwardMessage(msg)}><em className="icon ni ni-share-fill"></em></button></li>
-
-                                                    <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => showRemoveModal(msg?._id)}><em className="icon ni ni-trash-fill"></em></button></li>
-                                                    {/* <li>
-                                                    <div className="dropdown">
-                                                        <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
-                                                        <div className="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                                                            <ul className="link-list-opt no-bdr">
-                                                                <li className="d-sm-none"><a href="#"><em className="icon ni ni-reply-fill"></em> Reply</a></li>
-                                                                <li><a href="#"><em className="icon ni ni-pen-alt-fill"></em> Edit</a></li>
-                                                                <li><a href="#"><em className="icon ni ni-trash-fill"></em> Remove</a></li>
-                                                            </ul>
+                                                    <li>
+                                                        <div className="dropdown">
+                                                            <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                            <div className="dropdown-menu dropdown-menu-sm dropdown-menu-right">
+                                                                <ul className="link-list-opt no-bdr">
+                                                                    <li className="d-sm-none"><a href="#"><em className="icon ni ni-reply-fill"></em> Reply</a></li>
+                                                                    <li><a href="#"><em className="icon ni ni-pen-alt-fill"></em> Edit</a></li>
+                                                                    <li><a href="#"><em className="icon ni ni-trash-fill"></em> Remove</a></li>
+                                                                </ul>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </li> */}
-                                                </ul>
-                                            </div>}
-                                        </div>
-                                        {getDisplayTime(index, messageArr) && <ul className="chat-meta">
-                                            {/* <li>{msg?.senderDetails?.name}</li> */}
-                                            <li>
-                                                {getDisplayTime(index, messageArr) && getDisplayTime(index, messageArr)}
-                                                {/* {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <em className={`icon ni ni-check-circle-fill ms-1 ${(msg?.seen || msgSeen) ? 'message-seen' : ''}`}></em> } 
-                                            {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <span>{(msg?.seen || msgSeen) ? 'seen' : 'sent'}</span> }  */}
-                                            </li>
-                                        </ul>}
+                                                    </li>
+                                                </ul> */}
 
-                                        {/* <ul className="chat-meta">
-                                        <li>{msg?.senderDetails?.name}</li>
-                                        <li>{msg?.createdAt} <em className="icon ni ni-check-circle-fill"></em></li>
-                                    </ul> */}
+                                                </div>}
+                                                {msg?.content && <div className="chat-bubble">
+
+
+                                                    <div className="chat-msg">
+                                                        {msg?.isForwarded && <ul className="chat-meta mb-1" style={{ justifyContent: 'flex-start' }}>
+                                                            <li style={{ padding: '0 0.7rem', borderRadius: '25px', fontSize: '10px', backgroundColor: msg?.senderDetails?.id === loggedInUser._id ? '#fff' : '#3883F9', color: msg?.senderDetails?.id === loggedInUser._id ? '#3883F9' : '#fff' }}>Forwarded</li>
+                                                        </ul>}
+                                                        {parse(markdownToHtml(msg?.content) || "", getOptions(msg))}
+                                                    </div>
+                                                    <ul className="chat-msg-more">
+                                                        <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name)}><em className="icon ni ni-reply-fill"></em></button></li>
+
+                                                        <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => forwardMessage(msg)}><em className="icon ni ni-share-fill"></em></button></li>
+
+                                                        <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => showRemoveModal(msg?._id)}><em className="icon ni ni-trash-fill"></em></button></li>
+
+                                                        <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => copyMessage(msg)}><em className="icon ni ni-copy-fill"></em></button></li>
+
+                                                        {/* <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => copyMessage(msg)}><em className="icon ni ni-info-fill"></em></button></li> */}
+
+                                                        {/* <li>
+                                                        <div className="dropdown">
+                                                            <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                            <div className="dropdown-menu dropdown-menu-sm dropdown-menu-right">
+                                                                <ul className="link-list-opt no-bdr">
+                                                                    <li className="d-sm-none"><a href="#"><em className="icon ni ni-reply-fill"></em> Reply</a></li>
+                                                                    <li><a href="#"><em className="icon ni ni-pen-alt-fill"></em> Edit</a></li>
+                                                                    <li><a href="#"><em className="icon ni ni-trash-fill"></em> Remove</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </li> */}
+                                                    </ul>
+                                                </div>}
+                                            </div>
+                                            {getDisplayTime(index, messageArr) && <ul className="chat-meta">
+                                                {/* <li>{msg?.senderDetails?.name}</li> */}
+                                                <li>
+                                                    {getDisplayTime(index, messageArr) && getDisplayTime(index, messageArr)}
+                                                    {/* {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <em className={`icon ni ni-check-circle-fill ms-1 ${(msg?.seen || msgSeen) ? 'message-seen' : ''}`}></em> } 
+                                                {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <span>{(msg?.seen || msgSeen) ? 'seen' : 'sent'}</span> }  */}
+                                                </li>
+                                            </ul>}
+
+                                            {/* <ul className="chat-meta">
+                                            <li>{msg?.senderDetails?.name}</li>
+                                            <li>{msg?.createdAt} <em className="icon ni ni-check-circle-fill"></em></li>
+                                        </ul> */}
+                                        </div>
                                     </div>
-                                </div>
+                                )}
+
 
 
                                 {/* {true && <ul className="chat-meta chat-seen-meta mt-0 justify-content-end">
@@ -1546,7 +1647,6 @@ const ChatBox = ({ userId, groupId }) => {
 
                                 <div className={`chat ${msg?.senderDetails?.id === loggedInUser._id ? 'is-me' : 'is-you'}`}>
 
-                                    {/* <div key={index} className={`chat ${false ? 'is-me' : 'is-you'}`}> */}
                                     {msg?.senderDetails?.id !== loggedInUser._id && <div className={`chat-avatar ${getDisplayTime(index, messageArr) ? '' : 'mb-0'}`}>
                                         <div className="user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com${msg?.senderDetails?.imagePath})` }}>
                                             {!msg?.senderDetails?.imagePath && <span>{msg?.senderDetails?.name?.slice(0, 2).toUpperCase()}</span>}
@@ -1595,45 +1695,81 @@ const ChatBox = ({ userId, groupId }) => {
                                             {msg.files && msg.files.length > 0 && <div className="chat-bubble">
                                                 {/* Files preview */}
                                                 {msg.files && msg.files.length > 0 && (
-                                                    <div className={`message-files ${msg?.senderDetails?.id === loggedInUser._id ? 'text-end' : 'text-start'}`}>
-                                                        {msg.files.map((f, index) => {
-                                                            if (f.fileType === 'image') {
-                                                                return (
-                                                                    <div className='inner-file'>
-                                                                        <img
-                                                                            key={index}
-                                                                            src={`https://chat.quanteqsolutions.com${f.url}`}
-                                                                            alt={f.fileName}
-                                                                            style={{ margin: '5px', maxWidth: '200px', maxHeight: '200px' }}
-                                                                        />
-                                                                    </div>
-                                                                );
-                                                            } else if (f.fileType === 'video') {
-                                                                return (
-                                                                    <div className="inner-file">
-                                                                        <video
-                                                                            key={index}
-                                                                            src={`https://chat.quanteqsolutions.com${f.url}`}
-                                                                            controls
-                                                                            style={{ margin: '5px', maxWidth: '300px', maxHeight: '300px' }}
-                                                                        ></video>
-                                                                    </div>
-                                                                );
-                                                            } else {
-                                                                return (
-                                                                    <div className='inner-file' style={{ border: '1px solid rgb(204, 204, 204)', margin: '5px', padding: '5px' }} key={index}>
-                                                                        <a
-                                                                            href={`https://chat.quanteqsolutions.com${f.url}`}
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                            style={{ display: 'block' }}
-                                                                        >
-                                                                            📄 {f.fileName}
-                                                                        </a>
-                                                                    </div>
-                                                                );
-                                                            }
-                                                        })}
+                                                    <div
+                                                        className={`message-files ${msg?.senderDetails?.id === loggedInUser._id ? "text-end" : "text-start"
+                                                            }`}
+                                                    >
+                                                        {/* ✅ Wrap ALL images in one Lightbox */}
+                                                        <SlideshowLightbox
+                                                            className="flex flex-wrap gap-2 light-box"
+                                                            showThumbnails={true}
+                                                        >
+                                                            {msg.files
+                                                                .filter((f) => f.fileType === "image")
+                                                                .map((f, index) => (
+                                                                    <img
+                                                                        key={index}
+                                                                        src={`https://chat.quanteqsolutions.com${f.url}`}
+                                                                        alt={f.fileName}
+                                                                        className="rounded shadow"
+                                                                        data-lightboxjs="auto"
+                                                                        style={{
+                                                                            margin: "5px",
+                                                                            maxWidth: "200px",
+                                                                            maxHeight: "200px",
+                                                                            cursor: "pointer",
+                                                                        }}
+                                                                    />
+                                                                ))}
+                                                        </SlideshowLightbox>
+
+                                                        {/* ✅ Show videos separately (not in Lightbox) */}
+                                                        {msg.files
+                                                            .filter((f) => f.fileType === "video")
+                                                            .map((f, index) => (
+                                                                <div className="inner-file" key={index}>
+                                                                    <video
+                                                                        src={`https://chat.quanteqsolutions.com${f.url}`}
+                                                                        controls
+                                                                        style={{
+                                                                            margin: "5px",
+                                                                            maxWidth: "300px",
+                                                                            maxHeight: "300px",
+                                                                            borderRadius: "6px",
+                                                                        }}
+                                                                    ></video>
+                                                                </div>
+                                                            ))}
+
+                                                        {/* ✅ Show document or other files normally */}
+                                                        {msg.files
+                                                            .filter(
+                                                                (f) => f.fileType !== "image" && f.fileType !== "video"
+                                                            )
+                                                            .map((f, index) => (
+                                                                <div
+                                                                    className="inner-file"
+                                                                    key={index}
+                                                                    style={{
+                                                                        border: "1px solid rgb(204, 204, 204)",
+                                                                        margin: "5px",
+                                                                        padding: "5px",
+                                                                        borderRadius: "6px",
+                                                                    }}
+                                                                >
+                                                                    <a
+                                                                        href={`https://chat.quanteqsolutions.com${f.url}`}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        style={{
+                                                                            display: "block",
+                                                                            color: "#007bff",
+                                                                        }}
+                                                                    >
+                                                                        📄 {f.fileName}
+                                                                    </a>
+                                                                </div>
+                                                            ))}
                                                     </div>
                                                 )}
 
@@ -1669,6 +1805,9 @@ const ChatBox = ({ userId, groupId }) => {
                                                     <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => forwardMessage(msg)}><em className="icon ni ni-share-fill"></em></button></li>
 
                                                     <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => showRemoveModal(msg?._id)}><em className="icon ni ni-trash-fill"></em></button></li>
+
+                                                    <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => copyMessage(msg)}><em className="icon ni ni-copy-fill"></em></button></li>
+
                                                     {/* <li>
                                                     <div className="dropdown">
                                                         <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
