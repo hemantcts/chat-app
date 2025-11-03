@@ -247,8 +247,8 @@
     background-color: #3883F9;
     color: #fff !important;
     border-radius: 50%;
-    height: 19px;
-    width: 18px;
+    height: 22px;
+    width: 21px;
     align-items: center;
     justify-content: center;
 }
@@ -262,14 +262,16 @@
 }
 
 .unread-users {
-    /* position: absolute;
-    top: -8px;
-    right: -7px; */
     background-color: red;
     color: #fff;
-    padding: 0px 4px;
     border-radius: 50%;
     margin-left: 0.25rem;
+    height: 20px;
+    width: 20px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.75rem;
 }
 
 .nk-chat-aside-search {
@@ -588,4 +590,8 @@
     to {
         transform: rotateY(360deg);
     }
+}
+
+.message-files .light-box{
+    height: 100% !important;
 }

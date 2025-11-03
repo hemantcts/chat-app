@@ -55,17 +55,17 @@ const Sidebar = () => {
                                     </a>
                                 </li> */}
                                 {/* <li className="nk-menu-hr"></li> */}
-                                <li className={`nk-menu-item ${page==='users' ? 'active' : ''}`}>
+                                {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=3) && <li className={`nk-menu-item ${page==='users' ? 'active' : ''}`}>
                                     {/* <a href="html/apps/mailbox.html" className="nk-menu-link" title="Mailbox">
                                         <span className="nk-menu-icon"><em className="icon ni ni-inbox"></em></span>
                                     </a> */}
 
-                                    {loggedInUser?.role === 1 && <Link to="/dashboard/users" className="nk-menu-link active" title="Users">
+                                    <Link to="/dashboard/users" className="nk-menu-link active" title="Users">
                                         <span className="nk-menu-icon">
                                             <em className="icon ni ni-user"></em>
                                         </span>
-                                    </Link>}
-                                </li>
+                                    </Link>
+                                </li>}
                                 {/* <li className="nk-menu-item">
                                     <a href="html/apps/messages.html" className="nk-menu-link" title="Messages">
                                         <span className="nk-menu-icon"><em className="icon ni ni-chat"></em></span>

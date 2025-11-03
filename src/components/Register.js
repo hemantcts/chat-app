@@ -101,10 +101,11 @@ const Register = () => {
               <option value="Operations Team">Operations Team</option>
               <option value="Accounts Team">Accounts Team</option>
               <option value="Quality Team">Quality Team</option>
+              <option value="Customer Service Team">Customer Service Team</option>
               <option value="Contractor Management">Contractor Management</option>
               <option value="Contractor">Contractor</option>
-              <option value="Driver">Driver</option>
-              <option value="Jockey">Jockey</option>
+              <option value="driver">Driver</option>
+              <option value="jockey">Jockey</option>
             </select>
           </div>
           <div className="mb-3">
