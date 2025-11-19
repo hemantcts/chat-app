@@ -1,0 +1,36 @@
+{
+  "files": {
+    "main.css": "/chat-app/static/css/main.7e8785aa.css",
+    "main.js": "/chat-app/static/js/main.bc1e0d1a.js",
+    "static/js/453.fc439ced.chunk.js": "/chat-app/static/js/453.fc439ced.chunk.js",
+    "static/media/Nioicon.svg": "/chat-app/static/media/Nioicon.1fba761e7f46c4dd5457.svg",
+    "static/media/Nioicon.eot": "/chat-app/static/media/Nioicon.9262cde92d7db9454cc9.eot",
+    "static/media/Nioicon.woff": "/chat-app/static/media/Nioicon.08e5ad1d0d414bac92e7.woff",
+    "static/media/Nioicon.ttf": "/chat-app/static/media/Nioicon.2223262e97e2128073db.ttf",
+    "static/media/Roboto-Medium.eot": "/chat-app/static/media/Roboto-Medium.f9f0c87146a33023da7e.eot",
+    "static/media/Roboto-Medium.ttf": "/chat-app/static/media/Roboto-Medium.ef677e217f2009c16854.ttf",
+    "static/media/Roboto-Regular.eot": "/chat-app/static/media/Roboto-Regular.30b57652c88c5dbd65de.eot",
+    "static/media/Roboto-Regular.ttf": "/chat-app/static/media/Roboto-Regular.25e40da956314b12d333.ttf",
+    "static/media/Roboto-Bold.eot": "/chat-app/static/media/Roboto-Bold.6490694b37b0ee09bd91.eot",
+    "static/media/Roboto-Bold.ttf": "/chat-app/static/media/Roboto-Bold.5e9f6556d3c0bf6230f0.ttf",
+    "static/media/Roboto-Light.eot": "/chat-app/static/media/Roboto-Light.d592a653abb7a57fedd8.eot",
+    "static/media/Roboto-Light.ttf": "/chat-app/static/media/Roboto-Light.13d61ef8e609b548d9b5.ttf",
+    "static/media/Roboto-Medium.woff": "/chat-app/static/media/Roboto-Medium.b14ca2d2b289afceb0b0.woff",
+    "static/media/Roboto-Bold.woff": "/chat-app/static/media/Roboto-Bold.3f2cbde6b72e8d05669f.woff",
+    "static/media/Roboto-Regular.woff": "/chat-app/static/media/Roboto-Regular.31012f9b3e3da44f87e8.woff",
+    "static/media/Roboto-Light.woff": "/chat-app/static/media/Roboto-Light.df0f59d80526acc6d0cd.woff",
+    "static/media/notification_sound.wav": "/chat-app/static/media/notification_sound.b40168f3d541a46d4d01.wav",
+    "static/media/Roboto-Medium.woff2": "/chat-app/static/media/Roboto-Medium.fc0337b9cf1cce2e6e1e.woff2",
+    "static/media/Roboto-Bold.woff2": "/chat-app/static/media/Roboto-Bold.6cd35edfbc0d7a417131.woff2",
+    "static/media/Roboto-Regular.woff2": "/chat-app/static/media/Roboto-Regular.a25806274237d06e00a6.woff2",
+    "static/media/Roboto-Light.woff2": "/chat-app/static/media/Roboto-Light.d537674e9e217fa53a13.woff2",
+    "index.html": "/chat-app/index.html",
+    "main.7e8785aa.css.map": "/chat-app/static/css/main.7e8785aa.css.map",
+    "main.bc1e0d1a.js.map": "/chat-app/static/js/main.bc1e0d1a.js.map",
+    "453.fc439ced.chunk.js.map": "/chat-app/static/js/453.fc439ced.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7e8785aa.css",
+    "static/js/main.bc1e0d1a.js"
+  ]
+}
