@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/chat-app/static/css/main.7e8785aa.css",
-    "main.js": "/chat-app/static/js/main.bc1e0d1a.js",
+    "main.js": "/chat-app/static/js/main.9885aa86.js",
     "static/js/453.fc439ced.chunk.js": "/chat-app/static/js/453.fc439ced.chunk.js",
     "static/media/Nioicon.svg": "/chat-app/static/media/Nioicon.1fba761e7f46c4dd5457.svg",
     "static/media/Nioicon.eot": "/chat-app/static/media/Nioicon.9262cde92d7db9454cc9.eot",
@@ -26,11 +26,11 @@
     "static/media/Roboto-Light.woff2": "/chat-app/static/media/Roboto-Light.d537674e9e217fa53a13.woff2",
     "index.html": "/chat-app/index.html",
     "main.7e8785aa.css.map": "/chat-app/static/css/main.7e8785aa.css.map",
-    "main.bc1e0d1a.js.map": "/chat-app/static/js/main.bc1e0d1a.js.map",
+    "main.9885aa86.js.map": "/chat-app/static/js/main.9885aa86.js.map",
     "453.fc439ced.chunk.js.map": "/chat-app/static/js/453.fc439ced.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.7e8785aa.css",
-    "static/js/main.bc1e0d1a.js"
+    "static/js/main.9885aa86.js"
   ]
 }
