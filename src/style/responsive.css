@@ -12,7 +12,8 @@
 } */
 
 .group-create-form,
-.add-user-form {
+.add-user-form,
+.search_box {
 
     input.form-control,
     select.form-control,
@@ -594,4 +595,30 @@
 
 .message-files .light-box{
     height: 100% !important;
+}
+
+.chat{
+    transition: background-color 0.6s ease;
+}
+
+.chat.highlight {
+    background-color: #3882f963;
+    border-radius: 8px;
+}
+
+.chat.highlight .chat-msg{
+    animation: scaleMe 0.5s ease-in-out 0s 2 alternate-reverse forwards;
+}
+
+
+@keyframes scaleMe {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
 }

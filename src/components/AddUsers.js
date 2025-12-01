@@ -8,6 +8,8 @@ import { useEffect } from 'react';
 const AddUsers = () => {
   const navigate = useNavigate();
 
+  const loggedInUser = JSON.parse(localStorage.getItem('userData'))
+
   const [companies, setCompanies] = useState([])
 
   const fetchCompanies = async () => {
@@ -47,7 +49,7 @@ const AddUsers = () => {
     accessLevel: '',
     groupCreateAccess: false,
     oneOnOneAccess: false,
-    appAccess: false,
+    appAccess: true,
     deleteMessageAccess: false,
     active: false,
   });
@@ -88,7 +90,7 @@ const AddUsers = () => {
           accessLevel: '',
           groupCreateAccess: false,
           oneOnOneAccess: false,
-          appAccess: false,
+          appAccess: true,
           deleteMessageAccess: false,
           active: false
         });
@@ -198,7 +200,7 @@ const AddUsers = () => {
                 <option value="1">L1</option>
                 <option value="2">L2</option>
                 <option value="3">L3</option>
-                <option value="4">L4</option>
+                {loggedInUser?.accessLevel >= 4 && <option value="4">L4</option>}
               </Form.Control>
             </Form.Group>
           )}

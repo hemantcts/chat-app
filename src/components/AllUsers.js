@@ -8,6 +8,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { Link } from 'react-router-dom';
 import UsersTab from './UsersTab';
 import CompanyTab from './CompanyTab';
+import AppVersions from './AppVersions';
 
 const AllUsers = () => {
     const [users, setUsers] = useState([]);
@@ -58,7 +59,15 @@ const AllUsers = () => {
             const data = await res.json();
 
             if (data.status) {
-                const filterUsers = data.users.filter(user => user._id !== loggedInUser._id)
+                let filterUsers = data.users.filter(user => user._id !== loggedInUser._id);
+                if (loggedInUser?.accessLevel < 4) {
+                    filterUsers = data.users.filter((user) => {
+                        if (user._id !== loggedInUser._id && user?.accessLevel === 4) {
+                            return false;
+                        }
+                        return true
+                    });
+                }
                 setUsers(filterUsers || []);
                 setLoading(false);
             } else {
@@ -182,7 +191,7 @@ const AllUsers = () => {
 
 
     const deleteUsers = async () => {
-        if(loggedInUser?.accessLevel < 4){
+        if (loggedInUser?.accessLevel < 4) {
             toast.warning("You don't have access to delete users");
             return
         }
@@ -223,7 +232,55 @@ const AllUsers = () => {
         ? users.filter(user => user?.company?.companyCode === selectedCompany)
         : users;
 
-        const [panel, setPanel] = useState('users')
+    const [panel, setPanel] = useState('users')
+    const [platform, setPlatform] = useState('android')
+
+    const [showUploadModal, setShowUploadModal] = useState(false);
+    const [newVersion, setNewVersion] = useState('');
+    const [newPlatform, setNewPlatform] = useState('android');
+    const [uploading, setUploading] = useState(false);
+    const [newVersionSubmitted, setNewVersionSubmitted] = useState(false);
+
+    const handleUploadVersion = async () => {
+        if (!newVersion.trim()) {
+            toast.warning('Please enter a version number');
+            return;
+        }
+
+        try {
+            setUploading(true);
+            const response = await fetch('https://chat.quanteqsolutions.com/api/admin/upload_version', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('token'),
+                },
+                body: JSON.stringify({
+                    version: newVersion,
+                    platform: newPlatform,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.status) {
+                toast.success('Version uploaded successfully');
+                setShowUploadModal(false);
+                setNewVersion('');
+                setNewPlatform('android');
+                setNewVersionSubmitted((prev) => !prev);
+                // Optional: refresh versions if AppVersions has fetch logic
+            } else {
+                toast.error(data.message || 'Failed to upload version');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Server error while uploading version');
+        } finally {
+            setUploading(false);
+        }
+    };
+
 
 
     return (
@@ -239,15 +296,21 @@ const AllUsers = () => {
                     >
                         <option value="users">All Users (Admin Panel)</option>
                         <option value="companies">All Companies (Admin Panel)</option>
+                        <option value="app">App Versions (Admin Panel)</option>
                     </Form.Control>
                 </div>
                 <div>
                     <ul className="d-flex">
-                        <li className='me-2'>
+                        {panel === 'companies' && <li className='me-2'>
                             <Link to='/dashboard/chat?add_company' className='btn btn-warning'>Add Company</Link>
-                        </li>
+                        </li>}
                         {panel === 'users' && <li className='me-2'>
                             <Link to='/dashboard/chat?add_user' className='btn btn-primary'>Add Users</Link>
+                        </li>}
+                        {panel === 'app' && <li className='me-2'>
+                            <Button variant="primary" onClick={() => setShowUploadModal(true)}>
+                                Upload New Version
+                            </Button>
                         </li>}
                         {panel === 'users' && <li>
                             <button className='btn btn-danger' onClick={deleteUsers} disabled={selectedUserIds.length === 0}>
@@ -256,15 +319,8 @@ const AllUsers = () => {
                         </li>}
 
                         {panel === 'users' && <li>
-                            {/* <div className='ms-3' style={{ border: '1px solid #000' }}> */}
-                            {/* <Form.Select
-                                    // className="ms-3"
-                                    style={{ width: '200px' }}
-                                    value={selectedCompany}
-                                    onChange={(e) => setSelectedCompany(e.target.value)}
-                                > */}
                             <Form.Control
-                                className='ms-3'
+                                className='ms-3 me-3'
                                 style={{ width: '200px' }}
                                 as="select"
                                 value={selectedCompany}
@@ -279,11 +335,25 @@ const AllUsers = () => {
                             </Form.Control>
                             {/* </div> */}
                         </li>}
+
+                        {panel === 'app' && <li>
+                            <Form.Control
+                                as="select"
+                                value={platform}
+                                onChange={(e) => setPlatform(e.target.value)}
+                            // style={{ fontWeight: 'bold', fontSize: '18px' }}
+                            >
+                                <option value="android">Android</option>
+                                <option value="ios">iOS</option>
+                            </Form.Control>
+                        </li>}
+
+
                     </ul>
                 </div>
             </div>
 
-            {panel !== 'users' ? (
+            {panel === 'companies' ? (
                 <CompanyTab
                     selectAll={selectAll}
                     handleSelectAllChange={handleSelectAllChange}
@@ -298,8 +368,9 @@ const AllUsers = () => {
                     handleSaveClick={handleSaveClick}
                     handleEditClick={handleEditClick}
                     setEditingUserId={setEditingUserId}
+                    fetchCompanies={fetchCompanies}
                 />
-            ) : (
+            ) : panel === 'users' ? (
                 <UsersTab
                     selectAll={selectAll}
                     handleSelectAllChange={handleSelectAllChange}
@@ -314,9 +385,74 @@ const AllUsers = () => {
                     handleSaveClick={handleSaveClick}
                     handleEditClick={handleEditClick}
                     setEditingUserId={setEditingUserId}
+                    loggedInUser={loggedInUser}
                 />
-
+            ) : (
+                <AppVersions platform={platform} newVersionSubmitted={newVersionSubmitted} />
             )}
+
+
+            {/* Upload Version Modal */}
+            {showUploadModal && (
+                <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+                    <div className="modal-dialog modal-dialog-centered" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Upload New App Version</h5>
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    onClick={() => setShowUploadModal(false)}
+                                ></button>
+                            </div>
+                            <div className="modal-body">
+                                <Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>App Version</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="e.g. 1.0.6"
+                                            value={newVersion}
+                                            onChange={(e) => setNewVersion(e.target.value)}
+                                        />
+                                    </Form.Group>
+
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Platform</Form.Label>
+                                        <Form.Select
+                                            value={newPlatform}
+                                            onChange={(e) => setNewPlatform(e.target.value)}
+                                            style={{opacity: '1'}}
+                                        >
+                                            <option value="android">Android</option>
+                                            <option value="ios">iOS</option>
+                                        </Form.Select>
+                                    </Form.Group>
+                                </Form>
+                            </div>
+                            <div className="modal-footer">
+                                <Button variant="secondary" onClick={() => setShowUploadModal(false)}>
+                                    Cancel
+                                </Button>
+                                <Button
+                                    variant="primary"
+                                    onClick={handleUploadVersion}
+                                    disabled={uploading}
+                                >
+                                    {uploading ? (
+                                        <>
+                                            <Spinner size="sm" animation="border" /> Uploading...
+                                        </>
+                                    ) : (
+                                        'Upload'
+                                    )}
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 };

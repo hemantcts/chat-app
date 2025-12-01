@@ -88,10 +88,10 @@ const CreateGroup2 = () => {
             return;
         }
 
-        if (!selectedCompany) {
-            toast.info('Select a company');
-            return;
-        }
+        // if (!selectedCompany) {
+        //     toast.info('Select a company');
+        //     return;
+        // }
 
         try {
             const response = await fetch('https://chat.quanteqsolutions.com/api/groups/create', {
@@ -104,7 +104,7 @@ const CreateGroup2 = () => {
                     name: groupName,
                     members: selectedUsers.map(u => u._id), // send ids
                     hiddenMembers: hiddenUsers,              // send hidden ids
-                    company: selectedCompany
+                    company: loggedInUser?.accessLevel >= 3 ? selectedCompany : loggedInUser?.company
                 })
             });
 
@@ -136,7 +136,7 @@ const CreateGroup2 = () => {
                         />
                     </Form.Group>
 
-                    <Form.Group className="mb-3">
+                    {loggedInUser.accessLevel>=3 && <Form.Group className="mb-3">
                         <Form.Control
                             as="select"
                             value={selectedCompany}
@@ -150,9 +150,9 @@ const CreateGroup2 = () => {
                                 </option>
                             ))}
                         </Form.Control>
-                    </Form.Group>
+                    </Form.Group>}
 
-                    {selectedCompany && (
+                    {(selectedCompany || loggedInUser?.accessLevel<=2) && (
                         <Form.Group className="mb-3">
                             {loading ? (
                                 <Spinner animation="border" />
@@ -160,6 +160,9 @@ const CreateGroup2 = () => {
                                 <Multiselect
                                     options={users
                                         .filter((u) => {
+                                            if(loggedInUser.accessLevel<=2){
+                                                return u?.company === loggedInUser?.company; // ✅ filter by company for lower access levels
+                                            }
                                             if (hiddenDepartments.includes(u?.department)) {
                                                 return true; // ✅ always include hidden dept users
                                             }
@@ -189,7 +192,7 @@ const CreateGroup2 = () => {
                     )}
 
                     {/* Hidden user toggles */}
-                    {selectedUsers.length > 0 && (
+                    {(selectedUsers.length > 0 && loggedInUser.accessLevel>=3) && (
                         <div className="mb-3 px-2" style={{ maxHeight: '60vh', overflowX: 'auto' }}>
                             <h6>Mark Hidden Users:</h6>
                             {selectedUsers.map(user => (

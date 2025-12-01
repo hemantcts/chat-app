@@ -26,7 +26,10 @@ const NewChat = () => {
 
                 if (data.status) {
                     const allUsers = data.users;
-                    const filteredUsers = allUsers.filter((user) => user._id !== loggedInUser._id);
+                    let filteredUsers = allUsers.filter((user) => user._id !== loggedInUser._id);
+                    if (loggedInUser.department === 'Contractor Management' || loggedInUser.department === 'Contractor') {
+                        filteredUsers = filteredUsers.filter(user => user.company === loggedInUser.company);
+                    }
                     setUsers(filteredUsers || []);
                     setLoading(false);
                 } else {
@@ -115,7 +118,7 @@ const NewChat = () => {
                                             }}
                                             onMouseDown={() => handleSelectUser(user._id)} // onMouseDown to avoid blur before click
                                         >
-                                            {user.name}
+                                            {user.name} ({user.department || 'No Dept'})
                                         </div>
                                     ))
                                 ) : (

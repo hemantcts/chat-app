@@ -3,7 +3,7 @@ import { Table, Form, Button } from 'react-bootstrap'
 import Skeleton from 'react-loading-skeleton'
 import { toast } from 'react-toastify'
 
-const CompanyTab = ({ selectAll, handleSelectAllChange, loading, filteredUsers, selectedUserIds, handleCheckboxChange, formData, editingUserId, handleInputChange, handleSaveClick, handleEditClick, setEditingUserId, companies }) => {
+const CompanyTab = ({ selectAll, handleSelectAllChange, loading, filteredUsers, selectedUserIds, handleCheckboxChange, formData, editingUserId, handleInputChange, handleSaveClick, handleEditClick, setEditingUserId, companies, fetchCompanies }) => {
 
     // const [companies, setCompanies] = useState([])
 
@@ -33,7 +33,53 @@ const CompanyTab = ({ selectAll, handleSelectAllChange, loading, filteredUsers, 
     //     fetchCompanies()
     // }, [])
 
+    const [editingCompanyId, setEditingCompanyId] = useState(null);
+    const [companyFormData, setCompanyFormData] = useState({})
+
+    const handleEditCompanyClick = (company) => {
+        console.log('company', company)
+        setEditingCompanyId(company._id);
+        setCompanyFormData({
+            companyName: company?.companyName,
+            companyCode: company?.companyCode,
+            active: company?.active
+        })
+    }
+
+    const handleInputChange2 = (e) => {
+        const { name, value, type, checked } = e.target;
+        setCompanyFormData((prevData) => ({
+            ...prevData,
+            [name]: type === 'checkbox' ? checked : value,
+        }));
+    };
+
+    const handleSaveCompanyClick = async (userId) => {
+            try {
+                const res = await fetch(`https://chat.quanteqsolutions.com/api/admin/update_company/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': localStorage.getItem('token'),
+                    },
+                    body: JSON.stringify(companyFormData),
+                });
     
+                const data = await res.json();
+    
+                if (data.status) {
+                    toast.success(data.message || 'Company updated successfully');
+                    setEditingCompanyId(null);
+                    // fetchUsers();
+                    fetchCompanies();
+                } else {
+                    toast.error(data.message || 'Error updating user');
+                }
+            } catch (err) {
+                console.error(err);
+                toast.error('Error updating user');
+            }
+        };
 
     return (
         <>
@@ -50,7 +96,7 @@ const CompanyTab = ({ selectAll, handleSelectAllChange, loading, filteredUsers, 
                         <th>Company Name</th>
                         <th>Company Code</th>
                         <th>Status</th>
-                        {/* <th>Actions</th> */}
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -75,63 +121,61 @@ const CompanyTab = ({ selectAll, handleSelectAllChange, loading, filteredUsers, 
                                     />
                                 </td> */}
                                 <td>
-                                    {editingUserId === user._id ? (
+                                    {editingCompanyId === user._id ? (
                                         <Form.Control
                                             type="text"
-                                            name="name"
-                                            value={formData.companyName}
-                                            onChange={handleInputChange}
+                                            name="companyName"
+                                            value={companyFormData.companyName}
+                                            onChange={handleInputChange2}
                                         />
                                     ) : (
                                         user.companyName
                                     )}
                                 </td>
                                 <td>
-                                    {editingUserId === user._id ? (
+                                    {editingCompanyId === user._id ? (
                                         <Form.Control
                                             type="text"
-                                            name="email"
-                                            value={formData.companyCode}
-                                            onChange={handleInputChange}
+                                            name="companyCode"
+                                            value={companyFormData.companyCode}
+                                            onChange={handleInputChange2}
                                         />
                                     ) : (
                                         user.companyCode
                                     )}
                                 </td>
                                 <td>
-                                    {editingUserId === user._id ? (
+                                    {editingCompanyId === user._id ? (
                                         <Form.Check
                                             type="checkbox"
                                             name="active"
-                                            checked={formData.active}
-                                            onChange={handleInputChange}
+                                            checked={companyFormData.active}
+                                            onChange={handleInputChange2}
                                         />
-
                                     ) : (
-                                        // user.active ? 'Active' : 'Inactive'
-                                        'Active'
+                                        user.active ? 'Active' : 'Inactive'
                                     )}
                                 </td>
-                                {/* <td style={{ display: 'flex', border: '0' }}>
-                                    {editingUserId === user._id ? (
+                                <td style={{ display: 'flex', border: '0' }}>
+                                    {editingCompanyId === user._id ? (
                                         <>
-                                            <Button variant="success" size="sm" onClick={() => handleSaveClick(user._id)} style={{ padding: '0', marginRight: '0.5rem' }}>
+                                            <Button variant="success" size="sm" onClick={() => handleSaveCompanyClick(user._id)} style={{ padding: '0', marginRight: '0.5rem' }}>
                                                 <svg width="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M4.89163 13.2687L9.16582 17.5427L18.7085 8" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                                                 </svg>
                                             </Button>{' '}
-                                            <Button variant="danger" size="sm" onClick={() => setEditingUserId(null)} style={{ padding: '0' }}>
+                                            <Button variant="danger" size="sm" onClick={() => setEditingCompanyId(null)} style={{ padding: '0' }}>
                                                 <svg width="27px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M16 8L8 16M8.00001 8L16 16" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                 </svg>
                                             </Button>
                                         </>
                                     ) : (
-                                        <Button variant="primary" size="sm" onClick={() => handleEditClick(user)}>
+                                        <Button variant="primary" size="sm" onClick={() => handleEditCompanyClick(user)}>
                                             Edit
                                         </Button>
                                     )}
-                                </td> */}
+                                </td>
                             </tr>
                         ))
                     )}

@@ -388,7 +388,7 @@ const Navbar = ({ page, pageHeading }) => {
                                     </div>
                                 </a>
 
-                                <div className="dropdown-menu dropdown-menu-md dropdown-menu-right">
+                                <div className="dropdown-menu dropdown-menu-md dropdown-menu-right" style={{maxWidth: 'unset'}}>
                                     <div className="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
                                         <div className="user-card">
                                             <div className="user-avatar" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${loggedInUser?.imagePath})` }}>

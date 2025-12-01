@@ -64,7 +64,7 @@ const AddMemberModal = ({ show, handleClose, onUserAdded, users, onlineUsers, ad
                             checked={selectAll}
                             label="Select All"
                             onChange={handleSelectAll}
-                            
+
                         />
                         {/* <div className="form-icon form-icon-left ms-3">
                             <em className="icon ni ni-search"></em>
@@ -77,7 +77,14 @@ const AddMemberModal = ({ show, handleClose, onUserAdded, users, onlineUsers, ad
                     </div>
 
                     <ul className='chat-list'>
-                        {users.filter((user) => !user.company || user.company === companyId).map((user) => (
+                        {users.filter((user) => {
+                            if (loggedInUser?.department === 'Contractor' || loggedInUser?.department === 'Contractor Management') {
+                                return user?.company === loggedInUser?.company
+                            }
+                            else {
+                                return (!user.company || user.company === companyId)
+                            }
+                        }).map((user) => (
                             <li key={user._id} className="chat-item d-flex align-items-center">
                                 <div className="chat-link chat-open current">
                                     <div className="checkbox">
@@ -94,7 +101,7 @@ const AddMemberModal = ({ show, handleClose, onUserAdded, users, onlineUsers, ad
                                     </div>
                                     <div className="chat-info">
                                         <div className="chat-from">
-                                            <div className="name" style={{color: hiddenMembers.includes(user._id) && '#ccc'}}>{user?.name}</div>
+                                            <div className="name" style={{ color: hiddenMembers.includes(user._id) && '#ccc' }}>{user?.name}</div>
                                             {/* {hiddenMembers.includes(user._id) && <div className="hidden">hidden</div>} */}
                                         </div>
                                         <div className="chat-context">

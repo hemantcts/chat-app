@@ -26,6 +26,7 @@ import {
 } from "@draft-js-plugins/buttons";
 
 import { SlideshowLightbox } from 'lightbox.js-react';
+import SearchBar from './SearchBar';
 // import 'lightbox.js-react/dist/index.css';
 
 // const mentions = [
@@ -45,6 +46,9 @@ const ChatBox = ({ userId, groupId }) => {
         EditorState.createEmpty()
     );
     const editorRef = useRef(null);
+
+
+    const hiddenDepartments = ["Operations Team", "Quality Team", "Accounts Team", "management"];
 
 
 
@@ -69,6 +73,7 @@ const ChatBox = ({ userId, groupId }) => {
     const [userDetails, setUserDetails] = useState(null)
     const [groupName, setGroupName] = useState(null)
     const [showDetails, setShowDetails] = useState(false);
+    const [showSearch, setShowSearch] = useState(false);
     const [showUploadOptions, setShowUploadOptions] = useState(false)
     const [msgSeen, setMsgSeen] = useState(false)
     const [mySeenMessages, setMySeenMessages] = useState([])
@@ -82,6 +87,8 @@ const ChatBox = ({ userId, groupId }) => {
     const loggedInUser = JSON.parse(localStorage.getItem('userData'));
 
     const [showModal, setShowModal] = useState(false);
+
+    const [highlightedMessageId, setHighlightedMessageId] = useState(null);
 
     const getGroupDetails = async () => {
         let roomId = groupId;
@@ -523,27 +530,45 @@ const ChatBox = ({ userId, groupId }) => {
         };
     }, [userId]);
 
+    const latestGroupId = useRef(null);
+    const latestUserId = useRef(null);
+
     useEffect(() => {
-        console.log('current group', groupId)
-    }, [groupId])
+        if (groupId) {
+            console.log('current groupId', groupId);
+            latestGroupId.current = groupId;
+        }
+        else {
+            console.log('current userId', userId);
+            latestUserId.current = userId;
+
+        }
+
+        // return () => {
+        //     if (groupId) {
+        //         console.log('user left room', groupId)
+        //         socket.emit("leave-room", { room: groupId });
+        //     }
+        // };
+    }, [userId, groupId])
 
 
     useEffect(() => {
         const handleReceiveMessage = (data) => {
-            console.log('test simple', data)
+            console.log('got the message', data)
             // return
             const newMessage = data.message;
             if (groupId) {
-                console.log('its group', groupId)
-                if (newMessage?.groupId === groupId) {
+                console.log('its group', groupId, latestGroupId.current)
+                if (newMessage?.groupId === latestGroupId.current) {
                     console.log(newMessage)
                     setMessageArr((prevMessages) => [...prevMessages, newMessage]);
                     setMessageSent(true);
                 }
             }
             else {
-                console.log('its user', userId)
-                if (newMessage?.senderDetails?.id === userId || newMessage?.receiverId === userId) {
+                console.log('its user', latestUserId.current)
+                if (newMessage?.senderDetails?.id === latestUserId.current || newMessage?.receiverId === latestUserId.current) {
                     console.log(newMessage)
                     setMessageArr((prevMessages) => [...prevMessages, newMessage]);
                     setMessageSent(true);
@@ -641,9 +666,24 @@ const ChatBox = ({ userId, groupId }) => {
 
     const sendMessage = async () => {
 
-        if ((!message.trim() && filesArr.length === 0) || (message === '<div><br></div>' && filesArr.length === 0)) {
+        // if ((!message.trim() && filesArr.length === 0) || (message === '<div><br></div>' && filesArr.length === 0)) {
+        //     return;
+        // }
+
+        if (
+            (
+                !message ||
+                !message
+                    .replace(/<[^>]*>/g, '')       // remove HTML tags
+                    .replace(/&nbsp;/g, ' ')        // replace &nbsp; with a space
+                    .trim()                         // trim remaining whitespace
+            ) &&
+            filesArr.length === 0
+        ) {
             return;
         }
+
+
 
         setMsgSeen(false);
 
@@ -780,8 +820,8 @@ const ChatBox = ({ userId, groupId }) => {
     }
 
 
-    const handleReply = (msgId, msgContent, senderName) => {
-        setReply({ msgId, msgContent, senderName });
+    const handleReply = (msgId, msgContent, senderName, senderDepartment) => {
+        setReply({ msgId, msgContent, senderName, senderDepartment });
 
         // console.log(msgId, msgContent, senderName)
 
@@ -1074,7 +1114,7 @@ const ChatBox = ({ userId, groupId }) => {
     return (
         <>
             {groupId ? (
-                <div className={`nk-chat-body ${showDetails ? 'profile-shown' : ''}`}>
+                <div className={`nk-chat-body ${showDetails || showSearch ? 'profile-shown' : ''}`}>
                     <div className="nk-chat-head">
                         <ul className="nk-chat-head-info">
                             <li className="nk-chat-body-close">
@@ -1117,7 +1157,8 @@ const ChatBox = ({ userId, groupId }) => {
                                     </div>
                                 </div>
                             </li> */}
-                            <li className="mr-n1 mr-md-n2"><button className={`btn btn-icon btn-trigger text-primary chat-profile-toggle ${showDetails ? 'active' : ''}`} onClick={() => setShowDetails(!showDetails)}><em className="icon ni ni-alert-circle-fill"></em></button></li>
+                            <li className="info-btn"><button className={`btn btn-icon btn-trigger text-primary chat-profile-toggle ${showDetails ? 'active' : ''}`} onClick={() => { setShowDetails(!showDetails); setShowSearch(false) }}><em className="icon ni ni-alert-circle-fill"></em></button></li>
+                            <li className="search-btn"><button className={`btn btn-icon btn-trigger text-primary chat-profile-toggle ${showSearch ? 'active' : ''}`} onClick={() => { setShowSearch(!showSearch); setShowDetails(false) }}><em className="icon ni ni-search"></em></button></li>
                         </ul>
                         <div className="nk-chat-head-search">
                             <div className="form-group">
@@ -1138,7 +1179,7 @@ const ChatBox = ({ userId, groupId }) => {
                             </div>
                         )}
                         {messageArr.map((msg, index) => (
-                            <div key={index} className='chat' style={{ display: 'block' }}>
+                            <div key={index} className={`chat ${highlightedMessageId === msg._id ? "highlight" : ""}`} style={{ display: 'block' }} id={`message-${msg._id}`}>
 
                                 {getDisplayDate(index, messageArr) && <div className="msg-date text-center">{getDisplayDate(index, messageArr)}</div>}
 
@@ -1149,7 +1190,7 @@ const ChatBox = ({ userId, groupId }) => {
 
                                         {msg?.senderDetails?.id !== loggedInUser._id && <div className={`chat-avatar ${getDisplayTime(index, messageArr) ? '' : 'mb-0'}`}>
                                             <div className="user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com${msg?.senderDetails?.imagePath})` }}>
-                                                {!msg?.senderDetails?.imagePath && <span>{msg?.senderDetails?.name?.slice(0, 2).toUpperCase()}</span>}
+                                                {!msg?.senderDetails?.imagePath && <span>{hiddenDepartments.includes(msg?.senderDetails?.department) ? msg?.senderDetails?.department?.slice(0, 2).toUpperCase() : msg?.senderDetails?.name?.slice(0, 2).toUpperCase()}</span>}
                                                 {/* <span>he</span> */}
                                             </div>
                                         </div>}
@@ -1159,7 +1200,14 @@ const ChatBox = ({ userId, groupId }) => {
                                             </div> */}
 
                                             {msg?.senderDetails?.id !== loggedInUser?._id && <ul className="chat-meta">
-                                                <li >{`${msg?.senderDetails?.name} ${loggedInUser?.role === 1 ? `| ${msg?.senderDetails?.department}` : ''} `}</li>
+                                                {loggedInUser?.department === 'Contractor' || loggedInUser?.department === 'Contractor Management' ?
+                                                    (
+                                                        <li>
+                                                            {hiddenDepartments.includes(msg?.senderDetails?.department) ? msg?.senderDetails?.department : msg?.senderDetails?.name}
+                                                        </li>
+                                                    ) : (
+                                                        <li >{`${msg?.senderDetails?.name} ${(loggedInUser?.role === 1 || loggedInUser?.accessLevel >= 3) ? `| ${msg?.senderDetails?.department}` : ''} `}</li>
+                                                    )}
                                             </ul>}
 
                                             {msg?.senderDetails?.id === loggedInUser._id ? (
@@ -1299,28 +1347,28 @@ const ChatBox = ({ userId, groupId }) => {
                                                         {parse(markdownToHtml(msg?.content) || "", getOptions(msg))}
                                                     </div>
                                                     <ul className="chat-msg-more">
-                                                        <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name)}><em className="icon ni ni-reply-fill"></em></button></li>
+                                                        <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name, msg?.senderDetails?.department)}><em className="icon ni ni-reply-fill"></em></button></li>
 
                                                         <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => forwardMessage(msg)}><em className="icon ni ni-share-fill"></em></button></li>
 
-                                                        <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => showRemoveModal(msg?._id)}><em className="icon ni ni-trash-fill"></em></button></li>
+                                                        {(msg?.senderDetails?.id === loggedInUser._id || loggedInUser?.accessLevel >= 3) && <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => showRemoveModal(msg?._id)}><em className="icon ni ni-trash-fill"></em></button></li>}
 
                                                         <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => copyMessage(msg)}><em className="icon ni ni-copy-fill"></em></button></li>
 
                                                         {/* <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => copyMessage(msg)}><em className="icon ni ni-info-fill"></em></button></li> */}
 
                                                         {/* <li>
-                                                        <div className="dropdown">
-                                                            <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
-                                                            <div className="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                                                                <ul className="link-list-opt no-bdr">
-                                                                    <li className="d-sm-none"><a href="#"><em className="icon ni ni-reply-fill"></em> Reply</a></li>
-                                                                    <li><a href="#"><em className="icon ni ni-pen-alt-fill"></em> Edit</a></li>
-                                                                    <li><a href="#"><em className="icon ni ni-trash-fill"></em> Remove</a></li>
-                                                                </ul>
+                                                            <div className="dropdown">
+                                                                <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                                <div className="dropdown-menu dropdown-menu-sm dropdown-menu-right">
+                                                                    <ul className="link-list-opt no-bdr">
+                                                                        <li className="d-sm-none"><a href="#"><em className="icon ni ni-reply-fill"></em> Reply</a></li>
+                                                                        <li><a href="#"><em className="icon ni ni-pen-alt-fill"></em> Edit</a></li>
+                                                                        <li><a href="#"><em className="icon ni ni-trash-fill"></em> Remove</a></li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </li> */}
+                                                        </li> */}
                                                     </ul>
                                                 </div>}
                                             </div>
@@ -1396,7 +1444,7 @@ const ChatBox = ({ userId, groupId }) => {
                     </div>
 
                     {!(Object.keys(reply).length === 0) && <div className="reply position-relative">
-                        <div className='reply-sender'>Replying to <span style={{ fontWeight: '500' }}>{reply?.senderName !== loggedInUser?.name ? reply?.senderName : 'yourself'}</span></div>
+                        <div className='reply-sender'>Replying to <span style={{ fontWeight: '500' }}>{reply?.senderName !== loggedInUser?.name ? hiddenDepartments.includes(reply?.senderDepartment) ? reply?.senderDepartment : reply?.senderName : 'yourself'}</span></div>
                         <div className="reply-message">
                             {parse(truncateHtml(reply?.msgContent || "", 20))}
                         </div>
@@ -1581,9 +1629,11 @@ const ChatBox = ({ userId, groupId }) => {
                     </div>
 
                     {groupDetails && <InfoBar showDetails={showDetails} setShowDetails={setShowDetails} groupDetails={groupDetails} groupName={groupName} setGroupName={setGroupName} getGroupDetails={getGroupDetails} onlineUsers={onlineUsers} />}
+
+                    {groupDetails && <SearchBar showDetails={showSearch} setShowDetails={setShowSearch} messages={messageArr} userId={userId} groupId={groupId} setHighlightedMessageId={setHighlightedMessageId} page={page} hasMoreMessages={hasMoreMessages} getChatMessages={getChatMessages} userDetails={userDetails} getGroupMessages={getGroupMessages} loadOlderMessages={loadOlderMessages} />}
                 </div>
             ) : (
-                <div style={{ paddingRight: showDetails && '325px' }} className={`nk-chat-body ${showDetails ? 'profile-shown' : ''}`}>
+                <div style={{ paddingRight: showDetails && '325px' }} className={`nk-chat-body ${showDetails || showSearch ? 'profile-shown' : ''}`}>
                     <div className="nk-chat-head">
                         <ul className="nk-chat-head-info">
                             <li className="nk-chat-body-close">
@@ -1621,6 +1671,7 @@ const ChatBox = ({ userId, groupId }) => {
                                 </div>
                             </li> */}
                             {/* <li className="mr-n1 mr-md-n2"><button className={`btn btn-icon btn-trigger text-primary chat-profile-toggle ${showDetails ? 'active' : ''}`} onClick={() => setShowDetails(!showDetails)}><em className="icon ni ni-alert-circle-fill"></em></button></li> */}
+                            <li className="search-btn"><button className={`btn btn-icon btn-trigger text-primary chat-profile-toggle ${showSearch ? 'active' : ''}`} onClick={() => { setShowSearch(!showSearch); setShowDetails(false) }}><em className="icon ni ni-search"></em></button></li>
                         </ul>
                         <div className="nk-chat-head-search">
                             <div className="form-group">
@@ -1641,7 +1692,7 @@ const ChatBox = ({ userId, groupId }) => {
                             </div>
                         )}
                         {messageArr.map((msg, index) => (
-                            <div key={index} className='chat' style={{ display: 'block' }}>
+                            <div key={index} className={`chat ${highlightedMessageId === msg._id ? "highlight" : ""}`} style={{ display: 'block' }} id={`message-${msg._id}`} >
 
                                 {getDisplayDate(index, messageArr) && <div className="msg-date text-center">{getDisplayDate(index, messageArr)}</div>}
 
@@ -1800,11 +1851,11 @@ const ChatBox = ({ userId, groupId }) => {
 
 
                                                 <ul className="chat-msg-more">
-                                                    <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name)}><em className="icon ni ni-reply-fill"></em></button></li>
+                                                    <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name, msg?.senderDetails?.department)}><em className="icon ni ni-reply-fill"></em></button></li>
 
                                                     <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => forwardMessage(msg)}><em className="icon ni ni-share-fill"></em></button></li>
 
-                                                    <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => showRemoveModal(msg?._id)}><em className="icon ni ni-trash-fill"></em></button></li>
+                                                    {(msg?.senderDetails?.id === loggedInUser._id || loggedInUser?.accessLevel >= 3) && <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => showRemoveModal(msg?._id)}><em className="icon ni ni-trash-fill"></em></button></li>}
 
                                                     <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => copyMessage(msg)}><em className="icon ni ni-copy-fill"></em></button></li>
 
@@ -2027,6 +2078,8 @@ const ChatBox = ({ userId, groupId }) => {
                             </li>
                         </ul>
                     </div>
+
+                    <SearchBar showDetails={showSearch} setShowDetails={setShowSearch} messages={messageArr} page={page} hasMoreMessages={hasMoreMessages} getChatMessages={getChatMessages} userDetails={userDetails} getGroupMessages={getGroupMessages} loadOlderMessages={loadOlderMessages} />
                 </div>
             )
 

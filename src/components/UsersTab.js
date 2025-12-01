@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Table, Form, Button, Modal } from 'react-bootstrap'
 import Skeleton from 'react-loading-skeleton'
 
-const UsersTab = ({selectAll, handleSelectAllChange, loading, filteredUsers, selectedUserIds, handleCheckboxChange, formData, editingUserId, handleInputChange, companies, handleSaveClick, handleEditClick , setEditingUserId}) => {
+const UsersTab = ({selectAll, handleSelectAllChange, loading, filteredUsers, selectedUserIds, handleCheckboxChange, formData, editingUserId, handleInputChange, companies, handleSaveClick, handleEditClick , setEditingUserId, loggedInUser}) => {
 
     const [showAccessModal, setShowAccessModal] = useState(false)
 
@@ -31,11 +31,7 @@ const UsersTab = ({selectAll, handleSelectAllChange, loading, filteredUsers, sel
                         <th>Password</th>
                         <th>Department/Designation</th>
                         <th>Company</th>
-                        <th>Access Level <em className="icon ni ni-info-fill" style={{color: '#3883F9'}} onClick={handleCheckAccess}></em></th>
-                        {/* <th>Create Group Access</th>
-                        <th>One-on-One Chat Access</th>
-                        <th>App Access</th>
-                        <th>Delete Message Access</th> */}
+                        <th>Access Level <em className="icon ni ni-info-fill" style={{color: '#3883F9', cursor: 'pointer'}} onClick={handleCheckAccess}></em></th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -53,10 +49,6 @@ const UsersTab = ({selectAll, handleSelectAllChange, loading, filteredUsers, sel
                                 <td><Skeleton /></td>
                                 <td><Skeleton /></td>
                                 <td><Skeleton /></td>
-                                {/* <td><Skeleton /></td>
-                                <td><Skeleton /></td>
-                                <td><Skeleton /></td>
-                                <td><Skeleton /></td> */}
                             </tr>
                         ))
                     ) : (
@@ -155,7 +147,7 @@ const UsersTab = ({selectAll, handleSelectAllChange, loading, filteredUsers, sel
                                 {user?.accessLevel ?
                                     (
                                         <td>
-                                            {(editingUserId === user._id) ? (
+                                            {(editingUserId === user._id && loggedInUser?.accessLevel >= 4) ? (
                                                 <Form.Control
                                                     as="select"
                                                     name="accessLevel"
@@ -228,34 +220,46 @@ const UsersTab = ({selectAll, handleSelectAllChange, loading, filteredUsers, sel
                         <thead>
                             <tr>
                                 <th>Access Level</th>
-                                <th>Create Group</th>
-                                <th>One-on-One Chat</th>
+                                <th>Web Access</th>
                                 <th>App Access</th>
-                                <th>Delete Message</th>
+                                <th>Create Group Access</th>
+                                <th>One-on-One Chat Access</th>
+                                <th>Create User Access</th>
+                                <th>Delete Message Access</th>
                             </tr>
                         </thead>
                         <tbody>
                             {[
-                                { level: "L1", group: false, oneOnOne: false, app: false, deleteMsg: false },
-                                { level: "L2", group: false, oneOnOne: false, app: false, deleteMsg: true },
-                                { level: "L3", group: true, oneOnOne: false, app: true, deleteMsg: true },
-                                { level: "L4", group: true, oneOnOne: true, app: true, deleteMsg: true },
+                                { level: "L1", group: false, oneOnOne: false, app: false, deleteMsg: false, web: true, createUser: false },
+                                { level: "L2", group: false, oneOnOne: false, app: false, deleteMsg: true, web: true, createUser: false },
+                                { level: "L3", group: true, oneOnOne: false, app: true, deleteMsg: true, web: true, createUser: true },
+                                { level: "L4", group: true, oneOnOne: true, app: true, deleteMsg: true, web: true, createUser: true },
+                                { level: "Driver / Jockey", group: false, oneOnOne: false, app: true, deleteMsg: false, web: false, createUser: false },
+                                { level: "Contractor", group: true, oneOnOne: false, app: true, deleteMsg: false, web: false, createUser: false },
+                                { level: "Contractor Management", group: true, oneOnOne: true, app: true, deleteMsg: false, web: false, createUser: false },
                             ].map((row) => (
                                 <tr key={row.level}>
                                     <td><strong>{row.level}</strong></td>
+                                    <td>{row.web ? '✅' : '❌'}</td>
+                                    <td>{row.app ? '✅' : '❌'}</td>
                                     <td>{row.group ? '✅' : '❌'}</td>
                                     <td>{row.oneOnOne ? '✅' : '❌'}</td>
-                                    <td>{row.app ? '✅' : '❌'}</td>
+                                    <td>{row.createUser ? '✅' : '❌'}</td>
                                     <td>{row.deleteMsg ? '✅' : '❌'}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </Table>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>
+                <Modal.Footer style={{justifyContent: 'start'}}>
+                    <div>
+                        <b>Legend:</b>
+                        <b style={{color: 'green', marginLeft: '0.5rem'}}>✅ Allowed</b>
+                        <b style={{color: 'red', marginLeft: '0.5rem'}}>❌ Not allowed</b>
+                    </div>
+                    {/* <Button variant="secondary" onClick={handleCloseModal}>
                         Close
-                    </Button>
+                    </Button> */}
                 </Modal.Footer>
             </Modal>
         </>

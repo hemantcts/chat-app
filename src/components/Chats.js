@@ -16,6 +16,8 @@ const Chats = () => {
     const queryParams = new URLSearchParams(location.search);
     const [userData, setUserData] = useState()
 
+    const hiddenDepartments = ["Operations Team", "Quality Team", "Accounts Team", "management"];
+
     const selectedUserId = queryParams.get('user');
     const selectedGroupId = queryParams.get('group');
     const hasGroup = queryParams.has('group');
@@ -219,7 +221,7 @@ const Chats = () => {
     };
 
     const handleDelete = async (groupId) => {
-        if (!loggedInUser?.groupCreateAccess && loggedInUser?.role !== 1) {
+        if (loggedInUser?.accessLevel<=2 && loggedInUser?.department !== 'Contractor Management' && loggedInUser?.department !== 'Contractor') {
             toast.error("You don't have access")
             return;
         }
@@ -322,15 +324,15 @@ const Chats = () => {
                             </div>
                         </div>
                     </li> */}
-                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=3) && <li>
+                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=3 || loggedInUser?.department === 'Contractor Management' || loggedInUser?.department === 'Contractor') && <li>
                         <div className="dropdown">
                             <a href="#" className="btn btn-round btn-icon btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 <em className="icon ni ni-edit-alt-fill"></em>
                             </a>
                             <div className="dropdown-menu dropdown-menu-start">
                                 <ul className="link-list-opt no-bdr">
-                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=3) && <li><Link to="/dashboard/chat?create_group"><span>Create Group</span></Link></li>}
-                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=4) && <li><Link to="/dashboard/chat?new_chat"><span>New Chat</span></Link></li>}
+                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=3 || loggedInUser?.department === 'Contractor Management' || loggedInUser?.department === 'Contractor') && <li><Link to="/dashboard/chat?create_group"><span>Create Group</span></Link></li>}
+                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=4 || loggedInUser?.department === 'Contractor Management') && <li><Link to="/dashboard/chat?new_chat"><span>New Chat</span></Link></li>}
                                     {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=3) && <li><Link to="/dashboard/chat?add_user"><span>Add User</span></Link></li>}
                                     {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=3) && <li><Link to="/dashboard/chat?add_company"><span>Add Company</span></Link></li>}
                                 </ul>
@@ -480,7 +482,12 @@ const Chats = () => {
                                                     <span className="time">{group?.latestTimestamp}</span>
                                                 </div>
                                                 {<div className="chat-context">
-                                                    {group?.latestSenderId && <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${group?.latestSenderName} ${loggedInUser?.role===1 ? `| ${group?.latestSenderDepartment}` : ''} :`} {parse(truncateHtml(group?.latestMessage || "", 20))}</div>}
+                                                    {group?.latestSenderId && (
+                                                        loggedInUser?.department === 'Contractor' || loggedInUser?.department === 'Contractor Management' ? (
+                                                            <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${hiddenDepartments.includes(group?.latestSenderDepartment) ? group?.latestSenderDepartment : group?.latestSenderName} :`} {parse(truncateHtml(group?.latestMessage || "", 20))}</div>
+                                                        ) : (
+                                                            <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${group?.latestSenderName} ${loggedInUser?.role===1 ? `| ${group?.latestSenderDepartment}` : ''} :`} {parse(truncateHtml(group?.latestMessage || "", 20))}</div>
+                                                        ))}
                                                     {group?.unseenCount > 0 && <div className="status unread">{group?.unseenCount > 99 ? '99' : group?.unseenCount}</div>}
                                                     {/* <div className="status delivered">
                                                         <em className="icon ni ni-check-circle-fill"></em>
