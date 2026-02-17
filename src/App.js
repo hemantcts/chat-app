@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Login from './components/Login';
-import { Routes, Route } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import './style/responsive.css'
 
 

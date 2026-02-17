@@ -339,18 +339,6 @@ const Chats = () => {
                             </div>
                         </div>
                     </li>}
-                    {/* <li>
-                        <div class="dropdown">
-                            <a href="#" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                Dropdown button
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Action</a></li>
-                                <li><a class="dropdown-item" href="#">Another action</a></li>
-                                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                            </ul>
-                        </div>
-                    </li> */}
                 </ul>
             </div>
             <div className="nk-chat-aside-body" data-simplebar>
@@ -534,7 +522,7 @@ const Chats = () => {
                                                 </div>
                                                 <div className="chat-context">
                                                     <div className="text">{user?.latestSenderId === loggedInUser?._id ? 'you :' : ''} {parse(truncateHtml(user?.latestMessage || "", 20))}</div>
-                                                    {user?.unreadCount > 0 && <div className="status unread">{user?.unseenCount > 99 ? '99' : user?.unseenCount}</div>}
+                                                    {user?.unreadCount > 0 && <div className="status unread">{user?.unreadCount > 99 ? '99' : user?.unreadCount}</div>}
                                                     {/* <div className="status delivered">
                                                         <em className="icon ni ni-check-circle-fill"></em>
                                                     </div> */}
