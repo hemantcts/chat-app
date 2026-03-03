@@ -10,7 +10,7 @@ const AppVersions = ({ platform, newVersionSubmitted }) => {
   const getVersions = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://chat.quanteqsolutions.com/api/admin/versions', {
+      const response = await fetch('https://talk.socceryou.ch/api/admin/versions', {
         headers: {
           'Authorization': localStorage.getItem('token'),
         },

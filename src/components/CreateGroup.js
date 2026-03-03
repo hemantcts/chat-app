@@ -8,13 +8,13 @@ const CreateGroup = () => {
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const loggedInUser = JSON.parse(localStorage.getItem('userData'))
+    const loggedInUser = JSON.parse(localStorage.getItem('chatUserData'))
 
     useEffect(() => {
         // Fetch list of users
         const fetchUsers = async () => {
             try {
-                const res = await fetch('https://chat.quanteqsolutions.com/api/users', {
+                const res = await fetch('https://talk.socceryou.ch/api/users', {
                     headers: {
                         'Authorization': localStorage.getItem('token')
                     }

@@ -11,13 +11,13 @@ const NewChat = () => {
     const [loading, setLoading] = useState(true);
     const [dropdownVisible, setDropdownVisible] = useState(false);
 
-    const loggedInUser = JSON.parse(localStorage.getItem('userData'));
+    const loggedInUser = JSON.parse(localStorage.getItem('chatUserData'));
     const dropdownRef = useRef();
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const res = await fetch('https://chat.quanteqsolutions.com/api/users', {
+                const res = await fetch('https://talk.socceryou.ch/api/users', {
                     headers: {
                         'Authorization': localStorage.getItem('token'),
                     },

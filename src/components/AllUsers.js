@@ -23,11 +23,11 @@ const AllUsers = () => {
     const [selectedCompany, setSelectedCompany] = useState("");
 
 
-    const loggedInUser = JSON.parse(localStorage.getItem('userData'))
+    const loggedInUser = JSON.parse(localStorage.getItem('chatUserData'))
 
     const fetchCompanies = async () => {
         try {
-            const res = await fetch('https://chat.quanteqsolutions.com/api/admin/companies', {
+            const res = await fetch('https://talk.socceryou.ch/api/admin/companies', {
                 headers: {
                     'Authorization': localStorage.getItem('token'),
                 },
@@ -51,7 +51,7 @@ const AllUsers = () => {
 
     const fetchUsers = async () => {
         try {
-            const res = await fetch('https://chat.quanteqsolutions.com/api/admin/users', {
+            const res = await fetch('https://talk.socceryou.ch/api/admin/users', {
                 headers: {
                     'Authorization': localStorage.getItem('token'),
                 },
@@ -105,7 +105,7 @@ const AllUsers = () => {
 
     const handleSaveClick = async (userId) => {
         try {
-            const res = await fetch(`https://chat.quanteqsolutions.com/api/admin/users/${userId}`, {
+            const res = await fetch(`https://talk.socceryou.ch/api/admin/users/${userId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -203,7 +203,7 @@ const AllUsers = () => {
         if (!window.confirm(`Are you sure you want to delete ${selectedUserIds.length} user(s)?`)) return;
 
         try {
-            const response = await fetch('https://chat.quanteqsolutions.com/api/admin/delete_users', {
+            const response = await fetch('https://talk.socceryou.ch/api/admin/delete_users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -249,7 +249,7 @@ const AllUsers = () => {
 
         try {
             setUploading(true);
-            const response = await fetch('https://chat.quanteqsolutions.com/api/admin/upload_version', {
+            const response = await fetch('https://talk.socceryou.ch/api/admin/upload_version', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

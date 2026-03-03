@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import Login from './components/Login';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { MemoryRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import './style/responsive.css'
 
 
 
 // Main CSS files
-import './assets/css/dashlite.css';
+import './assets/css/dashlite.css'; 
 // import './assets/css/dashlite.min.css';
 // import './assets/css/dashlite.rtl.css';
 // import './assets/css/dashlite.rtl.min.css';
@@ -66,7 +66,7 @@ const App = () => {
   const [profileImageChanged, setProfileImageChanged] = useState(false);
 
   useEffect(() => {
-    const user = localStorage.getItem('userData');
+    const user = localStorage.getItem('chatUserData');
     if (user) {
       console.info('app.js2')
       const userData = JSON.parse(user);
@@ -84,12 +84,91 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    let user = localStorage.getItem('userData');
+    let user = localStorage.getItem('chatUserData');
     if (user) {
       let userData = JSON.parse(user)
       socket.emit('connectUser', { userId: userData.id });
     }
   }, [])
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate('/dashboard');
+  }, []);
+
+  useEffect(() => {
+    socket.on("conversation-ready", ({userId}) => {
+      console.log('conversation-ready', userId);
+
+      navigate(`/dashboard/chat?user=${userId}`);
+    });
+
+    window.ChatWidget.navigate = navigate;
+  }, []);
+
+  useEffect(() => {
+    socket.on("loginUser", (data) => {
+      const { email, password } = data;
+      console.log('loginUser', email, password);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        handleLogin(email, password);
+      }
+      else{
+        const user = localStorage.getItem('chatUserData');
+        const userData = JSON.parse(user);
+        socket.emit('connectUser', { userId: userData._id });
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    let userData = localStorage.getItem('userData');
+    if (userData) {
+      console.warn('got the user data from localStorage', userData);
+      userData = JSON.parse(userData);
+      let user = {
+        userId: userData.id,
+        name: userData.first_name,
+        email: userData.email || userData.username,
+        photoUrl: userData.profile_image_path
+      }
+      socket.emit('registerUser', { userData: user });
+    }
+    else{
+      console.warn('No user data found in localStorage');
+    }
+  }, []);
+
+
+  const handleLogin = async (email, password) => {
+
+    try {
+
+      const response = await fetch(`https://talk.socceryou.ch/api/auth/login?projectId=soccer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+      
+      if (data.status) {
+        socket.emit('connectUser', { userId: data.user._id });
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('chatUserData', JSON.stringify(data.user));
+        // localStorage.setItem('chatUserData', JSON.stringify(data.user));
+        // getFcmToken(data.token);
+        // navigate('/dashboard/chat'); // redirect after login
+      }
+
+    } catch (err) {
+      // setError(err.response?.data?.message || 'Login failed');
+    }
+  };
 
   return (
     <OnlineUsersContext.Provider value={onlineUsers}>

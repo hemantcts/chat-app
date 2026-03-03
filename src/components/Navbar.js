@@ -9,7 +9,7 @@ const Navbar = ({ page, pageHeading }) => {
 
     const navigate = useNavigate();
     const [userId, setUserId] = useState(null);
-    const loggedInUser = JSON.parse(localStorage.getItem('userData'));
+    const loggedInUser = JSON.parse(localStorage.getItem('chatUserData'));
 
     useEffect(() => {
         if (!localStorage.getItem("token")) {
@@ -26,7 +26,7 @@ const Navbar = ({ page, pageHeading }) => {
         const token = localStorage.getItem("token");
 
         try {
-            const response = await fetch(`https://chat.quanteqsolutions.com/api/auth/get-user`, {
+            const response = await fetch(`https://talk.socceryou.ch/api/auth/get-user?projectId=soccer`, {
                 headers: {
                     "Authorization": token
                 }
@@ -40,7 +40,7 @@ const Navbar = ({ page, pageHeading }) => {
                 }
                 console.log("Authentication completed");
                 // socket.emit('connectUser', { userId: data.userData._id });
-                localStorage.setItem('userData', JSON.stringify(data.userData))
+                localStorage.setItem('chatUserData', JSON.stringify(data.userData))
                 setUserId(data.userData._id);
             }
             else {
@@ -381,7 +381,7 @@ const Navbar = ({ page, pageHeading }) => {
                             <li className="dropdown user-dropdown">
                                 <a href="#" className="dropdown-toggle mr-n1" data-bs-toggle="dropdown" aria-expanded="false">
                                     <div className="user-toggle">
-                                        <div className="user-avatar sm" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${loggedInUser?.imagePath})` }}>
+                                        <div className="user-avatar sm" style={{ backgroundImage: `url(https://talk.socceryou.ch/${loggedInUser?.imagePath})` }}>
                                             {/* <em className="icon ni ni-user-alt"></em> */}
                                             {!loggedInUser?.imagePath && <span>{loggedInUser?.name?.slice(0, 2).toUpperCase()}</span>}
                                         </div>
@@ -391,7 +391,7 @@ const Navbar = ({ page, pageHeading }) => {
                                 <div className="dropdown-menu dropdown-menu-md dropdown-menu-right" style={{maxWidth: 'unset'}}>
                                     <div className="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
                                         <div className="user-card">
-                                            <div className="user-avatar" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${loggedInUser?.imagePath})` }}>
+                                            <div className="user-avatar" style={{ backgroundImage: `url(https://talk.socceryou.ch/${loggedInUser?.imagePath})` }}>
                                                 {!loggedInUser?.imagePath && <span>{loggedInUser?.name?.slice(0, 2).toUpperCase()}</span>}
                                             </div>
                                             <div className="user-info">

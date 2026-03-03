@@ -19,7 +19,7 @@ const ForwardModal = ({ show, handleClose, onlineUsers, getPrivateRoomId, user, 
     const fetchUsers = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('https://chat.quanteqsolutions.com/api/messages/chatUsers', {
+            const res = await fetch('https://talk.socceryou.ch/api/messages/chatUsers', {
                 headers: {
                     Authorization: token,
                 },
@@ -47,7 +47,7 @@ const ForwardModal = ({ show, handleClose, onlineUsers, getPrivateRoomId, user, 
     const fetchGroups = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('https://chat.quanteqsolutions.com/api/groups/my_groups', {
+            const res = await fetch('https://talk.socceryou.ch/api/groups/my_groups', {
                 headers: {
                     'Authorization': token
                 }
@@ -207,7 +207,7 @@ const ForwardModal = ({ show, handleClose, onlineUsers, getPrivateRoomId, user, 
                                             onChange={() => handleCheckboxChange(user.roomId, user)}
                                         />
                                     </div>
-                                    <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${user?.imagePath})` }}>
+                                    <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://talk.socceryou.ch/${user?.imagePath})` }}>
                                         {!user?.imagePath && <span>{user?.name?.slice(0, 2).toUpperCase()}</span>}
                                         <span className={`status dot dot-lg ${onlineUsers[user._id] ? 'dot-success' : 'dot-gray'}`}></span>
                                     </div>

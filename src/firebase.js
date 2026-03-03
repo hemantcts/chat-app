@@ -19,7 +19,7 @@ const setupFcm = async (token, authToken) => {
   if (token) {
     // Send to your backend
     localStorage.setItem('fcmToken', token)
-    fetch('https://chat.quanteqsolutions.com/api/user/save-fcm-token', {
+    fetch('https://talk.socceryou.ch/api/user/save-fcm-token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export const removeFcmToken = async (userId) => {
       // await AsyncStorage.setItem('fcmToken', token);
 
       const authToken = localStorage.getItem('token');
-      const res = await fetch('https://chat.quanteqsolutions.com/api/user/remove-fcm-token', {
+      const res = await fetch('https://talk.socceryou.ch/api/user/remove-fcm-token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

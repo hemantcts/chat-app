@@ -13,14 +13,14 @@ const CreateGroup2 = () => {
     const [hiddenUsers, setHiddenUsers] = useState([]); // 👈 track hidden
     const [loading, setLoading] = useState(true);
 
-    const loggedInUser = JSON.parse(localStorage.getItem('userData'))
+    const loggedInUser = JSON.parse(localStorage.getItem('chatUserData'))
 
 
     const [companies, setCompanies] = useState([])
 
     const fetchCompanies = async () => {
         try {
-            const res = await fetch('https://chat.quanteqsolutions.com/api/admin/companies', {
+            const res = await fetch('https://talk.socceryou.ch/api/admin/companies', {
                 headers: {
                     'Authorization': localStorage.getItem('token'),
                 },
@@ -48,7 +48,7 @@ const CreateGroup2 = () => {
         // Fetch list of users
         const fetchUsers = async () => {
             try {
-                const res = await fetch('https://chat.quanteqsolutions.com/api/users', {
+                const res = await fetch('https://talk.socceryou.ch/api/users', {
                     headers: {
                         'Authorization': localStorage.getItem('token')
                     }
@@ -94,7 +94,7 @@ const CreateGroup2 = () => {
         // }
 
         try {
-            const response = await fetch('https://chat.quanteqsolutions.com/api/groups/create', {
+            const response = await fetch('https://talk.socceryou.ch/api/groups/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

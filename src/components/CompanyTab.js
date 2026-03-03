@@ -9,7 +9,7 @@ const CompanyTab = ({ selectAll, handleSelectAllChange, loading, filteredUsers, 
 
     // const fetchCompanies = async () => {
     //     try {
-    //         const res = await fetch('https://chat.quanteqsolutions.com/api/admin/companies', {
+    //         const res = await fetch('https://talk.socceryou.ch/api/admin/companies', {
     //             headers: {
     //                 'Authorization': localStorage.getItem('token'),
     //             },
@@ -56,7 +56,7 @@ const CompanyTab = ({ selectAll, handleSelectAllChange, loading, filteredUsers, 
 
     const handleSaveCompanyClick = async (userId) => {
             try {
-                const res = await fetch(`https://chat.quanteqsolutions.com/api/admin/update_company/${userId}`, {
+                const res = await fetch(`https://talk.socceryou.ch/api/admin/update_company/${userId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',

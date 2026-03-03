@@ -29,7 +29,7 @@ const Chats = () => {
     const [unreadUsers, setUnreadUsers] = useState(0);
     const [unreadGroups, setUnreadGroups] = useState(0);
 
-    const loggedInUser = JSON.parse(localStorage.getItem('userData'))
+    const loggedInUser = JSON.parse(localStorage.getItem('chatUserData'))
 
     // useEffect(() => {
     //     if (selectedGroupId) {
@@ -54,7 +54,7 @@ const Chats = () => {
         const token = localStorage.getItem("token");
 
         try {
-            const response = await fetch(`https://chat.quanteqsolutions.com/api/auth/get-user`, {
+            const response = await fetch(`https://talk.socceryou.ch/api/auth/get-user?projectId=soccer`, {
                 headers: {
                     "Authorization": token
                 }
@@ -78,7 +78,7 @@ const Chats = () => {
     // Fetch list of users
     const fetchGroups = async () => {
         try {
-            const res = await fetch('https://chat.quanteqsolutions.com/api/groups/my_groups', {
+            const res = await fetch('https://talk.socceryou.ch/api/groups/my_groups?projectId=soccer', {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
@@ -107,7 +107,7 @@ const Chats = () => {
 
     const fetchUsers = async () => {
         try {
-            const res = await fetch('https://chat.quanteqsolutions.com/api/messages/chatUsers', {
+            const res = await fetch('https://talk.socceryou.ch/api/messages/chatUsers?projectId=soccer', {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
@@ -142,7 +142,7 @@ const Chats = () => {
 
     const markSeen = async () => {
         try {
-            const res = await fetch('https://chat.quanteqsolutions.com/api/messages/markSeen', {
+            const res = await fetch('https://talk.socceryou.ch/api/messages/markSeen?projectId=soccer', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -169,8 +169,8 @@ const Chats = () => {
     useEffect(() => {
         const audio = new Audio(notificationSound);
         socket.on('notification', ({ message }) => {
-            fetchUsers();
-            fetchGroups();
+            // fetchUsers();
+            // fetchGroups();
 
             console.log('mef', message)
             console.log('test', message?.receiverId, loggedInUser?._id)
@@ -196,12 +196,12 @@ const Chats = () => {
 
 
     useEffect(() => {
-        if (selectedUserId) {
-            markSeen();
-        }
+        // if (selectedUserId) {
+        //     markSeen();
+        // }
         fetchUsers();
-        fetchGroups();
-        getUser();
+        // fetchGroups();
+        // getUser();
     }, [selectedUserId, selectedGroupId]);
 
 
@@ -227,7 +227,7 @@ const Chats = () => {
         }
 
         try {
-            const res = await fetch(`https://chat.quanteqsolutions.com/api/groups/delete/${selectedMessages}`, {
+            const res = await fetch(`https://talk.socceryou.ch/api/groups/delete/${selectedMessages}?projectId=soccer`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': localStorage.getItem('token')
@@ -237,7 +237,7 @@ const Chats = () => {
 
             if (data.status) {
                 toast.success(data.message || 'group deleted');
-                fetchGroups();
+                // fetchGroups();
                 navigate('/dashboard/chat?group')
             }
             else {
@@ -287,7 +287,7 @@ const Chats = () => {
 
     return (
         <div className="nk-chat-aside">
-            <div className="nk-chat-aside-head">
+            {false && <div className="nk-chat-aside-head">
                 <div className="nk-chat-aside-user">
                     <div className="dropdown">
                         {/* <a href="#" className="dropdown-toggle dropdown-indicator" data-bs-toggle="dropdown"> */}
@@ -340,9 +340,9 @@ const Chats = () => {
                         </div>
                     </li>}
                 </ul>
-            </div>
-            <div className="nk-chat-aside-body" data-simplebar>
-                <div className="nk-chat-aside-search">
+            </div>}
+            <div className="nk-chat-aside-body pt-4" data-simplebar>
+                {/* <div className="nk-chat-aside-search"> */}
                     {/* <div className="form-group">
                         <div className="form-control-wrap">
                             <div className="form-icon form-icon-left">
@@ -352,7 +352,7 @@ const Chats = () => {
                         </div>
                     </div> */}
 
-                    <div className="select-chat">
+                    {/* <div className="select-chat">
                         <ul className='d-flex'>
                             <li className={`disabled position-relative ${!groupEnable ? 'active' : ''}`} onClick={handleChangeUser}>
                                 Chats
@@ -363,8 +363,8 @@ const Chats = () => {
                                 {unreadGroups > 0 && <span className="unread-users">{unreadGroups}</span>}
                             </li>
                         </ul>
-                    </div>
-                </div>
+                    </div> */}
+                {/* </div> */}
 
 
 
@@ -455,7 +455,7 @@ const Chats = () => {
                                         <Link className="chat-link chat-open current" to={`/dashboard/chat?group=${group._id}`}>
 
                                             {group?.groupImage ? (
-                                                <div className="chat-media user-avatar bg-purple group-image" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${group?.groupImage})` }}
+                                                <div className="chat-media user-avatar bg-purple group-image" style={{ backgroundImage: `url(/${group?.groupImage})` }}
                                                 ></div>
                                             ) : (
                                                 <div className="chat-media user-avatar bg-purple"
@@ -511,7 +511,7 @@ const Chats = () => {
                                 users.map((user, index) => (
                                     <li key={index} className={`chat-item ${selectedUserId === user._id ? 'active' : ''} ${user?.unreadCount > 0 ? 'is-unread' : ''}`}>
                                         <Link className="chat-link chat-open current" to={`/dashboard/chat?user=${user._id}`}>
-                                            <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com${user?.imagePath})` }}>
+                                            <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(${user?.imagePath})` }}>
                                                 {!user?.imagePath && <span>{user?.name?.slice(0, 2).toUpperCase()}</span>}
                                                 <span className={`status dot dot-lg ${onlineUsers[user._id] ? 'dot-success' : 'dot-gray'} `}></span>
                                             </div>

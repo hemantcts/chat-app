@@ -18,7 +18,7 @@ const UserProfile = () => {
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch('https://chat.quanteqsolutions.com/api/user/update-profile', {
+            const res = await fetch('https://talk.socceryou.ch/api/user/update-profile', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ const UserProfile = () => {
     const handleResetPassword = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch('https://chat.quanteqsolutions.com/api/user/reset-password', {
+            const res = await fetch('https://talk.socceryou.ch/api/user/reset-password', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ const UserProfile = () => {
         const token = localStorage.getItem("token");
 
         try {
-            const response = await fetch(`https://chat.quanteqsolutions.com/api/auth/get-user`, {
+            const response = await fetch(`https://talk.socceryou.ch/api/auth/get-user`, {
                 headers: {
                     "Authorization": token
                 }
@@ -79,7 +79,7 @@ const UserProfile = () => {
             if (data.status) {
                 setUserData(data.userData);
                 setName(data.userData.name)
-                localStorage.setItem('userData', JSON.stringify(data.userData))
+                localStorage.setItem('chatUserData', JSON.stringify(data.userData))
             }
         }
         catch (error) {
@@ -94,7 +94,7 @@ const UserProfile = () => {
     const changeProfileImage = async (profileImageUrl) => {
         setLoading(true);
         console.log(profileImageUrl, 'image url')
-        const response = await fetch('https://chat.quanteqsolutions.com/api/user/update-profile-image', {
+        const response = await fetch('https://talk.socceryou.ch/api/user/update-profile-image', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -125,7 +125,7 @@ const UserProfile = () => {
                         {/* <div className='nk-chat-aside'>
                             <div className="nk-chat-aside-head">
                                 {userData?.imagePath ? (
-                                    <div className={`chat-media user-avatar bg-purple group-image user-profile-image ${isLoading ? 'rotate-it' : ''}`} style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${userData?.imagePath})` }}></div>
+                                    <div className={`chat-media user-avatar bg-purple group-image user-profile-image ${isLoading ? 'rotate-it' : ''}`} style={{ backgroundImage: `url(https://talk.socceryou.ch/${userData?.imagePath})` }}></div>
                                 ) : (
                                     <div className={`chat-media user-avatar user-avatar2 bg-purple group-image user-profile-image ${isLoading ? 'rotate-it' : ''}`} >
                                         <em className="icon ni ni-user-alt"></em>
@@ -135,31 +135,31 @@ const UserProfile = () => {
                             <div className="nk-chat-aside-body">
                                 <div className="d-flex flex-wrap">
                                     <div className="col-4 d-flex justify-content-center mt-3">
-                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img1.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://chat.quanteqsolutions.com/uploads/group/avatar-img1.jpg)' }}></button>
+                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img1.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://talk.socceryou.ch/uploads/group/avatar-img1.jpg)' }}></button>
                                     </div>
                                     <div className="col-4 d-flex justify-content-center mt-3">
-                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img2.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://chat.quanteqsolutions.com/uploads/group/avatar-img2.jpg)' }}></button>
+                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img2.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://talk.socceryou.ch/uploads/group/avatar-img2.jpg)' }}></button>
                                     </div>
                                     <div className="col-4 d-flex justify-content-center mt-3">
-                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img3.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://chat.quanteqsolutions.com/uploads/group/avatar-img3.jpg)' }}></button>
+                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img3.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://talk.socceryou.ch/uploads/group/avatar-img3.jpg)' }}></button>
                                     </div>
                                     <div className="col-4 d-flex justify-content-center mt-3">
-                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img4.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://chat.quanteqsolutions.com/uploads/group/avatar-img4.jpg)' }}></button>
+                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img4.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://talk.socceryou.ch/uploads/group/avatar-img4.jpg)' }}></button>
                                     </div>
                                     <div className="col-4 d-flex justify-content-center mt-3">
-                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img5.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://chat.quanteqsolutions.com/uploads/group/avatar-img5.jpg)' }}></button>
+                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img5.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://talk.socceryou.ch/uploads/group/avatar-img5.jpg)' }}></button>
                                     </div>
                                     <div className="col-4 d-flex justify-content-center mt-3">
-                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img6.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://chat.quanteqsolutions.com/uploads/group/avatar-img6.jpg)' }}></button>
+                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img6.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://talk.socceryou.ch/uploads/group/avatar-img6.jpg)' }}></button>
                                     </div>
                                     <div className="col-4 d-flex justify-content-center mt-3">
-                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img7.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://chat.quanteqsolutions.com/uploads/group/avatar-img7.jpg)' }}></button>
+                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img7.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://talk.socceryou.ch/uploads/group/avatar-img7.jpg)' }}></button>
                                     </div>
                                     <div className="col-4 d-flex justify-content-center mt-3">
-                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img8.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://chat.quanteqsolutions.com/uploads/group/avatar-img8.jpg)' }}></button>
+                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img8.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://talk.socceryou.ch/uploads/group/avatar-img8.jpg)' }}></button>
                                     </div>
                                     <div className="col-4 d-flex justify-content-center mt-3">
-                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img9.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://chat.quanteqsolutions.com/uploads/group/avatar-img9.jpg)' }}></button>
+                                        <button onClick={() => changeProfileImage('/uploads/group/avatar-img9.jpg')} className="chat-media user-avatar bg-purple group-image border-0" style={{ backgroundImage: 'url(https://talk.socceryou.ch/uploads/group/avatar-img9.jpg)' }}></button>
                                     </div>
                                 </div>
                             </div>

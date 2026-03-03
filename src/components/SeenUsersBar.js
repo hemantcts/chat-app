@@ -35,7 +35,7 @@ const SeenUsersBar = ({ showDetails, setShowDetails, groupDetails, groupName, se
 
     const onSave = async (newName) => {
 
-        const response = await fetch(`https://chat.quanteqsolutions.com/api/groups/update-name`, {
+        const response = await fetch(`https://talk.socceryou.ch/api/groups/update-name`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -61,14 +61,14 @@ const SeenUsersBar = ({ showDetails, setShowDetails, groupDetails, groupName, se
         }
     };
 
-    const loggedInUser = JSON.parse(localStorage.getItem('userData'))
+    const loggedInUser = JSON.parse(localStorage.getItem('chatUserData'))
 
 
 
     // Fetch list of users
     const fetchUsers = async () => {
         try {
-            const res = await fetch('https://chat.quanteqsolutions.com/api/users', {
+            const res = await fetch('https://talk.socceryou.ch/api/users', {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
@@ -114,7 +114,7 @@ const SeenUsersBar = ({ showDetails, setShowDetails, groupDetails, groupName, se
             }
         }
         try {
-            const res = await fetch('https://chat.quanteqsolutions.com/api/groups/add-members', {
+            const res = await fetch('https://talk.socceryou.ch/api/groups/add-members', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -161,7 +161,7 @@ const SeenUsersBar = ({ showDetails, setShowDetails, groupDetails, groupName, se
         let arr = [];
         arr.push(selectedMessages);
         try {
-            const res = await fetch('https://chat.quanteqsolutions.com/api/groups/remove-members', {
+            const res = await fetch('https://talk.socceryou.ch/api/groups/remove-members', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -215,7 +215,7 @@ const SeenUsersBar = ({ showDetails, setShowDetails, groupDetails, groupName, se
         formData.append('groupId', groupDetails?._id);
         formData.append('files', croppedBlob, 'group.jpg');
 
-        const res = await fetch('https://chat.quanteqsolutions.com/api/groups/upload', {
+        const res = await fetch('https://talk.socceryou.ch/api/groups/upload', {
             method: 'POST',
             headers: {
                 Authorization: `${localStorage.getItem('token')}`
@@ -242,7 +242,7 @@ const SeenUsersBar = ({ showDetails, setShowDetails, groupDetails, groupName, se
                         className="user-avatar md bg-purple group-image group-image-change"
                         style={{
                             backgroundImage: groupDetails?.groupImage
-                                ? `url(https://chat.quanteqsolutions.com/${groupDetails?.groupImage})`
+                                ? `url(https://talk.socceryou.ch/${groupDetails?.groupImage})`
                                 : 'none',
                         }}
                     >
@@ -308,7 +308,7 @@ const SeenUsersBar = ({ showDetails, setShowDetails, groupDetails, groupName, se
                             {groupDetails?.members?.map((group, index) => (
                                 <li key={index} className={`chat-item`}>
                                     <div className="chat-link chat-open current" >
-                                        <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${group?.imagePath})` }}>
+                                        <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://talk.socceryou.ch/${group?.imagePath})` }}>
                                             {!group?.imagePath && <span>{group?.name?.slice(0, 2).toUpperCase()}</span>}
                                             <span className={`status dot dot-lg ${onlineUsers[group._id] ? 'dot-success' : 'dot-gray'} `}></span>
                                         </div>
@@ -348,7 +348,7 @@ const SeenUsersBar = ({ showDetails, setShowDetails, groupDetails, groupName, se
                             {users.map((group, index) => (
                                 <li key={index} className={`chat-item`}>
                                     <div className="chat-link chat-open current" >
-                                        <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${group?.imagePath})` }}>
+                                        <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://talk.socceryou.ch/${group?.imagePath})` }}>
                                             {!group?.imagePath && <span>{group?.name?.slice(0, 2).toUpperCase()}</span>}
                                             <span className={`status dot dot-lg ${onlineUsers[group._id] ? 'dot-success' : 'dot-gray'} `}></span>
                                         </div>
@@ -405,7 +405,7 @@ const SeenUsersBar = ({ showDetails, setShowDetails, groupDetails, groupName, se
                         {groupDetails?.members?.map((group, index) => (
                             <li key={index} className={`chat-item`}>
                                 <div className="chat-link chat-open current" >
-                                    <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${group?.imagePath})` }}>
+                                    <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(https://talk.socceryou.ch/${group?.imagePath})` }}>
                                         {!group?.imagePath && <span>{group?.name?.slice(0, 2).toUpperCase()}</span>}
                                         <span className={`status dot dot-lg ${onlineUsers[group._id] ? 'dot-success' : 'dot-gray'} `}></span>
                                     </div>

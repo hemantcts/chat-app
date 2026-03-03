@@ -8,13 +8,13 @@ import { useEffect } from 'react';
 const AddUsers = () => {
   const navigate = useNavigate();
 
-  const loggedInUser = JSON.parse(localStorage.getItem('userData'))
+  const loggedInUser = JSON.parse(localStorage.getItem('chatUserData'))
 
   const [companies, setCompanies] = useState([])
 
   const fetchCompanies = async () => {
     try {
-      const res = await fetch('https://chat.quanteqsolutions.com/api/admin/companies', {
+      const res = await fetch('https://talk.socceryou.ch/api/admin/companies', {
         headers: {
           'Authorization': localStorage.getItem('token'),
         },
@@ -66,7 +66,7 @@ const AddUsers = () => {
     e.preventDefault();
     console.log('Creating user:', user);
     try {
-      const response = await fetch('https://chat.quanteqsolutions.com/api/auth/addUser', {
+      const response = await fetch('https://talk.socceryou.ch/api/auth/addUser', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

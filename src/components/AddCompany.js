@@ -22,7 +22,7 @@ const AddCompany = () => {
     console.log('Adding company:', company);
 
     try {
-      const response = await fetch('https://chat.quanteqsolutions.com/api/admin/add_companies', {
+      const response = await fetch('https://talk.socceryou.ch/api/admin/add_companies', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -29,10 +29,10 @@ const ChatRoom = () => {
 
 
     return (
-        <div className="nk-content p-0 mt-0">
-            <div className="nk-content-inner">
-                <div className="nk-content-body">
-                    <div className="nk-chat">
+        <div className="nk-content p-0 mt-0 h-100">
+            <div className="nk-content-inner h-100">
+                <div className="nk-content-body h-100">
+                    <div className="nk-chat h-100" style={{minHeight: 'unset'}}>
                         {/* Sidebar Chats */}
                         <Chats />
 

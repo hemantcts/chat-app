@@ -1,3 +1,15 @@
+/* Light mode */
+.chat-container.light {
+  --chat-primary: var(--chat-light-primary) !important;
+  --chat-secondary: var(--chat-light-secondary) !important;
+}
+
+/* Dark mode */
+.chat-container.dark {
+  --chat-primary: var(--chat-dark-primary) !important;
+  --chat-secondary: var(--chat-dark-secondary) !important;
+}
+
 .login-container {
     display: flex;
     align-items: center;

@@ -27,8 +27,15 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
+    let user = {
+      name: 'test user',
+      email: 'test.cts@yopmail.com',
+      role: 4,
+      companyCode: '123'
+    }
+
     try {
-      const response = await fetch(`https://chat.quanteqsolutions.com/api/auth/register`, {
+      const response = await fetch(`https://talk.socceryou.ch/api/auth/register-chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

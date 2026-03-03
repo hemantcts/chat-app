@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 // import '../assets/images'
 
 const Sidebar = () => {
-    const loggedInUser = JSON.parse(localStorage.getItem('userData'));
+    const loggedInUser = JSON.parse(localStorage.getItem('chatUserData'));
 
     const { pathname } = useLocation();
 

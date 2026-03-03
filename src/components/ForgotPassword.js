@@ -10,7 +10,7 @@ const ForgotPassword = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`https://chat.quanteqsolutions.com/api/auth/forgot-password`, {
+      const response = await fetch(`https://talk.socceryou.ch/api/auth/forgot-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

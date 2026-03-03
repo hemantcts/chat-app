@@ -64,7 +64,7 @@ const ChatBox = ({ userId, groupId }) => {
 
     const onlineUsers = useOnlineUsers();
     const [room, setRoom] = useState(null);
-    const user = JSON.parse(localStorage.getItem('userData'))
+    const user = JSON.parse(localStorage.getItem('chatUserData'))
 
     const [message, setMessage] = useState('');
     const [messageArr, setMessageArr] = useState([]);
@@ -84,7 +84,7 @@ const ChatBox = ({ userId, groupId }) => {
 
     const [reply, setReply] = useState({});
 
-    const loggedInUser = JSON.parse(localStorage.getItem('userData'));
+    const loggedInUser = JSON.parse(localStorage.getItem('chatUserData'));
 
     const [showModal, setShowModal] = useState(false);
 
@@ -94,7 +94,7 @@ const ChatBox = ({ userId, groupId }) => {
         let roomId = groupId;
         setRoom(roomId);
         try {
-            const response = await fetch(`https://chat.quanteqsolutions.com/api/groups/${groupId}`, {
+            const response = await fetch(`https://talk.socceryou.ch/api/groups/${groupId}?projectId=soccer`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ const ChatBox = ({ userId, groupId }) => {
 
     const getGroupMessages2 = async (roomId) => {
         try {
-            const response = await fetch(`https://chat.quanteqsolutions.com/api/groups/messages/${roomId}`, {
+            const response = await fetch(`https://talk.socceryou.ch/api/groups/messages/${roomId}?projectId=soccer`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -157,7 +157,7 @@ const ChatBox = ({ userId, groupId }) => {
     const getGroupMessages = async (roomId, currentPage = 1) => {
         try {
             setIsLoading(true);
-            const response = await fetch(`https://chat.quanteqsolutions.com/api/groups/messages/${roomId}?page=${currentPage}&limit=20`, {
+            const response = await fetch(`https://talk.socceryou.ch/api/groups/messages/${roomId}?page=${currentPage}&limit=20&projectId=soccer`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -202,7 +202,7 @@ const ChatBox = ({ userId, groupId }) => {
 
     const getUserDetails = async () => {
         try {
-            const response = await fetch(`https://chat.quanteqsolutions.com/api/user/${userId}`, {
+            const response = await fetch(`https://talk.socceryou.ch/api/user/${userId}?projectId=soccer`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -233,7 +233,7 @@ const ChatBox = ({ userId, groupId }) => {
         setRoom(roomId);
 
         try {
-            const response = await fetch(`https://chat.quanteqsolutions.com/api/user/messages/${loggedInUser._id}/${userId}`, {
+            const response = await fetch(`https://talk.socceryou.ch/api/user/messages/${loggedInUser._id}/${userId}?projectId=soccer`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -267,7 +267,7 @@ const ChatBox = ({ userId, groupId }) => {
 
         try {
             setIsLoading(true);
-            const response = await fetch(`https://chat.quanteqsolutions.com/api/user/messages/${loggedInUser._id}/${userId}?page=${currentPage}&limit=20`, {
+            const response = await fetch(`https://talk.socceryou.ch/api/user/messages/${loggedInUser._id}/${userId}?page=${currentPage}&limit=20&projectId=soccer`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -698,7 +698,7 @@ const ChatBox = ({ userId, groupId }) => {
             });
 
             try {
-                const res = await fetch('https://chat.quanteqsolutions.com/api/messages/upload', {
+                const res = await fetch('https://talk.socceryou.ch/api/messages/upload?projectId=soccer', {
                     method: 'POST',
                     headers: {
                         'Authorization': localStorage.getItem('token'),
@@ -795,7 +795,7 @@ const ChatBox = ({ userId, groupId }) => {
         messageIds.push(selectedMessages);
 
         try {
-            const response = await fetch(`https://chat.quanteqsolutions.com/api/messages/delete`, {
+            const response = await fetch(`https://talk.socceryou.ch/api/messages/delete?projectId=soccer`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -1124,7 +1124,7 @@ const ChatBox = ({ userId, groupId }) => {
                                 <div className="user-card">
 
                                     {groupDetails?.groupImage ? (
-                                        <div className="user-avatar bg-purple group-image" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${groupDetails?.groupImage})` }}
+                                        <div className="user-avatar bg-purple group-image" style={{ backgroundImage: `url(/${groupDetails?.groupImage})` }}
                                         ></div>
                                     ) : (
                                         <div className="user-avatar bg-purple">
@@ -1189,7 +1189,7 @@ const ChatBox = ({ userId, groupId }) => {
                                     <div className={`chat ${msg?.senderDetails?.id === loggedInUser._id ? 'is-me' : 'is-you'}`}>
 
                                         {msg?.senderDetails?.id !== loggedInUser._id && <div className={`chat-avatar ${getDisplayTime(index, messageArr) ? '' : 'mb-0'}`}>
-                                            <div className="user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com${msg?.senderDetails?.imagePath})` }}>
+                                            <div className="user-avatar bg-purple" style={{ backgroundImage: `url(${msg?.senderDetails?.imagePath})` }}>
                                                 {!msg?.senderDetails?.imagePath && <span>{hiddenDepartments.includes(msg?.senderDetails?.department) ? msg?.senderDetails?.department?.slice(0, 2).toUpperCase() : msg?.senderDetails?.name?.slice(0, 2).toUpperCase()}</span>}
                                                 {/* <span>he</span> */}
                                             </div>
@@ -1256,7 +1256,7 @@ const ChatBox = ({ userId, groupId }) => {
                                                                     .map((f, index) => (
                                                                         <img
                                                                             key={index}
-                                                                            src={`https://chat.quanteqsolutions.com${f.url}`}
+                                                                            src={`https://talk.socceryou.ch${f.url}`}
                                                                             alt={f.fileName}
                                                                             className="rounded shadow"
                                                                             data-lightboxjs="auto"
@@ -1276,7 +1276,7 @@ const ChatBox = ({ userId, groupId }) => {
                                                                 .map((f, index) => (
                                                                     <div className="inner-file" key={index}>
                                                                         <video
-                                                                            src={`https://chat.quanteqsolutions.com${f.url}`}
+                                                                            src={`https://talk.socceryou.ch${f.url}`}
                                                                             controls
                                                                             style={{
                                                                                 margin: "5px",
@@ -1305,7 +1305,7 @@ const ChatBox = ({ userId, groupId }) => {
                                                                         }}
                                                                     >
                                                                         <a
-                                                                            href={`https://chat.quanteqsolutions.com${f.url}`}
+                                                                            href={`https://talk.socceryou.ch${f.url}`}
                                                                             target="_blank"
                                                                             rel="noopener noreferrer"
                                                                             style={{
@@ -1349,11 +1349,11 @@ const ChatBox = ({ userId, groupId }) => {
                                                     <ul className="chat-msg-more">
                                                         <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name, msg?.senderDetails?.department)}><em className="icon ni ni-reply-fill"></em></button></li>
 
-                                                        <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => forwardMessage(msg)}><em className="icon ni ni-share-fill"></em></button></li>
+                                                        {/* <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => forwardMessage(msg)}><em className="icon ni ni-share-fill"></em></button></li> */}
 
-                                                        {(msg?.senderDetails?.id === loggedInUser._id || loggedInUser?.accessLevel >= 3) && <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => showRemoveModal(msg?._id)}><em className="icon ni ni-trash-fill"></em></button></li>}
+                                                        {/* {(msg?.senderDetails?.id === loggedInUser._id || loggedInUser?.accessLevel >= 3) && <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => showRemoveModal(msg?._id)}><em className="icon ni ni-trash-fill"></em></button></li>} */}
 
-                                                        <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => copyMessage(msg)}><em className="icon ni ni-copy-fill"></em></button></li>
+                                                        {/* <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => copyMessage(msg)}><em className="icon ni ni-copy-fill"></em></button></li> */}
 
                                                         {/* <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => copyMessage(msg)}><em className="icon ni ni-info-fill"></em></button></li> */}
 
@@ -1633,7 +1633,8 @@ const ChatBox = ({ userId, groupId }) => {
                     {groupDetails && <SearchBar showDetails={showSearch} setShowDetails={setShowSearch} messages={messageArr} userId={userId} groupId={groupId} setHighlightedMessageId={setHighlightedMessageId} page={page} hasMoreMessages={hasMoreMessages} getChatMessages={getChatMessages} userDetails={userDetails} getGroupMessages={getGroupMessages} loadOlderMessages={loadOlderMessages} />}
                 </div>
             ) : (
-                <div style={{ paddingRight: showDetails && '325px' }} className={`nk-chat-body ${showDetails || showSearch ? 'profile-shown' : ''}`}>
+                <div className={`nk-chat-body ${showDetails || showSearch ? 'profile-shown' : ''}`}>
+                {/* <div style={{ paddingRight: showDetails && '325px' }} className={`nk-chat-body ${showDetails || showSearch ? 'profile-shown' : ''}`}> */}
                     <div className="nk-chat-head">
                         <ul className="nk-chat-head-info">
                             <li className="nk-chat-body-close">
@@ -1641,7 +1642,7 @@ const ChatBox = ({ userId, groupId }) => {
                             </li>
                             <li className="nk-chat-head-user">
                                 <div className="user-card">
-                                    <div className="user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com${userDetails?.imagePath})` }}>
+                                    <div className="user-avatar bg-purple" style={{ backgroundImage: `url(${userDetails?.imagePath})` }}>
                                         {!userDetails?.imagePath && <span>{userDetails?.name?.slice(0, 2).toUpperCase()}</span>}
                                     </div>
                                     <div className="user-info">
@@ -1699,7 +1700,7 @@ const ChatBox = ({ userId, groupId }) => {
                                 <div className={`chat ${msg?.senderDetails?.id === loggedInUser._id ? 'is-me' : 'is-you'}`}>
 
                                     {msg?.senderDetails?.id !== loggedInUser._id && <div className={`chat-avatar ${getDisplayTime(index, messageArr) ? '' : 'mb-0'}`}>
-                                        <div className="user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com${msg?.senderDetails?.imagePath})` }}>
+                                        <div className="user-avatar bg-purple" style={{ backgroundImage: `url(${msg?.senderDetails?.imagePath})` }}>
                                             {!msg?.senderDetails?.imagePath && <span>{msg?.senderDetails?.name?.slice(0, 2).toUpperCase()}</span>}
                                             {/* <span>he</span> */}
                                         </div>
@@ -1760,7 +1761,7 @@ const ChatBox = ({ userId, groupId }) => {
                                                                 .map((f, index) => (
                                                                     <img
                                                                         key={index}
-                                                                        src={`https://chat.quanteqsolutions.com${f.url}`}
+                                                                        src={`https://talk.socceryou.ch${f.url}`}
                                                                         alt={f.fileName}
                                                                         className="rounded shadow"
                                                                         data-lightboxjs="auto"
@@ -1780,7 +1781,7 @@ const ChatBox = ({ userId, groupId }) => {
                                                             .map((f, index) => (
                                                                 <div className="inner-file" key={index}>
                                                                     <video
-                                                                        src={`https://chat.quanteqsolutions.com${f.url}`}
+                                                                        src={`https://talk.socceryou.ch${f.url}`}
                                                                         controls
                                                                         style={{
                                                                             margin: "5px",
@@ -1809,7 +1810,7 @@ const ChatBox = ({ userId, groupId }) => {
                                                                     }}
                                                                 >
                                                                     <a
-                                                                        href={`https://chat.quanteqsolutions.com${f.url}`}
+                                                                        href={`https://talk.socceryou.ch${f.url}`}
                                                                         target="_blank"
                                                                         rel="noopener noreferrer"
                                                                         style={{
@@ -1853,11 +1854,11 @@ const ChatBox = ({ userId, groupId }) => {
                                                 <ul className="chat-msg-more">
                                                     <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name, msg?.senderDetails?.department)}><em className="icon ni ni-reply-fill"></em></button></li>
 
-                                                    <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => forwardMessage(msg)}><em className="icon ni ni-share-fill"></em></button></li>
+                                                    {/* <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => forwardMessage(msg)}><em className="icon ni ni-share-fill"></em></button></li> */}
 
-                                                    {(msg?.senderDetails?.id === loggedInUser._id || loggedInUser?.accessLevel >= 3) && <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => showRemoveModal(msg?._id)}><em className="icon ni ni-trash-fill"></em></button></li>}
+                                                    {/* {(msg?.senderDetails?.id === loggedInUser._id || loggedInUser?.accessLevel >= 3) && <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => showRemoveModal(msg?._id)}><em className="icon ni ni-trash-fill"></em></button></li>} */}
 
-                                                    <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => copyMessage(msg)}><em className="icon ni ni-copy-fill"></em></button></li>
+                                                    {/* <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => copyMessage(msg)}><em className="icon ni ni-copy-fill"></em></button></li> */}
 
                                                     {/* <li>
                                                     <div className="dropdown">
@@ -1888,7 +1889,7 @@ const ChatBox = ({ userId, groupId }) => {
                         ))}
                         {isTyping && <div className="chat is-you">
                             <div className={`chat-avatar mb-0`}>
-                                <div className="user-avatar bg-purple" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com${typingSender?.imagePath})` }}>
+                                <div className="user-avatar bg-purple" style={{ backgroundImage: `url(${typingSender?.imagePath})` }}>
                                     {!typingSender?.imagePath && <span>{typingSender?.name?.slice(0, 2).toUpperCase()}</span>}
                                 </div>
                             </div>
@@ -2005,17 +2006,17 @@ const ChatBox = ({ userId, groupId }) => {
                         </div>
                         <div className="nk-chat-editor-form">
                             <div className="form-control-wrap">
-                                {/* <input
+                                <input
                                     type="text"
-                                    className="form-control form-control-simple no-resize py-1"
+                                    className="form-control form-control-simple no-resize py-1 px-3"
                                     id="default-textarea"
                                     value={message}
                                     onChange={handleChangeMessage}
                                     onKeyDown={handleKeyDown}
                                     ref={inputRef}
                                     placeholder="Type your message..."
-                                /> */}
-                                <div className="py-1">
+                                />
+                                {false && <div className="py-1">
                                     {showToolBar && <Toolbar>
                                         {(externalProps) => (
                                             <div className="custom-toolbar">
@@ -2066,7 +2067,7 @@ const ChatBox = ({ userId, groupId }) => {
                                             return "not-handled"; // allow shift+enter for new line
                                         }}
                                     />
-                                </div>
+                                </div>}
                             </div>
                         </div>
                         <ul className="nk-chat-editor-tools g-2">

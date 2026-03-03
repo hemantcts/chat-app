@@ -2,7 +2,7 @@ import React from 'react'
 
 const EmptyChatRoom = () => {
   return (
-        <div className="nk-chat-body profile-shown pe-0">
+        <div className="nk-chat-body pe-0">
             
             <div className="nk-chat-panel" data-simplebar>
 

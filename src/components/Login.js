@@ -23,7 +23,7 @@ const Login = () => {
 
     try {
 
-      const response = await fetch(`https://chat.quanteqsolutions.com/api/auth/login`, {
+      const response = await fetch(`https://talk.socceryou.ch/api/auth/login?projectId=soccer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -36,7 +36,8 @@ const Login = () => {
       if (data.status) {
         socket.emit('connectUser', { userId: data.user._id });
         localStorage.setItem('token', data.token);
-        localStorage.setItem('userData', JSON.stringify(data.user));
+        localStorage.setItem('chatUserData', JSON.stringify(data.user));
+        // localStorage.setItem('chatUserData', JSON.stringify(data.user));
         getFcmToken(data.token);
         navigate('/dashboard/chat'); // redirect after login
       }

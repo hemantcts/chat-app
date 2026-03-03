@@ -20,7 +20,7 @@
     .search-wrapper {
         border: 0;
         border-radius: 0;
-        border-bottom: 2px solid #dbdfea;
+        border-bottom: 2px solid var(--chat-secondary-dark-bg);
         padding: 5px 8px;
     }
 
@@ -57,7 +57,7 @@
 } */
 
 .chat-list .chat-item.active {
-    background-color: rgb(235, 238, 242);
+    background-color: var(--chat-secondary-dark-bg);
 }
 
 .nk-chat-profile {
@@ -181,9 +181,10 @@
 }
 
 .reply {
-    padding: 0.7rem 1.25rem;
-    border-bottom: 1px solid #3883F9;
-    border-top: 1px solid #3883F9;
+    border-bottom: 1px solid var(--chat-secondary-dark-bg);
+    border-top: 1px solid var(--chat-secondary-dark-bg);
+    padding: .7rem 1.25rem;
+    background: var(--chat-primary-dark-bg);
 }
 
 .my-reply-bubble {
@@ -205,8 +206,8 @@
     margin-bottom: 0.25rem;
 
     .reply-chat-msg {
-        background-color: #3883F9 !important;
-        color: #fff !important;
+        background-color: var(--chat-primary-green) !important;
+        color: var(--chat-my-msg-color) !important;
     }
 }
 
@@ -246,12 +247,14 @@
 
 .is-unread .chat-context .status {
     background-color: #3883F9;
-    color: #fff !important;
+    /* color: #fff !important; */
+    color: var(--chat-secondary-dark-bg) !important;
     border-radius: 50%;
     height: 22px;
-    width: 21px;
+    width: 22px;
     align-items: center;
     justify-content: center;
+    font-size: 14px;
 }
 
 .message-seen {
