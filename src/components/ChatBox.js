@@ -27,6 +27,7 @@ import {
 
 import { SlideshowLightbox } from 'lightbox.js-react';
 import SearchBar from './SearchBar';
+import { t } from '../utils/i18n';
 // import 'lightbox.js-react/dist/index.css';
 
 // const mentions = [
@@ -379,7 +380,7 @@ const ChatBox = ({ userId, groupId }) => {
 
     useEffect(() => {
         if (userId) {
-            socket.emit('mark-seen', { chatUserId: userId });
+            socket.emit('mark-seen', { senderId: loggedInUser?._id, receiverId: userId });
         }
         if (groupId) {
             socket.emit('mark-seen-group', { groupId: groupId });
@@ -403,6 +404,32 @@ const ChatBox = ({ userId, groupId }) => {
 
     }, [groupId, userId, messageArr])
 
+    const handleDeleteConvo = async () => {
+        try {
+            const response = await fetch(`https://talk.socceryou.ch/api/messages/deleteConversation?projectId=soccer`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': localStorage.getItem('token'),
+                },
+                body: JSON.stringify({
+                    senderId: loggedInUser?._id,
+                    receiverId: userId
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.status) {
+                console.log('converstaion deleted', data.message);
+                // setMessageArr([]);
+                navigate('/dashboard/chat');
+            }
+        } catch (error) {
+            console.error("Failed to delete conversation:", error);
+        }
+    };
+
     const scrollToBottom2 = () => {
         const chatPanel = chatPanelRef.current;
         if (chatPanel) {
@@ -420,14 +447,35 @@ const ChatBox = ({ userId, groupId }) => {
         }
     };
 
-    function getDisplayDate(index, messageArr) {
+    // function getDisplayDate(index, messageArr) {
+    //     const currentDate = messageArr[index]?.createdDate;
+    //     const prevDate = messageArr[index - 1]?.createdDate;
+
+    //     if (currentDate === prevDate) {
+    //         return false;
+    //     }
+    //     return currentDate;
+    // }
+
+    function getDisplayDate(index, messageArr, lang = "en") {
+        lang = window.ChatWidget?.config?.lang || "en";
         const currentDate = messageArr[index]?.createdDate;
         const prevDate = messageArr[index - 1]?.createdDate;
 
-        if (currentDate === prevDate) {
+        if (!currentDate) return false;
+
+        const current = new Date(currentDate).toDateString();
+        const prev = prevDate ? new Date(prevDate).toDateString() : null;
+
+        if (current === prev) {
             return false;
         }
-        return currentDate;
+
+        return new Intl.DateTimeFormat(lang, {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        }).format(new Date(currentDate));
     }
 
 
@@ -1634,7 +1682,7 @@ const ChatBox = ({ userId, groupId }) => {
                 </div>
             ) : (
                 <div className={`nk-chat-body ${showDetails || showSearch ? 'profile-shown' : ''}`}>
-                {/* <div style={{ paddingRight: showDetails && '325px' }} className={`nk-chat-body ${showDetails || showSearch ? 'profile-shown' : ''}`}> */}
+                    {/* <div style={{ paddingRight: showDetails && '325px' }} className={`nk-chat-body ${showDetails || showSearch ? 'profile-shown' : ''}`}> */}
                     <div className="nk-chat-head">
                         <ul className="nk-chat-head-info">
                             <li className="nk-chat-body-close">
@@ -1672,6 +1720,7 @@ const ChatBox = ({ userId, groupId }) => {
                                 </div>
                             </li> */}
                             {/* <li className="mr-n1 mr-md-n2"><button className={`btn btn-icon btn-trigger text-primary chat-profile-toggle ${showDetails ? 'active' : ''}`} onClick={() => setShowDetails(!showDetails)}><em className="icon ni ni-alert-circle-fill"></em></button></li> */}
+                            <li className="delete-btn"><button className={`btn btn-icon btn-trigger text-primary chat-profile-toggle`} onClick={() => showRemoveModal()}><em className="icon ni ni-trash-fill"></em></button></li>
                             <li className="search-btn"><button className={`btn btn-icon btn-trigger text-primary chat-profile-toggle ${showSearch ? 'active' : ''}`} onClick={() => { setShowSearch(!showSearch); setShowDetails(false) }}><em className="icon ni ni-search"></em></button></li>
                         </ul>
                         <div className="nk-chat-head-search">
@@ -1880,7 +1929,7 @@ const ChatBox = ({ userId, groupId }) => {
                                             <li>
                                                 {getDisplayTime(index, messageArr) && getDisplayTime(index, messageArr)}
                                                 {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <em className={`icon ni ni-check-circle-fill ms-1 ${(msg?.seen || msgSeen) ? 'message-seen' : ''}`}></em>}
-                                                {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <span>{(msg?.seen || msgSeen) ? 'seen' : 'sent'}</span>}
+                                                {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <span>{(msg?.seen || msgSeen) ? t('seen') : t('sent')}</span>}
                                             </li>
                                         </ul>}
                                     </div>
@@ -1990,7 +2039,7 @@ const ChatBox = ({ userId, groupId }) => {
                                             />
                                         </label>
                                     </li>
-                                    <li>
+                                    {/* <li>
                                         <label className={`upload-files ${showToolBar ? 'active' : ''}`}
                                             onClick={() => {
                                                 setShowUploadOptions(false);
@@ -1998,7 +2047,7 @@ const ChatBox = ({ userId, groupId }) => {
                                             }}>
                                             <em className="icon ni ni-grid-sq"></em>
                                         </label>
-                                    </li>
+                                    </li> */}
                                     {/* <li><a href="#"><em className="icon ni ni-mic"></em></a></li>
                                     <li><a href="#"><em className="icon ni ni-grid-sq"></em></a></li> */}
                                 </ul>
@@ -2014,7 +2063,7 @@ const ChatBox = ({ userId, groupId }) => {
                                     onChange={handleChangeMessage}
                                     onKeyDown={handleKeyDown}
                                     ref={inputRef}
-                                    placeholder="Type your message..."
+                                    placeholder={t("typeMessage")}
                                 />
                                 {false && <div className="py-1">
                                     {showToolBar && <Toolbar>
@@ -2099,9 +2148,9 @@ const ChatBox = ({ userId, groupId }) => {
             <ConfirmModal
                 show={confirmModalVisible}
                 handleClose={hideModal}
-                onConfirm={deleteMessages}
+                onConfirm={handleDeleteConvo}
                 title="Confirm Delete"
-                message="Are you sure you want to delete this message?"
+                message={t("areYouSureToDeleteConvo")}
             />
         </>
     )

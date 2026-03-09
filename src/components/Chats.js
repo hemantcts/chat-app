@@ -169,7 +169,7 @@ const Chats = () => {
     useEffect(() => {
         const audio = new Audio(notificationSound);
         socket.on('notification', ({ message }) => {
-            // fetchUsers();
+            fetchUsers();
             // fetchGroups();
 
             console.log('mef', message)
@@ -196,9 +196,9 @@ const Chats = () => {
 
 
     useEffect(() => {
-        // if (selectedUserId) {
-        //     markSeen();
-        // }
+        if (selectedUserId) {
+            markSeen();
+        }
         fetchUsers();
         // fetchGroups();
         // getUser();
@@ -444,7 +444,7 @@ const Chats = () => {
                                         </div> */}
 
                 <div className="nk-chat-list">
-                    <h6 className="title overline-title-alt">Messages</h6>
+                    {/* <h6 className="title overline-title-alt">Messages</h6> */}
                     {groupEnable ? (
                         <ul className="chat-list">
                             {groups.length === 0 ? (

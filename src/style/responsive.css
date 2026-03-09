@@ -258,7 +258,7 @@
 }
 
 .message-seen {
-    color: #3883F9 !important;
+    color: var(--chat-primary-green) !important;
 }
 
 .add-members:hover {

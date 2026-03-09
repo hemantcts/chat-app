@@ -4,8 +4,8 @@ import { Modal, Button } from "react-bootstrap";
 const ConfirmModal = ({ show, handleClose, onConfirm, title, message }) => {
     return (
         <Modal show={show} onHide={handleClose} centered>
-            <Modal.Header closeButton>
-                <Modal.Title>{title || "Confirm Action"}</Modal.Title>
+            <Modal.Header style={{border:0}} closeButton>
+                {/* <Modal.Title>{title || "Confirm Action"}</Modal.Title> */}
             </Modal.Header>
 
             <Modal.Body>
@@ -14,7 +14,7 @@ const ConfirmModal = ({ show, handleClose, onConfirm, title, message }) => {
                 </p>
             </Modal.Body>
 
-            <Modal.Footer>
+            <Modal.Footer style={{border:0}}>
                 <Button variant="secondary" onClick={handleClose}>
                     Cancel
                 </Button>

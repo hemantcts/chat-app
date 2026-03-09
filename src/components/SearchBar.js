@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Form } from "react-bootstrap";
+import { t } from "../utils/i18n";
 
 const SearchBar = ({ showDetails, setShowDetails, messages, userId, groupId, setHighlightedMessageId, page, hasMoreMessages, getChatMessages, userDetails, getGroupMessages, loadOlderMessages }) => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -115,12 +116,12 @@ const SearchBar = ({ showDetails, setShowDetails, messages, userId, groupId, set
             data-simplebar
         >
             <div className="user-card user-card-s2 my-4">
-                <h4 style={{ marginBottom: "1rem" }}>Find in chat</h4>
+                <h4 style={{ marginBottom: "1rem" }}>{t("findInChat")}</h4>
 
                 <div className="search_box" style={{ width: "100%" }}>
                     <Form.Control
                         type="text"
-                        placeholder="Enter a search keyword and press Enter"
+                        placeholder={t("enterSearch")}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         onKeyDown={handleKeyDown}
@@ -132,7 +133,7 @@ const SearchBar = ({ showDetails, setShowDetails, messages, userId, groupId, set
             {/* Search Results */}
             {searchQuery && (
                 <div style={{ padding: "0 1rem" }}>
-                    <h4>Results</h4>
+                    <h4>{t("result")}</h4>
                     {filteredMessages.length > 0 ? (
                         filteredMessages.map((msg, index) => (
                             <div

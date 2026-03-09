@@ -63,10 +63,11 @@ window.ChatWidget = {
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href =
-      "https://bigstuffmovers.au/widget/build/static/css/main.49cf1658.css";
+      "https://bigstuffmovers.au/widget/build/static/css/main.b4aa5b0b.css";
     shadowRoot.appendChild(link);
 
     this.injectTheme(config);
+    this.updateLanguage(config.lang)
 
     // 5️⃣ Render React inside shadow
     const root = ReactDOM.createRoot(mountPoint);
@@ -129,6 +130,20 @@ window.ChatWidget = {
     }
     console.log('Socket working');
     socket.emit("create-conversation", { userData });
+  },
+
+  updateLanguage: function (lang) {
+    console.log('updated lang in chat widget', lang)
+    this.config.lang = lang;
+
+
+    // if (this.root) {
+    //   this.root.render(
+    //     <MemoryRouter>
+    //       <App config={this.config} />
+    //     </MemoryRouter>
+    //   );
+    // }
   }
 };
 
