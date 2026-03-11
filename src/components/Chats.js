@@ -165,15 +165,21 @@ const Chats = () => {
         }
     }
 
+    const selectedGroupIdRef = React.useRef(selectedGroupId);
+
+    useEffect(() => {
+        selectedGroupIdRef.current = selectedGroupId;
+    }, [selectedGroupId]);
 
     useEffect(() => {
         const audio = new Audio(notificationSound);
         socket.on('notification', ({ message }) => {
-            fetchUsers();
-            fetchGroups();
+            // fetchUsers();
+            // fetchGroups();
 
             console.log('mef', message)
             console.log('test', message?.receiverId, loggedInUser?._id)
+
             if (message?.receiverId === loggedInUser?._id) {
                 console.log('test', message?.receiverId, loggedInUser?._id)
                 audio.play().catch(error => {
@@ -181,6 +187,29 @@ const Chats = () => {
                 });
             }
             else {
+                setGroups((prevGroups) => {
+                    const updatedGroups = prevGroups.map((group) =>
+                        group._id === message.groupId
+                            ? {
+                                ...group,
+                                latestMessage: message.content,
+                                latestSenderName: message.senderDetails.name,
+                                latestSenderDepartment: message.senderDetails.department,
+                                latestSenderId: message.senderDetails.id,
+                                latestTimestamp: message.createdAt,
+                                unseenCount:
+                                    message.groupId !== selectedGroupIdRef.current
+                                        ? (group.unseenCount || 0) + 1
+                                        : 0
+                            }
+                            : group
+                    );
+
+                    const activeGroup = updatedGroups.find(g => g._id === message.groupId);
+                    const otherGroups = updatedGroups.filter(g => g._id !== message.groupId);
+
+                    return activeGroup ? [activeGroup, ...otherGroups] : updatedGroups;
+                });
                 const isMember = message?.groupDetails?.members?.some(
                     memberId => memberId === loggedInUser?._id
                 );
@@ -195,14 +224,20 @@ const Chats = () => {
     }, [])
 
 
+    // useEffect(() => {
+    //     if (selectedUserId) {
+    //         markSeen();
+    //     }
+    //     fetchUsers();
+    //     fetchGroups();
+    //     getUser();
+    // }, [selectedUserId, selectedGroupId]);
+
     useEffect(() => {
-        if (selectedUserId) {
-            markSeen();
-        }
         fetchUsers();
         fetchGroups();
         getUser();
-    }, [selectedUserId, selectedGroupId]);
+    }, []);
 
 
 
@@ -221,7 +256,7 @@ const Chats = () => {
     };
 
     const handleDelete = async (groupId) => {
-        if (loggedInUser?.accessLevel<=2 && loggedInUser?.department !== 'Contractor Management' && loggedInUser?.department !== 'Contractor') {
+        if (loggedInUser?.accessLevel <= 2 && loggedInUser?.department !== 'Contractor Management' && loggedInUser?.department !== 'Contractor') {
             toast.error("You don't have access")
             return;
         }
@@ -237,7 +272,7 @@ const Chats = () => {
 
             if (data.status) {
                 toast.success(data.message || 'group deleted');
-                fetchGroups();
+                // fetchGroups();
                 navigate('/dashboard/chat?group')
             }
             else {
@@ -324,17 +359,17 @@ const Chats = () => {
                             </div>
                         </div>
                     </li> */}
-                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=3 || loggedInUser?.department === 'Contractor Management' || loggedInUser?.department === 'Contractor') && <li>
+                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel >= 3 || loggedInUser?.department === 'Contractor Management' || loggedInUser?.department === 'Contractor') && <li>
                         <div className="dropdown">
                             <a href="#" className="btn btn-round btn-icon btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 <em className="icon ni ni-edit-alt-fill"></em>
                             </a>
                             <div className="dropdown-menu dropdown-menu-start">
                                 <ul className="link-list-opt no-bdr">
-                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=3 || loggedInUser?.department === 'Contractor Management' || loggedInUser?.department === 'Contractor') && <li><Link to="/dashboard/chat?create_group"><span>Create Group</span></Link></li>}
-                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=4 || loggedInUser?.department === 'Contractor Management') && <li><Link to="/dashboard/chat?new_chat"><span>New Chat</span></Link></li>}
-                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=3) && <li><Link to="/dashboard/chat?add_user"><span>Add User</span></Link></li>}
-                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=3) && <li><Link to="/dashboard/chat?add_company"><span>Add Company</span></Link></li>}
+                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel >= 3 || loggedInUser?.department === 'Contractor Management' || loggedInUser?.department === 'Contractor') && <li><Link to="/dashboard/chat?create_group"><span>Create Group</span></Link></li>}
+                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel >= 4 || loggedInUser?.department === 'Contractor Management') && <li><Link to="/dashboard/chat?new_chat"><span>New Chat</span></Link></li>}
+                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel >= 3) && <li><Link to="/dashboard/chat?add_user"><span>Add User</span></Link></li>}
+                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel >= 3) && <li><Link to="/dashboard/chat?add_company"><span>Add Company</span></Link></li>}
                                 </ul>
                             </div>
                         </div>
@@ -452,7 +487,15 @@ const Chats = () => {
                             ) : (
                                 groups.map((group, index) => (
                                     <li key={index} className={`chat-item ${selectedGroupId === group._id ? 'active' : ''} ${group?.unseenCount > 0 ? 'is-unread' : ''}`}>
-                                        <Link className="chat-link chat-open current" to={`/dashboard/chat?group=${group._id}`}>
+                                        <Link className="chat-link chat-open current" to={`/dashboard/chat?group=${group._id}`}
+                                            onClick={() => {
+                                                setGroups(prev =>
+                                                    prev.map(g =>
+                                                        g._id === group._id ? { ...g, unseenCount: 0 } : g
+                                                    )
+                                                );
+                                                setUnreadGroups(prev => Math.max(prev - 1, 0));
+                                            }}>
 
                                             {group?.groupImage ? (
                                                 <div className="chat-media user-avatar bg-purple group-image" style={{ backgroundImage: `url(https://chat.quanteqsolutions.com/${group?.groupImage})` }}
@@ -474,7 +517,7 @@ const Chats = () => {
                                                         loggedInUser?.department === 'Contractor' || loggedInUser?.department === 'Contractor Management' ? (
                                                             <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${hiddenDepartments.includes(group?.latestSenderDepartment) ? group?.latestSenderDepartment : group?.latestSenderName} :`} {parse(truncateHtml(group?.latestMessage || "", 20))}</div>
                                                         ) : (
-                                                            <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${group?.latestSenderName} ${loggedInUser?.role===1 ? `| ${group?.latestSenderDepartment}` : ''} :`} {parse(truncateHtml(group?.latestMessage || "", 20))}</div>
+                                                            <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${group?.latestSenderName} ${loggedInUser?.role === 1 ? `| ${group?.latestSenderDepartment}` : ''} :`} {parse(truncateHtml(group?.latestMessage || "", 20))}</div>
                                                         ))}
                                                     {group?.unseenCount > 0 && <div className="status unread">{group?.unseenCount > 99 ? '99' : group?.unseenCount}</div>}
                                                     {/* <div className="status delivered">
