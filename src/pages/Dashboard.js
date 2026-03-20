@@ -6,7 +6,7 @@ import CreateGroup from '../components/CreateGroup'
 import { useLocation } from 'react-router-dom'
 import UserProfile from '../components/UserProfile'
 
-const Dashboard = () => {
+const Dashboard = ({shadowRoot}) => {
     // const { pathname } = useLocation();
 
     // const isChat = pathname === '/dashboard/chat' || pathname === '/dashboard';
@@ -36,7 +36,7 @@ const Dashboard = () => {
                     <div className="nk-wrap pt-0 h-100" style={{minHeight: 'unset'}}>
                         {/* <Navbar page={page} pageHeading={pageHeading} /> */}
 
-                        <ChatRoom />
+                        <ChatRoom shadowRoot={shadowRoot} />
                         
                         {/* {isChat && <ChatRoom />}
                         {isCreateGroup && <CreateGroup />}

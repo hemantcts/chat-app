@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 // import { Navbar } from 'react-bootstrap'
 import Navbar from './Navbar'
 import ChatBox from './ChatBox'
@@ -10,8 +10,10 @@ import AddUsers from './AddUsers'
 import NewChat from './NewChat'
 import AllUsers from './AllUsers'
 import AddCompany from './AddCompany'
+import AdminChatBox from './AdminChatBox'
+import AdminChats from './AdminChats'
 
-const ChatRoom = () => {
+const ChatRoom = ({shadowRoot}) => {
 
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -24,8 +26,13 @@ const ChatRoom = () => {
 
     const selectedUserId = queryParams.get('user');
     const selectedGroupId = queryParams.get('group');
+    const selectedConversationId = queryParams.get('conversation');
 
-    const isChatEmpty = !selectedUserId && !selectedGroupId && !isCreateGroup && !isAddUser && !isNewChat && !isAllUsers && !isAddCompany;
+    const isChatEmpty = !selectedUserId && !selectedGroupId && !isCreateGroup && !isAddUser && !isNewChat && !isAllUsers && !isAddCompany && !selectedConversationId;
+
+    const loggedInUser = JSON.parse(localStorage.getItem('chatUserData'))
+
+    const [convoUsers, setConvoUsers] = useState(undefined);
 
 
     return (
@@ -34,7 +41,7 @@ const ChatRoom = () => {
                 <div className="nk-content-body h-100">
                     <div className="nk-chat h-100" style={{minHeight: 'unset'}}>
                         {/* Sidebar Chats */}
-                        <Chats />
+                        {loggedInUser?.role == '1' ? <AdminChats setConvoUsers={setConvoUsers} /> : <Chats />}
 
                         {/* Right-side logic */}
                         {isChatEmpty && <EmptyChatRoom />}
@@ -42,6 +49,15 @@ const ChatRoom = () => {
                             <ChatBox
                                 userId={selectedUserId}
                                 groupId={selectedGroupId}
+                                shadowRoot={shadowRoot}
+                            />
+                        )}
+                        {selectedConversationId && convoUsers && (
+                            <AdminChatBox
+                                conversationId={selectedConversationId}
+                                convoUsers={convoUsers}
+                                userId={null}
+                                groupId={null}
                             />
                         )}
                         {isCreateGroup && <CreateGroup2 />}

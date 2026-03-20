@@ -37,6 +37,7 @@
 
 .select-chat {
     ul li {
+        font-size: 16px;
         width: 50%;
         text-align: center;
         padding: 0.5rem 1rem;
@@ -45,8 +46,8 @@
     }
 
     ul li.active {
-        background-color: #3883F9;
-        color: #fff;
+        background-color: var(--chat-primary-green);
+        color: var(--chat-primary-dark-bg);
     }
 }
 
@@ -234,7 +235,7 @@
     margin: 0 !important;
     opacity: 0.6;
 
-    &:hover{
+    &:hover {
         opacity: 1;
     }
 
@@ -336,6 +337,36 @@
 
 .modal-body .chat-item:hover {
     background-color: unset;
+}
+
+.modal-content {
+    background-color: var(--chat-head-bg) !important;
+    border-radius: 16px !important;
+}
+
+.modal-footer {
+    .btn {
+        padding: 9px 20px;
+        border-radius: 10px;
+        min-width: 180px;
+        text-align: center;
+        font-size: 15px;
+        font-weight: 700;
+        border: 0;
+        outline: none;
+        white-space: nowrap;
+        margin: 5px;
+        justify-content: center;
+    }
+
+    .btn-danger {
+        background-color: var(--chat-primary-red);
+    }
+
+    .btn-secondary {
+        background-color: var(--chat-primary-green);
+        color: var(--chat-my-msg-color);
+    }
 }
 
 .btn-check:checked+.btn,
@@ -596,11 +627,11 @@
     }
 }
 
-.message-files .light-box{
+.message-files .light-box {
     height: 100% !important;
 }
 
-.chat{
+.chat {
     transition: background-color 0.6s ease;
 }
 
@@ -609,7 +640,7 @@
     border-radius: 8px;
 }
 
-.chat.highlight .chat-msg{
+.chat.highlight .chat-msg {
     animation: scaleMe 0.5s ease-in-out 0s 2 alternate-reverse forwards;
 }
 
@@ -618,10 +649,18 @@
     0% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.1);
     }
+
     100% {
         transform: scale(1);
     }
+}
+
+.file-preview-container {
+    background: var(--chat-primary-dark-bg);
+    border-bottom: 1px solid var(--chat-secondary-dark-bg);
+    border-top: 1px solid var(--chat-secondary-dark-bg);
 }

@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { Form } from "react-bootstrap";
 import { t } from "../utils/i18n";
 
-const SearchBar = ({ showDetails, setShowDetails, messages, userId, groupId, setHighlightedMessageId, page, hasMoreMessages, getChatMessages, userDetails, getGroupMessages, loadOlderMessages }) => {
+const SearchBar = ({ showDetails, setShowDetails, messages, userId, groupId, setHighlightedMessageId, page, hasMoreMessages, getChatMessages, userDetails, getGroupMessages, loadOlderMessages, setShowSearch }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [searchQuery, setSearchQuery] = useState(""); // Trigger search only when Enter is pressed
 
@@ -109,6 +109,12 @@ const SearchBar = ({ showDetails, setShowDetails, messages, userId, groupId, set
         setShowDetails(false)
     }, [userId, groupId])
 
+    const closeSearch = () => {
+        setSearchQuery("")
+        setSearchTerm("")
+        setShowDetails(false)
+    }
+
 
     return (
         <div
@@ -116,6 +122,12 @@ const SearchBar = ({ showDetails, setShowDetails, messages, userId, groupId, set
             data-simplebar
         >
             <div className="user-card user-card-s2 my-4">
+                <button className='btn btn-icon btn-sm btn-trigger1 position-absolute' style={{ top: '50%', right: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'translateY(-50%)', backgroundColor: '#e5e9f2', borderRadius: '50%' }} onClick={closeSearch}>
+                    <svg width="43" height="43" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" style={{height: '30px', width: '30px', position: 'absolute', top: '0.5rem', right: '0.5rem'}}>
+                        <path d="M21.7871 3.5C11.7934 3.5 3.84961 11.4437 3.84961 21.4375C3.84961 31.4312 11.7934 39.375 21.7871 39.375C31.7809 39.375 39.7246 31.4312 39.7246 21.4375C39.7246 11.4437 31.7809 3.5 21.7871 3.5ZM21.7871 36.8125C13.3309 36.8125 6.41211 29.8937 6.41211 21.4375C6.41211 12.9812 13.3309 6.0625 21.7871 6.0625C30.2434 6.0625 37.1621 12.9812 37.1621 21.4375C37.1621 29.8937 30.2434 36.8125 21.7871 36.8125Z" fill="var(--chat-name-color)"></path>
+                        <path d="M28.8535 30.5977L21.7871 23.5313L14.7207 30.5977L12.627 28.5039L19.6934 21.4375L12.627 14.3711L14.7207 12.2773L21.7871 19.3437L28.8535 12.2773L30.9473 14.3711L23.8809 21.4375L30.9473 28.5039L28.8535 30.5977Z" fill="var(--chat-name-color)"></path>
+                    </svg>
+                </button>
                 <h4 style={{ marginBottom: "1rem" }}>{t("findInChat")}</h4>
 
                 <div className="search_box" style={{ width: "100%" }}>

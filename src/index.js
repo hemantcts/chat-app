@@ -63,7 +63,7 @@ window.ChatWidget = {
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href =
-      "https://bigstuffmovers.au/widget/build/static/css/main.b4aa5b0b.css";
+      "https://bigstuffmovers.au/widget/build/static/css/main.5a8eced1.css";
     shadowRoot.appendChild(link);
 
     this.injectTheme(config);
@@ -75,7 +75,7 @@ window.ChatWidget = {
     root.render(
       <MemoryRouter>
         <RouterCheck>
-          <App config={config} />
+          <App config={config} shadowRoot={shadowRoot} />
         </RouterCheck>
       </MemoryRouter>
     );
@@ -92,16 +92,19 @@ window.ChatWidget = {
     style.id = "chat-theme-style";
 
     const lightPrimaryGreen = config?.theme?.light?.primaryGreen || "#3883F9";
+    const lightPrimaryRed = config?.theme?.light?.primaryRed || "#f93c65";
     const lightPrimaryDarkBg = config?.theme?.light?.primaryDarkBg || "#ffffff";
     const lightSecondaryDarkBg = config?.theme?.light?.secondaryDarkBg || "#ffffff";
 
     const darkPrimaryGreen = config?.theme?.dark?.primaryGreen || "#3883F9";
+    const darkPrimaryRed = config?.theme?.dark?.primaryRed || "#f93c65";
     const darkPrimaryDarkBg = config?.theme?.dark?.primaryDarkBg || "#ffffff";
     const darkSecondaryDarkBg = config?.theme?.dark?.secondaryDarkBg || "#ffffff";
 
     style.textContent = `
       :host {
         --chat-primary-green: ${config.isDarkMode ? darkPrimaryGreen : lightPrimaryGreen};
+        --chat-primary-red: ${config.isDarkMode ? darkPrimaryRed : lightPrimaryRed};
         --chat-primary-dark-bg: ${config.isDarkMode ? darkPrimaryDarkBg : lightPrimaryDarkBg};
         --chat-secondary-dark-bg: ${config.isDarkMode ? darkSecondaryDarkBg : lightSecondaryDarkBg};
         --chat-bg: ${config.isDarkMode ? darkPrimaryDarkBg : '#ebeef2b3'};

@@ -51,7 +51,7 @@ import ForgotPassword from './components/ForgotPassword';
 
 // In your main App component or chat component
 
-const App = () => {
+const App = ({config, shadowRoot}) => {
   useEffect(() => {
     Notification.requestPermission().then((permission) => {
       if (permission === 'granted') {
@@ -132,7 +132,8 @@ const App = () => {
         userId: userData.id,
         name: userData.first_name,
         email: userData.email || userData.username,
-        photoUrl: userData.profile_image_path
+        photoUrl: userData.profile_image_path,
+        role: userData.role
       }
       socket.emit('registerUser', { userData: user });
     }
@@ -178,7 +179,7 @@ const App = () => {
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot_password" element={<ForgotPassword />} />
-          <Route path="/dashboard/*" element={<Dashboard />} />
+          <Route path="/dashboard/*" element={<Dashboard shadowRoot={shadowRoot} />} />
         </Routes>
       </ProfileImageChangedContext.Provider>
     </OnlineUsersContext.Provider>

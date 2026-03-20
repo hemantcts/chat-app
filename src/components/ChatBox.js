@@ -42,7 +42,7 @@ const { Toolbar } = toolbarPlugin;
 const { MentionSuggestions } = mentionPlugin;
 const plugins = [mentionPlugin, toolbarPlugin];
 
-const ChatBox = ({ userId, groupId }) => {
+const ChatBox = ({ userId, groupId, shadowRoot }) => {
     const [editorState, setEditorState] = useState(() =>
         EditorState.createEmpty()
     );
@@ -247,6 +247,7 @@ const ChatBox = ({ userId, groupId }) => {
             if (data.status) {
                 console.log(data);
                 setMessageArr(data.messages);
+
                 socket.emit('join-room', { room: roomId })
             }
             else {
@@ -266,9 +267,16 @@ const ChatBox = ({ userId, groupId }) => {
         let roomId = getPrivateRoomId(loggedInUser._id, userId);
         setRoom(roomId);
 
+        let api = `https://talk.socceryou.ch/api/user/messages/${loggedInUser._id}/${userId}?page=${currentPage}&limit=20&projectId=soccer`
+
+
+        if (loggedInUser?.role === '1') {
+            api = `https://talk.socceryou.ch/api/admin/messages/${userId}?page=${currentPage}&limit=20&projectId=soccer`
+        }
+
         try {
             setIsLoading(true);
-            const response = await fetch(`https://talk.socceryou.ch/api/user/messages/${loggedInUser._id}/${userId}?page=${currentPage}&limit=20&projectId=soccer`, {
+            const response = await fetch(api, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -302,6 +310,7 @@ const ChatBox = ({ userId, groupId }) => {
                 } else {
                     setHasMoreMessages(true);
                 }
+                console.log('here roomId >>>>', roomId)
                 socket.emit('join-room', { room: roomId });
             }
 
@@ -1258,7 +1267,7 @@ const ChatBox = ({ userId, groupId }) => {
                                                     )}
                                             </ul>}
 
-                                            {msg?.senderDetails?.id === loggedInUser._id ? (
+                                            {/* {msg?.senderDetails?.id === loggedInUser._id ? (
                                                 msg?.replyTo && <ul className="chat-meta mt-0 mb-1">
                                                     <li>{msg?.replyTo?.time}</li>
                                                     <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
@@ -1269,7 +1278,7 @@ const ChatBox = ({ userId, groupId }) => {
                                                     <li>{msg?.replyTo?.time}</li>
                                                 </ul>
                                             )
-                                            }
+                                            } */}
 
                                             <div className="chat-bubbles">
                                                 {msg?.senderDetails?.id === loggedInUser._id ? (
@@ -1497,9 +1506,9 @@ const ChatBox = ({ userId, groupId }) => {
                             {parse(truncateHtml(reply?.msgContent || "", 20))}
                         </div>
 
-                        <button className='btn btn-icon btn-sm btn-trigger position-absolute' style={{ top: '0.7rem', right: '1.25rem' }} onClick={() => setReply({})}>
+                        <button className='btn btn-icon btn-sm btn-trigger1 position-absolute' style={{ top: '50%', right: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'translateY(-50%)', backgroundColor: '#e5e9f2', borderRadius: '50%' }} onClick={() => setReply({})}>
                             <svg className="svg-icon" style={{ width: '1em', height: '1em', verticalAlign: 'middle', fill: 'currentColor', overflow: 'hidden', }} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M810.65984 170.65984q18.3296 0 30.49472 12.16512t12.16512 30.49472q0 18.00192-12.32896 30.33088l-268.67712 268.32896 268.67712 268.32896q12.32896 12.32896 12.32896 30.33088 0 18.3296-12.16512 30.49472t-30.49472 12.16512q-18.00192 0-30.33088-12.32896l-268.32896-268.67712-268.32896 268.67712q-12.32896 12.32896-30.33088 12.32896-18.3296 0-30.49472-12.16512t-12.16512-30.49472q0-18.00192 12.32896-30.33088l268.67712-268.32896-268.67712-268.32896q-12.32896-12.32896-12.32896-30.33088 0-18.3296 12.16512-30.49472t30.49472-12.16512q18.00192 0 30.33088 12.32896l268.32896 268.67712 268.32896-268.67712q12.32896-12.32896 30.33088-12.32896z" />
+                                <path d="M810.65984 170.65984q18.3296 0 30.49472 12.16512t12.16512 30.49472q0 18.020692-12.32896 30.33088l-268.67712 268.32896 268.67712 268.32896q12.32896 12.32896 12.32896 30.33088 0 18.3296-12.16512 30.49472t-30.49472 12.16512q-18.00192 0-30.33088-12.32896l-268.32896-268.67712-268.32896 268.67712q-12.32896 12.32896-30.33088 12.32896-18.3296 0-30.49472-12.16512t-12.16512-30.49472q0-18.00192 12.32896-30.33088l268.67712-268.32896-268.67712-268.32896q-12.32896-12.32896-12.32896-30.33088 0-18.3296 12.16512-30.49472t30.49472-12.16512q18.00192 0 30.33088 12.32896l268.32896 268.67712 268.32896-268.67712q12.32896-12.32896 30.33088-12.32896z" />
                             </svg>
                         </button>
                     </div>}
@@ -1697,7 +1706,7 @@ const ChatBox = ({ userId, groupId }) => {
                                         <div className="lead-text">{userDetails?.name}</div>
                                         <div className="sub-text">
                                             <span className="d-none d-sm-inline mr-1">
-                                                {onlineUsers[userDetails?._id] ? 'online' : 'offline'}
+                                                {/* {onlineUsers[userDetails?._id] ? 'online' : 'offline'} */}
                                             </span>
                                         </div>
                                     </div>
@@ -1762,7 +1771,7 @@ const ChatBox = ({ userId, groupId }) => {
                                             <li >{msg?.senderDetails?.name}</li>
                                         </ul>}
 
-                                        {msg?.senderDetails?.id === loggedInUser._id ? (
+                                        {/* {msg?.senderDetails?.id === loggedInUser._id ? (
                                             msg?.replyTo && <ul className="chat-meta mt-0 mb-1">
                                                 <li>{msg?.replyTo?.time}</li>
                                                 <li>{`replied to ${msg?.replyTo?.senderName !== loggedInUser?.name ? msg?.replyTo?.senderName : 'yourself'}`}</li>
@@ -1773,7 +1782,7 @@ const ChatBox = ({ userId, groupId }) => {
                                                 <li>{msg?.replyTo?.time}</li>
                                             </ul>
                                         )
-                                        }
+                                        } */}
                                         <div className="chat-bubbles">
                                             {msg?.senderDetails?.id === loggedInUser._id ? (
                                                 msg?.replyTo && <div className="chat-bubble my-reply-bubble">
@@ -1929,7 +1938,7 @@ const ChatBox = ({ userId, groupId }) => {
                                             <li>
                                                 {getDisplayTime(index, messageArr) && getDisplayTime(index, messageArr)}
                                                 {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <em className={`icon ni ni-check-circle-fill ms-1 ${(msg?.seen || msgSeen) ? 'message-seen' : ''}`}></em>}
-                                                {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <span>{(msg?.seen || msgSeen) ? t('seen') : t('sent')}</span>}
+                                                {/* {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <span>{(msg?.seen || msgSeen) ? t('seen') : t('sent')}</span>} */}
                                             </li>
                                         </ul>}
                                     </div>
@@ -1968,9 +1977,9 @@ const ChatBox = ({ userId, groupId }) => {
                             {parse(truncateHtml(reply?.msgContent || "", 20))}
                         </div>
 
-                        <button className='btn btn-icon btn-sm btn-trigger position-absolute' style={{ top: '0.7rem', right: '1.25rem' }} onClick={() => setReply({})}>
+                        <button className='btn btn-icon btn-sm btn-trigger1 position-absolute' style={{ top: '50%', right: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'translateY(-50%)', backgroundColor: '#e5e9f2', borderRadius: '50%', height: '25px', aspectRatio: '1/1' }} onClick={() => setReply({})}>
                             <svg className="svg-icon" style={{ width: '1em', height: '1em', verticalAlign: 'middle', fill: 'currentColor', overflow: 'hidden', }} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M810.65984 170.65984q18.3296 0 30.49472 12.16512t12.16512 30.49472q0 18.00192-12.32896 30.33088l-268.67712 268.32896 268.67712 268.32896q12.32896 12.32896 12.32896 30.33088 0 18.3296-12.16512 30.49472t-30.49472 12.16512q-18.00192 0-30.33088-12.32896l-268.32896-268.67712-268.32896 268.67712q-12.32896 12.32896-30.33088 12.32896-18.3296 0-30.49472-12.16512t-12.16512-30.49472q0-18.00192 12.32896-30.33088l268.67712-268.32896-268.67712-268.32896q-12.32896-12.32896-12.32896-30.33088 0-18.3296 12.16512-30.49472t30.49472-12.16512q18.00192 0 30.33088 12.32896l268.32896 268.67712 268.32896-268.67712q12.32896-12.32896 30.33088-12.32896z" />
+                                <path d="M810.65984 170.65984q18.3296 0 30.49472 12.16512t12.16512 30.49472q0 18.020692-12.32896 30.33088l-268.67712 268.32896 268.67712 268.32896q12.32896 12.32896 12.32896 30.33088 0 18.3296-12.16512 30.49472t-30.49472 12.16512q-18.00192 0-30.33088-12.32896l-268.32896-268.67712-268.32896 268.67712q-12.32896 12.32896-30.33088 12.32896-18.3296 0-30.49472-12.16512t-12.16512-30.49472q0-18.00192 12.32896-30.33088l268.67712-268.32896-268.67712-268.32896q-12.32896-12.32896-12.32896-30.33088 0-18.3296 12.16512-30.49472t30.49472-12.16512q18.00192 0 30.33088 12.32896l268.32896 268.67712 268.32896-268.67712q12.32896-12.32896 30.33088-12.32896z" />
                             </svg>
                         </button>
                     </div>}
@@ -2007,20 +2016,10 @@ const ChatBox = ({ userId, groupId }) => {
 
                     <div className="nk-chat-editor position-relative">
                         <div className="nk-chat-editor-upload  ml-n1">
-                            <button onClick={() => setShowUploadOptions(!showUploadOptions)} className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" data-bs-target="chat-upload"><em className="icon ni ni-plus-circle-fill"></em></button>
+                            {/* <button onClick={() => setShowUploadOptions(!showUploadOptions)} className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" data-bs-target="chat-upload">
+                                <em className="icon ni ni-plus-circle-fill"></em>
 
-                            {/* <button className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" >
-                                <label className="upload-files m-0 d-flex" style={{ cursor: 'pointer' }}>
-                                    <em className="icon ni ni-plus-circle-fill"></em>
-                                    <input
-                                        type="file"
-                                        multiple
-                                        style={{ display: 'none' }}
-                                        onChange={(e) => { handleFileUpload(e.target.files) }}
-                                    />
-                                </label>
-
-                            </button> */}
+                            </button>
 
                             {showUploadOptions && <div className="chat-upload-option" data-content="chat-upload">
                                 <ul>
@@ -2039,19 +2038,22 @@ const ChatBox = ({ userId, groupId }) => {
                                             />
                                         </label>
                                     </li>
-                                    {/* <li>
-                                        <label className={`upload-files ${showToolBar ? 'active' : ''}`}
-                                            onClick={() => {
-                                                setShowUploadOptions(false);
-                                                setShowToolBar(!showToolBar)
-                                            }}>
-                                            <em className="icon ni ni-grid-sq"></em>
-                                        </label>
-                                    </li> */}
-                                    {/* <li><a href="#"><em className="icon ni ni-mic"></em></a></li>
-                                    <li><a href="#"><em className="icon ni ni-grid-sq"></em></a></li> */}
                                 </ul>
-                            </div>}
+                            </div>} */}
+
+                            <label className="upload-files" style={{ cursor: 'pointer' }}>
+                                <em className="icon ni ni-img-fill"></em>
+                                <input
+                                    type="file"
+                                    multiple
+                                    style={{ display: 'none' }}
+                                    onChange={(e) => {
+                                        setShowToolBar(false);
+                                        setShowUploadOptions(false)
+                                        handleFileUpload(e.target.files)
+                                    }}
+                                />
+                            </label>
                         </div>
                         <div className="nk-chat-editor-form">
                             <div className="form-control-wrap">
@@ -2151,6 +2153,7 @@ const ChatBox = ({ userId, groupId }) => {
                 onConfirm={handleDeleteConvo}
                 title="Confirm Delete"
                 message={t("areYouSureToDeleteConvo")}
+                container={shadowRoot}
             />
         </>
     )

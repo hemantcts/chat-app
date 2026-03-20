@@ -9,7 +9,7 @@ import notificationSound from '../assets/sounds/notification_sound.wav'
 import parse, { domToReact } from "html-react-parser";
 import ConfirmModal from './ConfirmModal';
 
-const Chats = () => {
+const AdminChats = ({ setConvoUsers }) => {
     const onlineUsers = useOnlineUsers();
     const location = useLocation();
     const navigate = useNavigate();
@@ -20,12 +20,13 @@ const Chats = () => {
 
     const selectedUserId = queryParams.get('user');
     const selectedGroupId = queryParams.get('group');
-    const hasGroup = queryParams.has('group');
+    const hasGroup = queryParams.has('conversation');
 
     const [groupEnable, setGroupEnable] = useState(hasGroup ? true : false)
     const [groups, setGroups] = useState([])
 
     const [users, setUsers] = useState([]);
+    const [allChatUsers, setAllChatUsers] = useState([]);
     const [unreadUsers, setUnreadUsers] = useState(0);
     const [unreadGroups, setUnreadGroups] = useState(0);
 
@@ -106,14 +107,9 @@ const Chats = () => {
     };
 
     const fetchUsers = async () => {
+        console.log('users fetched here')
         let api = "https://talk.socceryou.ch/api/messages/chatUsers?projectId=soccer"
-        if(loggedInUser?.role == '1'){
-            console.log("chat user admin")
-            api = "https://talk.socceryou.ch/api/messages/getAllConversations?projectId=soccer"
-        }
-        else{
-            console.log("chat user not admin")
-        }
+        
         try {
             const res = await fetch(api, {
                 headers: {
@@ -127,12 +123,52 @@ const Chats = () => {
 
                 console.log('login users,', allUsers)
 
+                // setConvoUsers(allUsers);
+
                 setUsers(allUsers || []);
 
                 const unreadUsers = allUsers.filter(user => user.unreadCount > 0);
 
                 // Example: If you want to store only the count:
                 setUnreadUsers(unreadUsers.length);
+                // setUnreadUsers(unreadUsersCount)
+
+                // setLoading(false);
+            }
+            else {
+                // toast.error(data.message || 'error!');
+            }
+
+        } catch (err) {
+            console.error(err);
+            // setLoading(false);
+        }
+    };
+
+    const fetchUsers2 = async () => {
+        let api = "https://talk.socceryou.ch/api/messages/getAllConversations?projectId=soccer"
+
+        try {
+            const res = await fetch(api, {
+                headers: {
+                    'Authorization': localStorage.getItem('token')
+                }
+            });
+            const data = await res.json();
+
+            if (data.status) {
+                const allUsers = data.users;
+
+                console.log('login users,', allUsers)
+
+                setConvoUsers(allUsers);
+
+                setAllChatUsers(allUsers || []);
+
+                // const unreadUsers = allUsers.filter(user => user.unreadCount > 0);
+
+                // Example: If you want to store only the count:
+                // setUnreadUsers(unreadUsers.length);
                 // setUnreadUsers(unreadUsersCount)
 
                 // setLoading(false);
@@ -178,6 +214,7 @@ const Chats = () => {
         const audio = new Audio(notificationSound);
         socket.on('notification', ({ message }) => {
             fetchUsers();
+            fetchUsers2();
             // fetchGroups();
 
             console.log('mef', message)
@@ -208,6 +245,7 @@ const Chats = () => {
             markSeen();
         }
         fetchUsers();
+        fetchUsers2();
         // fetchGroups();
         // getUser();
     }, [selectedUserId, selectedGroupId]);
@@ -229,7 +267,7 @@ const Chats = () => {
     };
 
     const handleDelete = async (groupId) => {
-        if (loggedInUser?.accessLevel<=2 && loggedInUser?.department !== 'Contractor Management' && loggedInUser?.department !== 'Contractor') {
+        if (loggedInUser?.accessLevel <= 2 && loggedInUser?.department !== 'Contractor Management' && loggedInUser?.department !== 'Contractor') {
             toast.error("You don't have access")
             return;
         }
@@ -260,8 +298,8 @@ const Chats = () => {
         hideModal();
     }
 
-    const handleChangeGroup = () => {
-        navigate(`/dashboard/chat?group`)
+    const handleChangeAllConversation = () => {
+        navigate(`/dashboard/chat?conversation`)
     }
     const handleChangeUser = () => {
         navigate(`/dashboard/chat?chats`)
@@ -295,62 +333,8 @@ const Chats = () => {
 
     return (
         <div className="nk-chat-aside">
-            {false && <div className="nk-chat-aside-head">
-                <div className="nk-chat-aside-user">
-                    <div className="dropdown">
-                        {/* <a href="#" className="dropdown-toggle dropdown-indicator" data-bs-toggle="dropdown"> */}
-                        {/* <div className="user-avatar">
-                                <img src="./images/avatar/b-sm.jpg" alt="" />
-                            </div> */}
-                        <div className="title">Chats</div>
-                        {/* </a> */}
-                        <div className="dropdown-menu">
-                            <ul className="link-list-opt no-bdr">
-                                <li><a href="html/apps/chats-contacts.html"><span>Contacts</span></a></li>
-                                <li><a href="html/apps/chats-channels.html"><span>Channels</span></a></li>
-                                <li className="divider"></li>
-                                <li><a href="#"><span>Help</span></a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <ul className="nk-chat-aside-tools g-2">
-                    {/* <li>
-                        <div className="dropdown">
-                            <a href="#" className="btn btn-round btn-icon btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                <em className="icon ni ni-setting-alt-fill"></em>
-                            </a>
-                            <div className="dropdown-menu dropdown-menu-end">
-                                <ul className="link-list-opt no-bdr">
-                                    <li><a href="#"><span>Settings</span></a></li>
-                                    <li className="divider"></li>
-                                    <li><a href="#"><span>Message Requests</span></a></li>
-                                    <li><a href="#"><span>Archives Chats</span></a></li>
-                                    <li><a href="#"><span>Unread Chats</span></a></li>
-                                    <li><a href="#"><span>Group Chats</span></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </li> */}
-                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=3 || loggedInUser?.department === 'Contractor Management' || loggedInUser?.department === 'Contractor') && <li>
-                        <div className="dropdown">
-                            <a href="#" className="btn btn-round btn-icon btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                <em className="icon ni ni-edit-alt-fill"></em>
-                            </a>
-                            <div className="dropdown-menu dropdown-menu-start">
-                                <ul className="link-list-opt no-bdr">
-                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=3 || loggedInUser?.department === 'Contractor Management' || loggedInUser?.department === 'Contractor') && <li><Link to="/dashboard/chat?create_group"><span>Create Group</span></Link></li>}
-                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=4 || loggedInUser?.department === 'Contractor Management') && <li><Link to="/dashboard/chat?new_chat"><span>New Chat</span></Link></li>}
-                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=3) && <li><Link to="/dashboard/chat?add_user"><span>Add User</span></Link></li>}
-                                    {(loggedInUser?.role == 1 || loggedInUser?.accessLevel>=3) && <li><Link to="/dashboard/chat?add_company"><span>Add Company</span></Link></li>}
-                                </ul>
-                            </div>
-                        </div>
-                    </li>}
-                </ul>
-            </div>}
             <div className="nk-chat-aside-body pt-4" data-simplebar>
-                {/* <div className="nk-chat-aside-search"> */}
+                <div className="nk-chat-aside-search">
                     {/* <div className="form-group">
                         <div className="form-control-wrap">
                             <div className="form-icon form-icon-left">
@@ -360,19 +344,19 @@ const Chats = () => {
                         </div>
                     </div> */}
 
-                    {/* <div className="select-chat">
+                    <div className="select-chat">
                         <ul className='d-flex'>
                             <li className={`disabled position-relative ${!groupEnable ? 'active' : ''}`} onClick={handleChangeUser}>
-                                Chats
-                                {unreadUsers > 0 && <span className="unread-users">{unreadUsers}</span>}
+                                My Chats
+                                {/* {unreadUsers > 0 && <span className="unread-users">{unreadUsers}</span>} */}
                             </li>
-                            <li className={`${groupEnable ? 'active' : ''}`} onClick={handleChangeGroup}>
-                                Groups
-                                {unreadGroups > 0 && <span className="unread-users">{unreadGroups}</span>}
+                            <li className={`${groupEnable ? 'active' : ''}`} onClick={handleChangeAllConversation}>
+                                All Chats
+                                {/* {unreadGroups > 0 && <span className="unread-users">{unreadGroups}</span>} */}
                             </li>
                         </ul>
-                    </div> */}
-                {/* </div> */}
+                    </div>
+                </div>
 
 
 
@@ -453,72 +437,14 @@ const Chats = () => {
 
                 <div className="nk-chat-list">
                     {/* <h6 className="title overline-title-alt">Messages</h6> */}
-                    {groupEnable ? (
-                        <ul className="chat-list">
-                            {groups.length === 0 ? (
-                                <div className='d-flex justify-content-center mt-4'>Not added in any group yet</div>
-                            ) : (
-                                groups.map((group, index) => (
-                                    <li key={index} className={`chat-item ${selectedGroupId === group._id ? 'active' : ''} ${group?.unseenCount > 0 ? 'is-unread' : ''}`}>
-                                        <Link className="chat-link chat-open current" to={`/dashboard/chat?group=${group._id}`}>
-
-                                            {group?.groupImage ? (
-                                                <div className="chat-media user-avatar bg-purple group-image" style={{ backgroundImage: `url(/${group?.groupImage})` }}
-                                                ></div>
-                                            ) : (
-                                                <div className="chat-media user-avatar bg-purple"
-                                                >
-                                                    <span>{group?.name?.slice(0, 2).toUpperCase()}</span>
-                                                    {/* <span className={`status dot dot-lg ${onlineUsers[group._id] ? 'dot-success' : 'dot-gray'} `}></span> */}
-                                                </div>
-                                            )}
-                                            <div className="chat-info">
-                                                <div className="chat-from">
-                                                    <div className="name">{group?.name}</div>
-                                                    <span className="time">{group?.latestTimestamp}</span>
-                                                </div>
-                                                {<div className="chat-context">
-                                                    {group?.latestSenderId && (
-                                                        loggedInUser?.department === 'Contractor' || loggedInUser?.department === 'Contractor Management' ? (
-                                                            <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${hiddenDepartments.includes(group?.latestSenderDepartment) ? group?.latestSenderDepartment : group?.latestSenderName} :`} {parse(truncateHtml(group?.latestMessage || "", 20))}</div>
-                                                        ) : (
-                                                            <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${group?.latestSenderName} ${loggedInUser?.role===1 ? `| ${group?.latestSenderDepartment}` : ''} :`} {parse(truncateHtml(group?.latestMessage || "", 20))}</div>
-                                                        ))}
-                                                    {group?.unseenCount > 0 && <div className="status unread">{group?.unseenCount > 99 ? '99' : group?.unseenCount}</div>}
-                                                    {/* <div className="status delivered">
-                                                        <em className="icon ni ni-check-circle-fill"></em>
-                                                    </div> */}
-                                                </div>}
-                                            </div>
-                                        </Link>
-                                        <div className="chat-actions">
-                                            <div className="dropdown">
-                                                <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
-                                                <div className="dropdown-menu dropdown-menu-right">
-                                                    <ul className="link-list-opt no-bdr">
-                                                        <li><button className='btn' onClick={() => showRemoveModal(group?._id)}>Delete Group</button></li>
-                                                        {/* <li><a href="#">Hide Conversion</a></li>
-                                                        <li><a href="#">Delete Conversion</a></li>
-                                                        <li className="divider"></li>
-                                                        <li><a href="#">Mark as Unread</a></li>
-                                                        <li><a href="#">Ignore Messages</a></li>
-                                                        <li><a href="#">Block Messages</a></li> */}
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                ))
-                            )}
-                        </ul>
-                    ) : (
+                    {!groupEnable ? (
                         <ul className="chat-list">
                             {users.length === 0 ? (
                                 <div className='d-flex justify-content-center mt-4'>No chat started yet</div>
                             ) : (
                                 users.map((user, index) => (
                                     <li key={index} className={`chat-item ${selectedUserId === user._id ? 'active' : ''} ${user?.unreadCount > 0 ? 'is-unread' : ''}`}>
-                                        <Link className="chat-link chat-open current" to={loggedInUser?.role == 1 ? `/dashboard/chat?user=${user?.conversationId}` : `/dashboard/chat?user=${user._id}`}>
+                                        <Link className="chat-link chat-open current" to={`/dashboard/chat?user=${user._id}`}>
                                             <div className="chat-media user-avatar bg-purple" style={{ backgroundImage: `url(${user?.imagePath})` }}>
                                                 {!user?.imagePath && <span>{user?.name?.slice(0, 2).toUpperCase()}</span>}
                                                 <span className={`status dot dot-lg ${onlineUsers[user._id] ? 'dot-success' : 'dot-gray'} `}></span>
@@ -526,6 +452,56 @@ const Chats = () => {
                                             <div className="chat-info">
                                                 <div className="chat-from">
                                                     <div className="name">{user?.name}</div>
+                                                    <span className="time">{user?.latestTimestamp}</span>
+                                                </div>
+                                                <div className="chat-context">
+                                                    <div className="text">{user?.latestSenderId === loggedInUser?._id ? 'you :' : ''} {parse(truncateHtml(user?.latestMessage || "", 20))}</div>
+                                                    {user?.unreadCount > 0 && <div className="status unread">{user?.unreadCount > 99 ? '99' : user?.unreadCount}</div>}
+                                                    {/* <div className="status delivered">
+                                                                                <em className="icon ni ni-check-circle-fill"></em>
+                                                                            </div> */}
+                                                </div>
+                                            </div>
+                                        </Link>
+                                        {/* <div className="chat-actions">
+                                                                    <div className="dropdown">
+                                                                        <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
+                                                                        <div className="dropdown-menu dropdown-menu-right">
+                                                                            <ul className="link-list-opt no-bdr">
+                                                                                <li><a href="#">Mute Conversion</a></li>
+                                                                                <li><a href="#">Hide Conversion</a></li>
+                                                                                <li><a href="#">Delete Conversion</a></li>
+                                                                                <li className="divider"></li>
+                                                                                <li><a href="#">Mark as Unread</a></li>
+                                                                                <li><a href="#">Ignore Messages</a></li>
+                                                                                <li><a href="#">Block Messages</a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </div> */}
+                                    </li>
+                                ))
+                            )}
+                        </ul>
+                    ) : (
+                        <ul className="chat-list">
+                            {allChatUsers.length === 0 ? (
+                                <div className='d-flex justify-content-center mt-4'>No conversations</div>
+                            ) : (
+                                allChatUsers.map((user, index) => (
+                                    <li key={index} className={`chat-item ${selectedUserId === user._id ? 'active' : ''} ${user?.unreadCount > 0 ? 'is-unread' : ''}`}>
+                                        <Link className="chat-link chat-open current" to={`/dashboard/chat?conversation=${user?.conversationId}`}>
+                                            {user?.users?.map((u, i) => (
+                                                <div key={i} className="chat-media user-avatar bg-purple" style={{ backgroundImage: u?.imagePath ? `url(${u?.imagePath})` : 'none', border: '1px solid', marginLeft: i != 0 ? '-30px' : 'unset', marginBottom: i != 0 ? '-20px' : 'unset' }}>
+                                                    {!u?.imagePath && <span>{u?.name?.slice(0, 2).toUpperCase()}</span>}
+                                                    {/* <span className={`status dot dot-lg ${onlineUsers[user._id] ? 'dot-success' : 'dot-gray'} `}></span> */}
+                                                </div>
+                                            ))}
+                                            <div className="chat-info">
+                                                <div className="chat-from">
+                                                    {/* <div className="name">{user?.name}</div> */}
+                                                    <div className="name" style={{ maxWidth: '180px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.users?.map(user => user.name).join(" and ")}</div>
+
                                                     <span className="time">{user?.latestTimestamp}</span>
                                                 </div>
                                                 <div className="chat-context">
@@ -573,4 +549,4 @@ const Chats = () => {
     )
 }
 
-export default Chats
+export default AdminChats
