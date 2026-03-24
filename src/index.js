@@ -63,7 +63,7 @@ window.ChatWidget = {
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href =
-      "https://bigstuffmovers.au/widget/build/static/css/main.5a8eced1.css";
+      "https://bigstuffmovers.au/widget/build/static/css/main.4932e919.css";
     shadowRoot.appendChild(link);
 
     this.injectTheme(config);

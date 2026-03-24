@@ -1146,7 +1146,7 @@ const AdminChatBox = ({ userId, groupId, conversationId, convoUsers }) => {
                             <div className="user-card">
                                 {convoUsers?.filter(convo => convo.conversationId === conversationId).map(convo =>
                                     convo.users.map((user, i) => (
-                                        <div key={user.id} style={{marginLeft: i!=0 ? '-25px' : 'unset', marginBottom: i!=0 ? '-20px' : 'unset', }} className="user-avatar-wrapper">
+                                        <div key={user.id} style={{ marginLeft: i != 0 ? '-25px' : 'unset', marginBottom: i != 0 ? '-20px' : 'unset', }} className="user-avatar-wrapper">
                                             <div
                                                 className="user-avatar bg-purple"
                                                 style={{
@@ -1373,13 +1373,13 @@ const AdminChatBox = ({ userId, groupId, conversationId, convoUsers }) => {
                                             {/* <ul className="chat-msg-more">
                                                 <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => handleReply(msg?._id, msg?.content, msg?.senderDetails?.name, msg?.senderDetails?.department)}><em className="icon ni ni-reply-fill"></em></button></li> */}
 
-                                                {/* <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => forwardMessage(msg)}><em className="icon ni ni-share-fill"></em></button></li> */}
+                                            {/* <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => forwardMessage(msg)}><em className="icon ni ni-share-fill"></em></button></li> */}
 
-                                                {/* {(msg?.senderDetails?.id === loggedInUser._id || loggedInUser?.accessLevel >= 3) && <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => showRemoveModal(msg?._id)}><em className="icon ni ni-trash-fill"></em></button></li>} */}
+                                            {/* {(msg?.senderDetails?.id === loggedInUser._id || loggedInUser?.accessLevel >= 3) && <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => showRemoveModal(msg?._id)}><em className="icon ni ni-trash-fill"></em></button></li>} */}
 
-                                                {/* <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => copyMessage(msg)}><em className="icon ni ni-copy-fill"></em></button></li> */}
+                                            {/* <li className="d-none d-sm-block"><button className="btn btn-icon btn-sm btn-trigger" onClick={() => copyMessage(msg)}><em className="icon ni ni-copy-fill"></em></button></li> */}
 
-                                                {/* <li>
+                                            {/* <li>
                                                     <div className="dropdown">
                                                         <a href="#" className="btn btn-icon btn-sm btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em className="icon ni ni-more-h"></em></a>
                                                         <div className="dropdown-menu dropdown-menu-sm dropdown-menu-right">
@@ -1477,7 +1477,7 @@ const AdminChatBox = ({ userId, groupId, conversationId, convoUsers }) => {
 
                 {false && <div className="nk-chat-editor position-relative">
                     <div className="nk-chat-editor-upload  ml-n1">
-                        <button onClick={() => setShowUploadOptions(!showUploadOptions)} className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" data-bs-target="chat-upload"><em className="icon ni ni-plus-circle-fill"></em></button>
+                        {/* <button onClick={() => setShowUploadOptions(!showUploadOptions)} className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" data-bs-target="chat-upload"><em className="icon ni ni-plus-circle-fill"></em></button> */}
 
                         {/* <button className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt" >
                                 <label className="upload-files m-0 d-flex" style={{ cursor: 'pointer' }}>
@@ -1492,7 +1492,7 @@ const AdminChatBox = ({ userId, groupId, conversationId, convoUsers }) => {
 
                             </button> */}
 
-                        {showUploadOptions && <div className="chat-upload-option" data-content="chat-upload">
+                        {/* {showUploadOptions && <div className="chat-upload-option" data-content="chat-upload">
                             <ul>
                                 <li>
                                     <label className="upload-files" style={{ cursor: 'pointer' }}>
@@ -1509,19 +1509,22 @@ const AdminChatBox = ({ userId, groupId, conversationId, convoUsers }) => {
                                         />
                                     </label>
                                 </li>
-                                {/* <li>
-                                        <label className={`upload-files ${showToolBar ? 'active' : ''}`}
-                                            onClick={() => {
-                                                setShowUploadOptions(false);
-                                                setShowToolBar(!showToolBar)
-                                            }}>
-                                            <em className="icon ni ni-grid-sq"></em>
-                                        </label>
-                                    </li> */}
-                                {/* <li><a href="#"><em className="icon ni ni-mic"></em></a></li>
-                                    <li><a href="#"><em className="icon ni ni-grid-sq"></em></a></li> */}
                             </ul>
-                        </div>}
+                        </div>} */}
+
+                        <label className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt upload-files mb-0" style={{ cursor: 'pointer' }}>
+                            <em className="icon ni ni-plus-circle-fill"></em>
+                            <input
+                                type="file"
+                                multiple
+                                style={{ display: 'none' }}
+                                onChange={(e) => {
+                                    setShowToolBar(false);
+                                    setShowUploadOptions(false);
+                                    handleFileUpload(e.target.files);
+                                }}
+                            />
+                        </label>
                     </div>
                     <div className="nk-chat-editor-form">
                         <div className="form-control-wrap">
@@ -1601,7 +1604,7 @@ const AdminChatBox = ({ userId, groupId, conversationId, convoUsers }) => {
 
                 {true && <div className="nk-chat-editor position-relative justify-content-center">
                     <div className="no-chat-text">
-                        <p>You can't send message here</p>
+                        <p>{t("noAccess")}</p>
                     </div>
                 </div>}
 

@@ -1938,7 +1938,7 @@ const ChatBox = ({ userId, groupId, shadowRoot }) => {
                                             <li>
                                                 {getDisplayTime(index, messageArr) && getDisplayTime(index, messageArr)}
                                                 {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <em className={`icon ni ni-check-circle-fill ms-1 ${(msg?.seen || msgSeen) ? 'message-seen' : ''}`}></em>}
-                                                {/* {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <span>{(msg?.seen || msgSeen) ? t('seen') : t('sent')}</span>} */}
+                                                {(index === messageArr.length - 1 && msg?.senderDetails?.id === loggedInUser?._id) && <span>{(msg?.seen || msgSeen) ? t('seen') : t('sent')}</span>}
                                             </li>
                                         </ul>}
                                     </div>
@@ -2041,16 +2041,16 @@ const ChatBox = ({ userId, groupId, shadowRoot }) => {
                                 </ul>
                             </div>} */}
 
-                            <label className="upload-files" style={{ cursor: 'pointer' }}>
-                                <em className="icon ni ni-img-fill"></em>
+                            <label className="btn btn-sm btn-icon btn-trigger text-primary toggle-opt upload-files mb-0" style={{ cursor: 'pointer' }}>
+                                <em className="icon ni ni-plus-circle-fill"></em>
                                 <input
                                     type="file"
                                     multiple
                                     style={{ display: 'none' }}
                                     onChange={(e) => {
                                         setShowToolBar(false);
-                                        setShowUploadOptions(false)
-                                        handleFileUpload(e.target.files)
+                                        setShowUploadOptions(false);
+                                        handleFileUpload(e.target.files);
                                     }}
                                 />
                             </label>

@@ -8,6 +8,7 @@ import notificationSound from '../assets/sounds/notification_sound.wav'
 
 import parse, { domToReact } from "html-react-parser";
 import ConfirmModal from './ConfirmModal';
+import { t } from '../utils/i18n';
 
 const Chats = () => {
     const onlineUsers = useOnlineUsers();
@@ -480,9 +481,9 @@ const Chats = () => {
                                                 {<div className="chat-context">
                                                     {group?.latestSenderId && (
                                                         loggedInUser?.department === 'Contractor' || loggedInUser?.department === 'Contractor Management' ? (
-                                                            <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${hiddenDepartments.includes(group?.latestSenderDepartment) ? group?.latestSenderDepartment : group?.latestSenderName} :`} {parse(truncateHtml(group?.latestMessage || "", 20))}</div>
+                                                            <div className="text">{group?.latestSenderId === loggedInUser?._id ? '' : `${hiddenDepartments.includes(group?.latestSenderDepartment) ? group?.latestSenderDepartment : group?.latestSenderName} :`} {parse(truncateHtml(group?.latestMessage || "", 20))}</div>
                                                         ) : (
-                                                            <div className="text">{group?.latestSenderId === loggedInUser?._id ? 'you :' : `${group?.latestSenderName} ${loggedInUser?.role===1 ? `| ${group?.latestSenderDepartment}` : ''} :`} {parse(truncateHtml(group?.latestMessage || "", 20))}</div>
+                                                            <div className="text">{group?.latestSenderId === loggedInUser?._id ? '' : `${group?.latestSenderName} ${loggedInUser?.role===1 ? `| ${group?.latestSenderDepartment}` : ''} :`} {parse(truncateHtml(group?.latestMessage || "", 20))}</div>
                                                         ))}
                                                     {group?.unseenCount > 0 && <div className="status unread">{group?.unseenCount > 99 ? '99' : group?.unseenCount}</div>}
                                                     {/* <div className="status delivered">
@@ -514,7 +515,7 @@ const Chats = () => {
                     ) : (
                         <ul className="chat-list">
                             {users.length === 0 ? (
-                                <div className='d-flex justify-content-center mt-4'>No chat started yet</div>
+                                <div className='d-flex justify-content-center mt-4'>{t("noMessages")}</div>
                             ) : (
                                 users.map((user, index) => (
                                     <li key={index} className={`chat-item ${selectedUserId === user._id ? 'active' : ''} ${user?.unreadCount > 0 ? 'is-unread' : ''}`}>
@@ -529,7 +530,7 @@ const Chats = () => {
                                                     <span className="time">{user?.latestTimestamp}</span>
                                                 </div>
                                                 <div className="chat-context">
-                                                    <div className="text">{user?.latestSenderId === loggedInUser?._id ? 'you :' : ''} {parse(truncateHtml(user?.latestMessage || "", 20))}</div>
+                                                    <div className="text">{user?.latestSenderId === loggedInUser?._id ? '' : ''} {parse(truncateHtml(user?.latestMessage || "", 20))}</div>
                                                     {user?.unreadCount > 0 && <div className="status unread">{user?.unreadCount > 99 ? '99' : user?.unreadCount}</div>}
                                                     {/* <div className="status delivered">
                                                         <em className="icon ni ni-check-circle-fill"></em>

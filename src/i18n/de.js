@@ -7,5 +7,8 @@ export default {
   areYouSureToDeleteConvo: "Möchten Sie diese Unterhaltung dauerhaft löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
   result: "Resultat",
   sent: "Sendt",
-  seen: "Set"
+  seen: "Set",
+  noAccess: "Hier kannst du keine Nachricht senden",
+  myChats: "Meine Chats",
+  allChats: "Alle Chats"
 };

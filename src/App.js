@@ -93,9 +93,9 @@ const App = ({config, shadowRoot}) => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    navigate('/dashboard');
-  }, []);
+  // useEffect(() => {
+  //   navigate('/dashboard');
+  // }, []);
 
   useEffect(() => {
     socket.on("conversation-ready", ({userId}) => {
@@ -163,7 +163,7 @@ const App = ({config, shadowRoot}) => {
         localStorage.setItem('chatUserData', JSON.stringify(data.user));
         // localStorage.setItem('chatUserData', JSON.stringify(data.user));
         // getFcmToken(data.token);
-        // navigate('/dashboard/chat'); // redirect after login
+        navigate('/dashboard/chat'); // redirect after login
       }
 
     } catch (err) {

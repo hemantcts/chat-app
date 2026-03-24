@@ -8,6 +8,7 @@ import notificationSound from '../assets/sounds/notification_sound.wav'
 
 import parse, { domToReact } from "html-react-parser";
 import ConfirmModal from './ConfirmModal';
+import { t } from '../utils/i18n';
 
 const AdminChats = ({ setConvoUsers }) => {
     const onlineUsers = useOnlineUsers();
@@ -347,11 +348,11 @@ const AdminChats = ({ setConvoUsers }) => {
                     <div className="select-chat">
                         <ul className='d-flex'>
                             <li className={`disabled position-relative ${!groupEnable ? 'active' : ''}`} onClick={handleChangeUser}>
-                                My Chats
+                                {t("myChats")}
                                 {/* {unreadUsers > 0 && <span className="unread-users">{unreadUsers}</span>} */}
                             </li>
                             <li className={`${groupEnable ? 'active' : ''}`} onClick={handleChangeAllConversation}>
-                                All Chats
+                                {t("allChats")}
                                 {/* {unreadGroups > 0 && <span className="unread-users">{unreadGroups}</span>} */}
                             </li>
                         </ul>
@@ -440,7 +441,8 @@ const AdminChats = ({ setConvoUsers }) => {
                     {!groupEnable ? (
                         <ul className="chat-list">
                             {users.length === 0 ? (
-                                <div className='d-flex justify-content-center mt-4'>No chat started yet</div>
+                                // <div className='d-flex justify-content-center mt-4'>No chat started yet</div>
+                                <div className='d-flex justify-content-center mt-4'>{t("noMessages")}</div>
                             ) : (
                                 users.map((user, index) => (
                                     <li key={index} className={`chat-item ${selectedUserId === user._id ? 'active' : ''} ${user?.unreadCount > 0 ? 'is-unread' : ''}`}>
@@ -455,7 +457,7 @@ const AdminChats = ({ setConvoUsers }) => {
                                                     <span className="time">{user?.latestTimestamp}</span>
                                                 </div>
                                                 <div className="chat-context">
-                                                    <div className="text">{user?.latestSenderId === loggedInUser?._id ? 'you :' : ''} {parse(truncateHtml(user?.latestMessage || "", 20))}</div>
+                                                    <div className="text">{user?.latestSenderId === loggedInUser?._id ? '' : ''} {parse(truncateHtml(user?.latestMessage || "", 20))}</div>
                                                     {user?.unreadCount > 0 && <div className="status unread">{user?.unreadCount > 99 ? '99' : user?.unreadCount}</div>}
                                                     {/* <div className="status delivered">
                                                                                 <em className="icon ni ni-check-circle-fill"></em>
@@ -500,12 +502,12 @@ const AdminChats = ({ setConvoUsers }) => {
                                             <div className="chat-info">
                                                 <div className="chat-from">
                                                     {/* <div className="name">{user?.name}</div> */}
-                                                    <div className="name" style={{ maxWidth: '180px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.users?.map(user => user.name).join(" and ")}</div>
+                                                    <div className="name" style={{ maxWidth: '135px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.users?.map(user => user.name).join(" and ")}</div>
 
                                                     <span className="time">{user?.latestTimestamp}</span>
                                                 </div>
                                                 <div className="chat-context">
-                                                    <div className="text">{user?.latestSenderId === loggedInUser?._id ? 'you :' : ''} {parse(truncateHtml(user?.latestMessage || "", 20))}</div>
+                                                    <div className="text">{user?.latestSenderId === loggedInUser?._id ? '' : ''} {parse(truncateHtml(user?.latestMessage || "", 20))}</div>
                                                     {user?.unreadCount > 0 && <div className="status unread">{user?.unreadCount > 99 ? '99' : user?.unreadCount}</div>}
                                                     {/* <div className="status delivered">
                                                         <em className="icon ni ni-check-circle-fill"></em>
